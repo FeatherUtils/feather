@@ -33,7 +33,7 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
         }
         form.button(`${button.text}${button.subtext ? `\n§r§7${button.subtext}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player)=>{
             for(const action of button.actions) {
-                actionParser.runAction(e.sourceEntity, action)
+                actionParser.runAction(e.sourceEntity, action.action)
             }
         })
     }

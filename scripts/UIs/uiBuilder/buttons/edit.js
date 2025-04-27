@@ -39,7 +39,7 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.edit, 'edit button', (player, u
         })
     })
     form.button(`§aEdit Actions\n§7Edit this button's actions`, icons.resolve('azalea/CustomCommands2'), (player) => {
-        
+        uiManager.open(player,config.uinames.uiBuilder.buttons.editActions,uiID,id)
     })
     form.button(`§cDelete Button\n§7Delete this button`, icons.resolve(`azalea/SidebarTrash`), (player) => {
         function ye(player) {
