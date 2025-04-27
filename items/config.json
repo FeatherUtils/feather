@@ -1,0 +1,20 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:item": {
+		"description": {
+			"identifier": "feather:config",
+			"menu_category": {
+				"category": "nature"
+			}
+		},
+		"components": {
+			"minecraft:icon": "admin_ui",
+			"minecraft:display_name": {
+				"value": "§d§lConfig UI"
+			},
+			"minecraft:glint": true,
+			"minecraft:can_destroy_in_creative": false,
+			"minecraft:allow_off_hand": false
+		}
+	}
+}

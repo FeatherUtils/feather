@@ -1,0 +1,60 @@
+{
+    "format_version": 2,
+    "metadata": {
+      "authors": [
+        "FruitKitty"
+      ]
+    },
+    "header": {
+      "name": "§b§lFeather Essentials §e- §bv0.1",
+      "description": "Feather Essentials - Made with <3 by FruitKitty",
+      "min_engine_version": [
+        1,
+        20,
+        60
+      ],
+      "uuid": "0364746b-2522-4e9c-94b5-32c15d30fe44",
+      "version": [
+        1,
+        0,
+        1
+      ]
+    },
+    "modules": [
+      {
+        "type": "data",
+        "uuid": "839e8e6d-fb58-4ab1-995e-4a012bd9804c",
+        "version": [
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "type": "script",
+        "language": "javascript",
+        "uuid": "ca8fe3c2-12aa-46d4-b0a5-6b06d19b452a",
+        "entry": "scripts/index.js",
+        "version": [
+          1,
+          0,
+          0
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "module_name": "@minecraft/server",
+        "version": "2.0.0-beta"
+      },
+      {
+        "module_name": "@minecraft/server-ui",
+        "version": "2.0.0-beta"
+      },
+      {
+        "module_name": "@minecraft/server-admin",
+        "version": "1.0.0-beta"
+      }
+    ],
+    "capabilities": ["script_eval"]
+  }

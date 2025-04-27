@@ -1,0 +1,17 @@
+{
+  "name": "feather-essentials",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@minecraft/server": "^2.0.0-beta.1.21.70-preview.23",
+    "@minecraft/server-admin": "^1.0.0-beta.11940b24",
+    "@minecraft/server-ui": "^2.0.0-beta.1.21.70-preview.23"
+  }
+}
