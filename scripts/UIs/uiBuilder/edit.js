@@ -39,7 +39,7 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
     form.button(`§aEdit Body\n§7Edit the body of this ui`, `textures/blossom_icons/edit`, (player) => {
         let form2 = new ModalFormData();
         form2.title('Code Editor')
-        form2.textField(`Body`, `Enter body here..`, ui.data.body)
+        form2.textField(`Body`, `Enter body here..`, {defaultValue: ui.data.body})
         form2.show(player).then((res) => {
             let [body] = res.formValues
             uiBuilder.edit(id,ui.data.name,body,ui.data.scriptevent,ui.data.layout)

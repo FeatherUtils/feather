@@ -49,20 +49,21 @@ export default {
             root: 'ranks | Ranks',
             add: "ranks_add | Ranks/Add",
             edit: "ranks_edit | Ranks/Edit",
+            editform: "ranks_editForm | Ranks/EditForm"
         },
         basic: {
             confirmation: 'basic_confirm | Basic/Confirmation',
             iconViewer: 'basic_iconviewer | Basic/IconViewer'
         },
         uiBuilder: {
-            root: 'uibuilder_root | UIBuilder/Root', // Done :3
-            create: 'uibuilder_create | UIBuilder/Create', // Done
-            edit: 'uibuilder_edit | UIBuilder/Edit', // Done
+            root: 'uibuilder_root | UIBuilder/Root',
+            create: 'uibuilder_create | UIBuilder/Create',
+            edit: 'uibuilder_edit | UIBuilder/Edit',
             buttons: {
-                editall: 'uibuilder_buttons_editall | UIBuilder/Buttons/EditAll', // Done
-                create: 'uibuilder_buttons_create | UIBuilder/Buttons/Create', // done
-                edit: 'uibuilder_buttons_edit | UIBuilder/Buttons/Edit', // almost done
-                editActions: 'uibuilder_buttons_editActions | UIBuilder/Buttons/EditActions' // starting..
+                editall: 'uibuilder_buttons_editall | UIBuilder/Buttons/EditAll',
+                create: 'uibuilder_buttons_create | UIBuilder/Buttons/Create',
+                edit: 'uibuilder_buttons_edit | UIBuilder/Buttons/Edit',
+                editActions: 'uibuilder_buttons_editActions | UIBuilder/Buttons/EditActions'
             },
             folders: {
                 view: "uibuilder_folders_view | UIBuilder/Folders/View"

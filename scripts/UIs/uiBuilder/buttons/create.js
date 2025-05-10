@@ -10,10 +10,10 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.create, 'create button', (playe
     let form = new ModalFormData();
     form.title('Create Button')
     if(preview) form.label('§c* §e- §rRequired')
-    form.textField('Text§c*', `This button's text`, null)
-    form.textField('Subtext', `This button's subtext`, null)
+    form.textField('Text§c*', `This button's text`)
+    form.textField('Subtext', `This button's subtext`)
     form.textField(`Required Tag`, `Required tag of this button`)
-    form.textField(`First Action§c*`, `This button's first actions`, null)
+    form.textField(`First Action§c*`, `This button's first actions`)
     form.show(player).then((res) => {
         let[text,subtext,requiredTag,firstAction] = res.formValues
         if(!text || !firstAction) return player.error('Please enter text and a first action'), uiManager.open(player,config.uinames.uiBuilder.buttons.editall,uiID);

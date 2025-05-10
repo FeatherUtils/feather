@@ -36,7 +36,7 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.editActions, 'edit actions', (p
             form2.button(`§eEdit\n§7Edit this action`, null, (player) => {
                 let form3 = new ModalFormData();
                 form3.title(`Code Editor`)
-                form3.textField(`Action`, `Edit action`, a.action)
+                form3.textField(`Action`, `Edit action`, {defaultValue:a.action})
                 form3.show(player).then((res) => {
                     let [action] = res.formValues;
                     if (!action) return player.error(`Please enter an action >:(`);

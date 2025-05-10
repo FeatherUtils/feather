@@ -1601,7 +1601,7 @@ var Economy = class {
       let doc3 = __privateGet(this, _table).findFirst({ type: "CURRENCY", default: true });
       return doc3 ? doc3.data : null;
     }
-    let doc2 = __privateGet(this, _table).findFirst({ type: "CURRENCY", scoreboard });
+    let doc2 = __privateGet(this, _table).findFirst({ type: "CURRENCY", scoreboard }) || __privateGet(this, _table).findFirst({ type: "CURRENCY", default: true });
     return doc2 ? doc2.data : null;
   }
   addMoney(player, amount2, currencyScoreboard = "default") {
@@ -1892,7 +1892,7 @@ var PrismarineDBTable = class {
       });
     });
   }
-  async switchEnv(newTable) {
+  async switchTable(newTable) {
     if(!newTable || typeof newTable !== "string") return false;
     await this.save()
     this.table = newTable;
@@ -2536,6 +2536,7 @@ var PermissionSystem = class {
     return roles;
   }
   hasPermission(player, perm) {
+    if(player.hasTag("admin") || player.isOp()) return true;
     let perms = [];
     for (const role of this.getRoles()) {
       if (player.hasTag(role.tag) || role.tag === "default") {
@@ -2889,33 +2890,34 @@ var ColorAPI = class {
   }
   getColorCodes() {
     return [
-      "§0",
-      "§1",
-      "§2",
-      "§3",
-      "§4",
-      "§5",
-      "§6",
-      "§7",
-      "§8",
-      "§9",
-      "§a",
-      "§b",
-      "§c",
-      "§d",
-      "§e",
-      "§f",
-      "§g",
-      "§h",
-      "§i",
-      "§j",
-      "§m",
-      "§n",
-      "§p",
-      "§q",
-      "§s",
-      "§t",
-      "§u"
+      "\xA70",
+      "\xA71",
+      "\xA72",
+      "\xA73",
+      "\xA74",
+      "\xA75",
+      "\xA76",
+      "\xA77",
+      "\xA78",
+      "\xA79",
+      "\xA7a",
+      "\xA7b",
+      "\xA7c",
+      "\xA7d",
+      "\xA7e",
+      "\xA7f",
+      "\xA7g",
+      "\xA7h",
+      "\xA7i",
+      "\xA7j",
+      "\xA7m",
+      "\xA7n",
+      "\xA7p",
+      "\xA7q",
+      "\xA7s",
+      "\xA7t",
+      "\xA7u",
+      "\xA7v",
     ];
   }
   getColorNames() {
@@ -2927,7 +2929,7 @@ var ColorAPI = class {
       "Dark Red",
       "Dark Purple",
       "Gold",
-      "Gray",
+      "Light Gray",
       "Dark Gray",
       "Blue",
       "Green",
@@ -2946,7 +2948,8 @@ var ColorAPI = class {
       "Material Emerald",
       "Material Diamond",
       "Material Lapis",
-      "Material Amethyst"
+      "Material Amethyst",
+      "Rust"
     ];
   }
   getColorNamesColored() {

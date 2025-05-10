@@ -10,9 +10,9 @@ uiManager.addUI(config.uinames.uiBuilder.create, 'uiBuilder_create', (player, id
     let layouts = ['Normal', 'Fullscreen', 'Grid', 'Player Model']
     layouts.push('CherryUI (Recommended)')
     form.title('Create UI')
-    form.textField('Title', 'Enter title here...', d ? d.name : null)
-    form.textField('Scriptevent', 'Enter scriptevent here..', d ? d.scriptevent : null)
-    form.dropdown('Layout', layouts, d ? d.layout : 4)
+    form.textField('Title', 'Enter title here...', {defaultValue: d ? d.name : null})
+    form.textField('Scriptevent', 'Enter scriptevent here..', {defaultValue: d ? d.scriptevent : null})
+    form.dropdown('Layout', layouts, {defaultValueIndex: d ? d.layout : 4})
     form.show(player).then((res) => {
         if(res.canceled) return uiManager.open(player,config.uinames.uiBuilder.root);
         let [title, scriptevent, layout] = res.formValues

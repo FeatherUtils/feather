@@ -21,7 +21,7 @@ uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     form.button(`Chat Rank Format`, null, (player)=>{
         let form2 = new ModalFormData();
         form2.title(`Code Editor`)
-        form2.textField(`${translate(config.lang.config.modules.text.crf)}`, `${translate(config.lang.config.modules.text.desc.crf)}`, modules.get('crf'))
+        form2.textField(`${translate(config.lang.config.modules.text.crf)}`, `${translate(config.lang.config.modules.text.desc.crf)}`, {defaultValue: modules.get('crf')})
         form2.show(player).then((res) => {
             let [crf] = res.formValues;
             if(crf === '') return modules.set('crf', config.info.defaultChatRankFormat), uiManager.open(player, config.uinames.config.misc);

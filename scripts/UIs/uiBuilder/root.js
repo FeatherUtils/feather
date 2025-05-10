@@ -31,7 +31,7 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
     form.button(`${consts.right}§r§bCreate Folder\n§7Make UI Folders`, `textures/folders/rainbow`, (player) => {
         let form2 = new ModalFormData();
         form2.title('Create Folder')
-        form2.textField(`Name`, `Enter folder name`, null)
+        form2.textField(`Name`, `Enter folder name`)
         form2.show(player).then((res) => {
             let [name] = res.formValues;
             if (res.canceled) uiManager.open(player, config.uinames.uiBuilder.root);
