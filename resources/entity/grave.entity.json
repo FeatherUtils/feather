@@ -1,0 +1,18 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "leaf:grave",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/grave"
+			},
+			"geometry": {
+				"default": "geometry.grave"
+			},
+			"render_controllers": ["controller.render.default"]
+		}
+	}
+}

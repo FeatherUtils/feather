@@ -1,0 +1,22 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "azalea:crate_1",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/crate_1"
+			},
+			"geometry": {
+				"default": "geometry.crate_1"
+			},
+			"render_controllers": ["controller.render.default"],
+			"spawn_egg": {
+				"base_color": "#ff9600",
+				"overlay_color": "#ff5c00"
+			}
+		}
+	}
+}

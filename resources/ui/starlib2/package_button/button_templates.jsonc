@@ -1,0 +1,415 @@
+//=======================================
+//
+//   Website & Documentation - https://pipangry.github.io/docs-starlib
+//
+//   StarLibV2 by pipa_ngry
+//   Please respect my work, don't pass at yours and use it for its intended purpose.
+//   Thanks =)
+//
+//=======================================
+{
+    "namespace": "starlib_pkg_button_templates",
+    "common_vertical_stack_item": {
+        "type": "stack_panel",
+        "orientation": "vertical",
+        "size": [
+            "100%",
+            "100%c"
+        ],
+        "$VERTICAL_ITEM_button_control|default": "style.dme_09",
+        "controls": [
+            {
+                "top_margin": {
+                    "type": "panel",
+                    "size": "$VERTICAL_ITEM_top_margin_size",
+                    "$VERTICAL_ITEM_top_margin_size|default": [
+                        0,
+                        1
+                    ]
+                }
+            },
+            {
+                "button@$VERTICAL_ITEM_button_control": {}
+            },
+            {
+                "bottom_margin": {
+                    "type": "panel",
+                    "size": "$VERTICAL_ITEM_bottom_margin_size",
+                    "$VERTICAL_ITEM_bottom_margin_size|default": [
+                        0,
+                        1
+                    ]
+                }
+            }
+        ]
+    },
+    "bordered_button_template": {
+        "type": "panel",
+        "size": "$BORDERED_BUTTON_size",
+        "$BORDERED_BUTTON_size": [
+            "100%",
+            "100%"
+        ],
+        "$BORDERED_BUTTON_background_control|default": "style.black",
+        "controls": [
+            {
+                "button_background@$BORDERED_BUTTON_background_control": {
+                    "layer": 16
+                }
+            },
+            {
+                "button": {
+                    "type": "panel",
+                    "size": [
+                        "100% - 2px",
+                        "100% - 2px"
+                    ],
+                    "$BORDERED_BUTTON_default_control|default": "style.dme_10",
+                    "controls": "$BORDERED_BUTTON_inner",
+                    "$BORDERED_BUTTON_inner|default": [
+                        {
+                            "root@$BORDERED_BUTTON_default_control": {
+                                "size": [
+                                    "100%",
+                                    "100%"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "horizontal_button@starlib_pkg_button_templates.common_vertical_stack_item": {
+        "$VERTICAL_ITEM_button_control": "starlib_pkg_button_templates.horizontal_button_template"
+    },
+    "horizontal_button_template@starlib_pkg_button_templates.bordered_button_template": {
+        "size": "$HORIZONTAL_BUTTON_size",
+        "$HORIZONTAL_BUTTON_size|default": [
+            "100%",
+            32
+        ],
+        "$BORDERED_BUTTON_inner": [
+            {
+                "horizontal_button": {
+                    "type": "stack_panel",
+                    "orientation": "horizontal",
+                    "size": [
+                        "100%",
+                        "100%"
+                    ],
+                    "controls": [
+                        {
+                            "image@starlib_pkg_button_templates.horizontal_button_image": {}
+                        },
+                        {
+                            "root": {
+                                "type": "panel",
+                                "size": [
+                                    "fill",
+                                    "100%"
+                                ],
+                                "$HORIZONTAL_BUTTON_root_control|default": "starlib_pkg_button_common.common_button",
+                                "$HORIZONTAL_BUTTON_content_control|default": "starlib_pkg_button_common.button_text",
+                                "controls": [
+                                    {
+                                        "root@$HORIZONTAL_BUTTON_root_control": {}
+                                    },
+                                    {
+                                        "content@$HORIZONTAL_BUTTON_content_control": {}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "horizontal_button_image": {
+        "type": "stack_panel",
+        "orientation": "horizontal",
+        "size": "$HORIZONTAL_BUTTON_image_panel_size",
+        "$HORIZONTAL_BUTTON_image_panel_size|default": [
+            "100%y + 1px",
+            "100%"
+        ],
+        "bindings": "$HORIZONTAL_BUTTON_image_bindings",
+        "$HORIZONTAL_BUTTON_image_bindings|default": [
+            {
+                "binding_name": "#form_button_texture",
+                "binding_name_override": "#texture",
+                "binding_type": "collection",
+                "binding_collection_name": "form_buttons"
+            },
+            {
+                "binding_name": "#form_button_texture_file_system",
+                "binding_name_override": "#texture_file_system",
+                "binding_type": "collection",
+                "binding_collection_name": "form_buttons"
+            },
+            {
+                "binding_type": "view",
+                "source_property_name": "(not((#texture = '') or (#texture = 'loading')))",
+                "target_property_name": "#visible"
+            }
+        ],
+        "controls": [
+            {
+                "imame_root": {
+                    "type": "panel",
+                    "size": [
+                        "fill",
+                        "100%"
+                    ],
+                    "controls": [
+                        {
+                            "image@starlib_pkg_button_common.button_image": {
+                                "size": [
+                                    "100%",
+                                    "100%"
+                                ]
+                            }
+                        },
+                        {
+                            "image_background@style.image": {
+                                "texture": "$HORIZONTAL_BUTTON_image_background_texture",
+                                "$HORIZONTAL_BUTTON_image_background_texture|default": "",
+                                "layer": 30
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "margin": {
+                    "type": "panel",
+                    "size": "$HORIZONTAL_BUTTON_image_margin_size",
+                    "$HORIZONTAL_BUTTON_image_margin_size|default": [
+                        1,
+                        0
+                    ]
+                }
+            }
+        ]
+    },
+    "cubic_button": {
+        "type": "panel",
+        "size": "$CUBIC_BUTTON_size",
+        "$CUBIC_BUTTON_size|default": [
+            "100%",
+            "100%x"
+        ],
+        "controls": [
+            {
+                "root@starlib_pkg_button_common.common_button": {}
+            },
+            {
+                "content@common_cubic_button_content": {}
+            }
+        ]
+    },
+    "common_cubic_button_content": {
+        "type": "stack_panel",
+        "orientation": "vertical",
+        "size": "$CUBIC_BUTTON_content_size",
+        "$CUBIC_BUTTON_content_size|default": [
+            "100%",
+            "100%"
+        ],
+        "offset": "$CUBIC_BUTTON_content_offset",
+        "$CUBIC_BUTTON_content_offset|default": [
+            0,
+            0
+        ],
+        "max_size": [
+            "100%",
+            "100%"
+        ],
+        "$CUBIC_BUTTON_text_control|default": "starlib_pkg_button_common.button_text",
+        "controls": [
+            {
+                "image_panel": {
+                    "type": "panel",
+                    "size": [
+                        "100%",
+                        "fill"
+                    ],
+                    "controls": [
+                        {
+                            "button_image@starlib_pkg_button_common.button_image": {
+                                "size": "$CUBIC_BUTTON_image_size",
+                                "$CUBIC_BUTTON_image_size|default": [
+                                    "100%",
+                                    "100%"
+                                ],
+                                "bindings": "$CUBIC_BUTTON_image_bindings",
+                                "$CUBIC_BUTTON_image_bindings|default": "$BUTTON_IMAGE_bindings"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "button_text@$CUBIC_BUTTON_text_control": {}
+            },
+            {
+                "bottom_padding": {
+                    "type": "panel",
+                    "size": "$CUBIC_BUTTON_bottom_padding_size",
+                    "$CUBIC_BUTTON_bottom_padding_size|default": [
+                        0,
+                        2
+                    ]
+                }
+            }
+        ]
+    },
+    "big_button": {
+        "type": "panel",
+        "size": "$BIG_BUTTON_size",
+        "$BIG_BUTTON_size|default": [
+            "100%",
+            "100%x"
+        ],
+        "$BIG_BUTTON_content_control|default": "starlib_pkg_button_templates.common_big_button_content",
+        "$BIG_BUTTON_image_overlap_control|default": "global.empty_panel",
+        "$BIG_BUTTON_image_size|default": [
+            "100% - 4px",
+            "100% - 4px"
+        ],
+        "controls": [
+            {
+                "root@starlib_pkg_button_common.common_button": {}
+            },
+            {
+                "image@starlib_pkg_button_common.button_image": {
+                    "size": "$BIG_BUTTON_image_size",
+                    "layer": 32,
+                    "bindings": "$BIG_BUTTON_image_bindings",
+                    "$BIG_BUTTON_image_bindings|default": [
+                        {
+                            "binding_name": "#form_button_texture",
+                            "binding_name_override": "#texture",
+                            "binding_type": "collection",
+                            "binding_collection_name": "form_buttons"
+                        },
+                        {
+                            "binding_name": "#form_button_texture_file_system",
+                            "binding_name_override": "#texture_file_system",
+                            "binding_type": "collection",
+                            "binding_collection_name": "form_buttons"
+                        },
+                        {
+                            "binding_type": "view",
+                            "source_property_name": "(not((#texture = '') or (#texture = 'loading')))",
+                            "target_property_name": "#visible"
+                        }
+                    ],
+                    "fill": "$BIG_BUTTON_enable_image_fill",
+                    "$BIG_BUTTON_enable_image_fill|default": false
+                }
+            },
+            {
+                "image_overlap@$BIG_BUTTON_image_overlap_control": {
+                    "layer": 38,
+                    "size": "$BIG_BUTTON_overlap_size",
+                    "$BIG_BUTTON_overlap_size|default": "$BIG_BUTTON_image_size"
+                }
+            },
+            {
+                "content_panel": {
+                    "type": "panel",
+                    "size": "$BIG_BUTTON_content_size",
+                    "$BIG_BUTTON_content_size|default": [
+                        "100% - 4px",
+                        "100% - 4px"
+                    ],
+                    "controls": [
+                        {
+                            "content@$BIG_BUTTON_content_control": {
+                                "layer": 42,
+                                "max_size": [
+                                    "100%",
+                                    "100%"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "common_big_button_content@starlib_pkg_button_common.button_text": {
+        "$BIG_BUTTON_CONTENT_text_alignment|default": "left",
+        "$BIG_BUTTON_CONTENT_font_type|default": "MinecraftTen",
+        "$BIG_BUTTON_CONTENT_font_scale_factor|default": 1.2,
+        "text_alignment": "$BIG_BUTTON_CONTENT_text_alignment",
+        "font_type": "$BIG_BUTTON_CONTENT_font_type",
+        "font_scale_factor": "$BIG_BUTTON_CONTENT_font_scale_factor",
+        "anchor_from": "bottom_middle",
+        "anchor_to": "bottom_middle"
+    },
+    "grid_item_template": {
+        "type": "panel",
+        "size": "$GRID_ITEM_size",
+        "$GRID_ITEM_size|default": [
+            "100%",
+            "100%x"
+        ],
+        "$GRID_ITEM_root_control|default": "style.dme_11",
+        "controls": [
+            {
+                "root@$GRID_ITEM_root_control": {
+                    "size": "$GRID_ITEM_root_size",
+                    "$GRID_ITEM_root_size|default": [
+                        "100% - 2px",
+                        "100% - 2px"
+                    ],
+                    "bindings": "$GRID_ITEM_BINDINGS",
+                    "$GRID_ITEM_BINDINGS|default": []
+                }
+            }
+        ]
+    },
+    "hover_button": {
+        "type": "panel",
+        "size": "$HOVER_BUTTON_size",
+        "$HOVER_BUTTON_size|default": [
+            "100%",
+            "100%x"
+        ],
+        "controls": [
+            {
+                "content@starlib_pkg_button_common.button_image": {
+                    "size": "$HOVER_BUTTON_image_size",
+                    "$HOVER_BUTTON_image_size|default": [
+                        "100% - 8px",
+                        "100% - 8px"
+                    ]
+                }
+            },
+            {
+                "root@starlib_pkg_button_common.common_button": {
+                    "$COMMON_BUTTON_hover_control": "starlib_pkg_button_templates.hover_button_hover_root"
+                }
+            }
+        ]
+    },
+    "hover_button_hover_root": {
+        "type": "panel",
+        "size": [
+            "100%",
+            "100%"
+        ],
+        "$HOVER_BUTTON_hover_control|default": "style.hightlight",
+        "controls": [
+            {
+                "root@$HOVER_BUTTON_hover_control": {}
+            },
+            {
+                "hover_text@starlib_pkg_button_common.hover_text": {}
+            }
+        ]
+    }
+}

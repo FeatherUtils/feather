@@ -1,0 +1,113 @@
+let iconPack = new Map([
+    ["pack_name", "Leaf"],
+    ["pack_icon", "textures/items/diamond_sword"],
+    ["pack_namespace", "leaf"],
+    ["pack_data", new Map([
+  [
+    "add",
+    "textures/blossom_icons/add"
+  ],
+  [
+    "addrank",
+    "textures/blossom_icons/addrank"
+  ],
+  [
+    "credits",
+    "textures/blossom_icons/credits"
+  ],
+  [
+    "delrank",
+    "textures/blossom_icons/delrank"
+  ],
+  [
+    "devices",
+    "textures/blossom_icons/devices"
+  ],
+  [
+    "downvote",
+    "textures/blossom_icons/downvote"
+  ],
+  [
+    "edit",
+    "textures/blossom_icons/edit"
+  ],
+  [
+    "editrank",
+    "textures/blossom_icons/editrank"
+  ],
+  [
+    "event",
+    "textures/blossom_icons/event"
+  ],
+  [
+    "event2",
+    "textures/blossom_icons/event2"
+  ],
+  [
+    "features",
+    "textures/blossom_icons/features"
+  ],
+  [
+    "first blossom icon",
+    "textures/blossom_icons/first blossom icon"
+  ],
+  [
+    "floatingtext",
+    "textures/blossom_icons/floatingtext"
+  ],
+  [
+    "folder",
+    "textures/blossom_icons/folder"
+  ],
+  [
+    "format",
+    "textures/blossom_icons/format"
+  ],
+  [
+    "globe",
+    "textures/blossom_icons/globe"
+  ],
+  [
+    "medal",
+    "textures/blossom_icons/medal"
+  ],
+  [
+    "rank",
+    "textures/blossom_icons/rank"
+  ],
+  [
+    "rankformat",
+    "textures/blossom_icons/rankformat"
+  ],
+  [
+    "ranks",
+    "textures/blossom_icons/ranks"
+  ],
+  [
+    "report",
+    "textures/blossom_icons/report"
+  ],
+  [
+    "sword",
+    "textures/blossom_icons/sword"
+  ],
+  [
+    "ui",
+    "textures/blossom_icons/ui"
+  ],
+  [
+    "upvote",
+    "textures/blossom_icons/upvote"
+  ],
+  [
+    "vote",
+    "textures/blossom_icons/vote"
+  ],
+  [
+    "xraydiamond",
+    "textures/blossom_icons/xraydiamond"
+  ]
+])]
+]);
+icons.install(iconPack)
+export { iconPack }

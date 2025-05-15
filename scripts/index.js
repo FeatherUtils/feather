@@ -4,6 +4,7 @@ import { prismarineDb } from './Libraries/prismarinedb'
 import './Networking/currentNetworkingLib'
 import config from './config'
 import uiManager from './Libraries/uiManager'
+import './customCommandHandler'
 import handleChat from './handleChat'
 import modules from './Modules/modules'
 import playerStorage from './Libraries/playerStorage'
@@ -11,6 +12,8 @@ import formatter from './Formatting/formatter'
 import './Openers/form'
 import './IconPacks/index'
 import http from './Networking/currentNetworkingLib'
+import binding from './Modules/binding'
+import actionParser from './Modules/actionParser'
 
 Player.prototype.error = function (msg) {
     this.sendMessage(`§c§lERROR§8 >>§r§7 ${msg}`)
@@ -29,6 +32,12 @@ system.run(() => {
 })
 
 world.beforeEvents.itemUse.subscribe(e => {
+    for(const bind of binding.db.findDocuments()) {
+        if(bind.data.typeID == e.itemStack.typeId) {
+            e.cancel = true
+            actionParser.runAction(e.source, bind.data.cmd)
+        }
+    }
     system.run(() => {
         if (e.itemStack.typeId == `${config.config.ui}`) {
             if (e.source.isOp()) {
@@ -45,7 +54,9 @@ world.beforeEvents.itemUse.subscribe(e => {
                 }
             }
             uiManager.open(e.source, config.uinames.config.root);
+            
         }
+        
     });
 });
 

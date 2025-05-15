@@ -1,0 +1,26 @@
+{
+	"format_version": "1.19.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.crate_key_1",
+				"texture_width": 16,
+				"texture_height": 16
+			},
+			"bones": [
+				{
+					"name": "root_item",
+					"pivot": [0, 0, 0],
+					"binding": "q.item_slot_to_bone_name(c.item_slot)",
+					"cubes": [
+						{
+							"origin": [-2.5, 0, -1.5],
+							"size": [5, 11, 3],
+							"uv": [0, 0]
+						}
+					]
+				}
+			]
+		}
+	]
+}

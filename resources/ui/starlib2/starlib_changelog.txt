@@ -1,0 +1,13 @@
+DO NOT DELETE THIS FILE!
+
+====================================
+
+  StarLibV2 - Library to help you create a JsonUI forms. Supports multi-forming, dynamic structure, custom tabs, styles and much more!
+  Created by pipa_ngry | Source code - https://github.com/pipangry/StarLibV2
+
+  Website & Documentation - https://pipangry.github.io/docs-starlib
+
+====================================
+
+Current version: 1.0.3.2-release
+1. Fixed starlib_pkg_screen_common.async_close_button

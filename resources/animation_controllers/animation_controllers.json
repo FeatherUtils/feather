@@ -1,0 +1,327 @@
+{
+	"format_version": "1.10.0",
+	"animation_controllers": {
+		"controller.animation.crate": {
+			"initial_state": "start",
+			"states": {
+				"start": {
+					"transitions": [
+						{
+							"default0": "(query.scoreboard('halo') == 0) || (query.scoreboard('halo') > 3)"
+						},
+						{
+							"default1": "(query.scoreboard('halo') == 1)"
+						},
+						{
+							"default2": "(query.scoreboard('halo') == 2)"
+						},
+						{
+							"default3": "(query.scoreboard('halo') == 3)"
+						}
+					]
+				},
+				"default0": {
+					"animations": [
+						"halo0"
+					],
+					"transitions": [
+						{
+							"open": "(query.mark_variant == 1)"
+						},
+						{
+							"stay": "(query.mark_variant == 3)"
+						},
+						{
+							"default1": "(query.scoreboard('halo') == 1)"
+						},
+						{
+							"default2": "(query.scoreboard('halo') == 2)"
+						},
+						{
+							"default3": "(query.scoreboard('halo') == 3)"
+						}
+					]
+				},
+				"default1": {
+					"animations": [
+						"halo1"
+					],
+					"transitions": [
+						{
+							"open": "(query.mark_variant == 1)"
+						},
+						{
+							"stay1": "(query.mark_variant == 3)"
+						},
+						{
+							"default0": "(query.scoreboard('halo') == 0) || (query.scoreboard('halo') > 3)"
+						},
+						{
+							"default2": "(query.scoreboard('halo') == 2)"
+						},
+						{
+							"default3": "(query.scoreboard('halo') == 3)"
+						}
+					]
+				},
+				"default2": {
+					"animations": [
+						"halo2"
+					],
+					"transitions": [
+						{
+							"open": "(query.mark_variant == 1)"
+						},
+						{
+							"stay2": "(query.mark_variant == 3)"
+						},
+						{
+							"default1": "(query.scoreboard('halo') == 1)"
+						},
+						{
+							"default0": "(query.scoreboard('halo') == 0) || (query.scoreboard('halo') > 3)"
+						},
+						{
+							"default3": "(query.scoreboard('halo') == 3)"
+						}
+					]
+				},
+				"default3": {
+					"animations": [
+						"halo3"
+					],
+					"transitions": [
+						{
+							"open": "(query.mark_variant == 1)"
+						},
+						{
+							"stay3": "(query.mark_variant == 3)"
+						},
+						{
+							"default1": "(query.scoreboard('halo') == 1)"
+						},
+						{
+							"default2": "(query.scoreboard('halo') == 2)"
+						},
+						{
+							"default0": "(query.scoreboard('halo') == 0) || (query.scoreboard('halo') > 3)"
+						}
+					]
+				},
+				"open": {
+					"animations": [
+						"open"
+					],
+					"transitions": [
+						{
+							"short": "(query.variant == 0) && (query.mark_variant == 2) && ((query.scoreboard('halo') == 0) || (query.scoreboard('halo') > 3))"
+						},
+						{
+							"short1": "(query.variant == 0) && (query.mark_variant == 2) && (query.scoreboard('halo') == 1)"
+						},
+						{
+							"short2": "(query.variant == 0) && (query.mark_variant == 2) && (query.scoreboard('halo') == 2)"
+						},
+						{
+							"short3": "(query.variant == 0) && (query.mark_variant == 2) && (query.scoreboard('halo') == 3)"
+						},
+						{
+							"showcase": "(query.variant == 2) && (query.mark_variant == 2) && ((query.scoreboard('halo') == 0) || (query.scoreboard('halo') > 3))"
+						},
+						{
+							"showcase1": "(query.variant == 2) && (query.mark_variant == 2) && (query.scoreboard('halo') == 1)"
+						},
+						{
+							"showcase2": "(query.variant == 2) && (query.mark_variant == 2) && (query.scoreboard('halo') == 2)"
+						},
+						{
+							"showcase3": "(query.variant == 2) && (query.mark_variant == 2) && (query.scoreboard('halo') == 3)"
+						},
+						{
+							"close1": "(query.mark_variant == 4) && (query.scoreboard('halo') == 1)"
+						},
+						{
+							"close2": "(query.mark_variant == 4) && (query.scoreboard('halo') == 2)"
+						},
+						{
+							"close3": "(query.mark_variant == 4) && (query.scoreboard('halo') == 3)"
+						},
+						{
+							"rotating": "(query.variant == 1) && (query.mark_variant == 2)"
+						}
+					]
+				},
+				"rotating": {
+					"animations": [
+						"rotate"
+					],
+					"transitions": [
+						{
+							"stay": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"showcase": {
+					"animations": [
+						"showcase"
+					],
+					"transitions": [
+						{
+							"stay": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"showcase1": {
+					"animations": [
+						"showcase","halo1"
+					],
+					"transitions": [
+						{
+							"stay1": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"showcase2": {
+					"animations": [
+						"showcase","halo2"
+					],
+					"transitions": [
+						{
+							"stay2": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"showcase3": {
+					"animations": [
+						"showcase","halo3"
+					],
+					"transitions": [
+						{
+							"stay3": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"short": {
+					"animations": [
+						"short"
+					],
+					"transitions": [
+						{
+							"stay": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"short1": {
+					"animations": [
+						"short","halo1"
+					],
+					"transitions": [
+						{
+							"stay1": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"stay1": {
+					"animations": [
+						"stay","halo1"
+					],
+					"transitions": [
+						{
+							"close1": "(query.mark_variant == 4)"
+						}
+					]
+				},
+				"close1": {
+					"animations": [
+						"close","halo1"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						}
+					]
+				},
+				"short2": {
+					"animations": [
+						"short","halo2"
+					],
+					"transitions": [
+						{
+							"stay2": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"stay2": {
+					"animations": [
+						"stay","halo2"
+					],
+					"transitions": [
+						{
+							"close2": "(query.mark_variant == 4)"
+						}
+					]
+				},
+				"close2": {
+					"animations": [
+						"close","halo2"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						}
+					]
+				},
+				"short3": {
+					"animations": [
+						"short","halo3"
+					],
+					"transitions": [
+						{
+							"stay3": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"stay3": {
+					"animations": [
+						"stay","halo3"
+					],
+					"transitions": [
+						{
+							"close3": "(query.mark_variant == 4)"
+						}
+					]
+				},
+				"close3": {
+					"animations": [
+						"close","halo3"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						}
+					]
+				},
+				"close": {
+					"animations": [
+						"close"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						}
+					]
+				},
+				"stay": {
+					"animations": [
+						"stay"
+					],
+					"transitions": [
+						{
+							"close": "(query.mark_variant == 4)"
+						}
+					]
+				}
+			}
+		}
+	}
+}

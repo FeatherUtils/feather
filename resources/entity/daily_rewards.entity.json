@@ -1,0 +1,22 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "azalea:daily_rewards",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/daily_rewards"
+			},
+			"geometry": {
+				"default": "geometry.daily_rewards"
+			},
+			"render_controllers": ["controller.render.default"],
+			"spawn_egg": {
+				"base_color": "#3a40ff",
+				"overlay_color": "#272180"
+			}
+		}
+	}
+}

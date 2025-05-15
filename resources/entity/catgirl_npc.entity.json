@@ -1,0 +1,38 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "leaf:catgirl_npc",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/catgirl_npc",
+				"alt1": "textures/entity/catgirl_npc_2",
+				"alt2": "textures/entity/catgirl_npc_3",
+				"alt3": "textures/entity/catgirl_npc_4",
+				"alt4": "textures/entity/catgirl_npc_5"
+			},
+			"geometry": {
+				"default": "geometry.catgirl_npc"
+			},
+			"render_controllers": ["controller.render.catgirl_npc"],
+			"spawn_egg": {
+				"base_color": "#ffd204",
+				"overlay_color": "#f37569"
+			},
+			"scripts": {
+				"pre_animation": [
+					"variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
+				],
+				"animate": [
+				  "root"
+				]
+			},
+			"animations": {
+				"root": "controller.animation.humanoid.bob",
+				"bob": "animation.humanoid.bob"
+			}
+		}
+	}
+}

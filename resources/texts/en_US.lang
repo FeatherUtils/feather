@@ -1,0 +1,6 @@
+entity.azalea:keycrate.name=§e§lCrates§r
+item.spawn_egg.entity.azalea:crate.name=Setup §e§lCrates§r
+tile.furry:furry_block.name=Furry Block
+entity.leaf:catgirl_npc.name=Catgirl NPC
+item.spawn_egg.entity.leaf:catgirl_npc.name=Spawn Catgirl NPC
+leaf:admin=Leaf Config Tools

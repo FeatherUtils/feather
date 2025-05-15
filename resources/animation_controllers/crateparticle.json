@@ -1,0 +1,140 @@
+{
+	"format_version": "1.10.0",
+	"animation_controllers": {
+		"controller.animation.crates": {
+			"initial_state": "start",
+			"states": {
+				"start": {
+					"transitions": [
+						{
+							"particle": "(query.scoreboard('halo') < 4)"
+						},
+						{
+							"particle1": "(query.scoreboard('halo') == 4)"
+						},
+						{
+							"particle2": "(query.scoreboard('halo') == 5)"
+						}
+					]
+				},
+				"particle": {
+					"animations": [
+						"crate_particle"
+					],
+					"transitions": [
+						{
+							"opening": "(query.mark_variant == 1) && (query.variant != 0)"
+						},
+						{
+							"particle1": "(query.scoreboard('halo') == 4)"
+						},
+						{
+							"particle2": "(query.scoreboard('halo') == 5)"
+						}
+					]
+				},
+				"particle1": {
+					"animations": [
+						"crate_particle","4halo"
+					],
+					"transitions": [
+						{
+							"particle": "(query.scoreboard('halo') < 4)"
+						},
+						{
+							"opening1": "(query.mark_variant == 1) && (query.variant != 0)"
+						},
+						{
+							"particle2": "(query.scoreboard('halo') == 5)"
+						}
+					]
+				},
+				"particle2": {
+					"animations": [
+						"crate_particle","5halo"
+					],
+					"transitions": [
+						{
+							"particle": "(query.scoreboard('halo') < 4)"
+						},
+						{
+							"opening2": "(query.mark_variant == 1) && (query.variant != 0)"
+						},
+						{
+							"particle1": "(query.scoreboard('halo') == 4)"
+						}
+					]
+				},
+				"opening": {
+					"animations": [
+						"crate_particle","crate_lava"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						},
+						{
+							"smoke": "(query.mark_variant == 1) && (query.variant == 2)"
+						}
+					]
+				},
+				"smoke": {
+					"animations": [
+						"crate_particle","crate_smoke","crate_lava"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"opening1": {
+					"animations": [
+						"crate_particle","crate_lava","4halo"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						},
+						{
+							"smoke1": "(query.mark_variant == 1) && (query.variant == 2)"
+						}
+					]
+				},
+				"opening2": {
+					"animations": [
+						"crate_particle","crate_lava","5halo"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 0)"
+						},
+						{
+							"smoke2": "(query.mark_variant == 1) && (query.variant == 2)"
+						}
+					]
+				},
+				"smoke1": {
+					"animations": [
+						"crate_particle","crate_smoke","crate_lava","4halo"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 3)"
+						}
+					]
+				},
+				"smoke2": {
+					"animations": [
+						"crate_particle","crate_smoke","crate_lava","5halo"
+					],
+					"transitions": [
+						{
+							"start": "(query.mark_variant == 3)"
+						}
+					]
+				}
+			}
+		}
+	}
+}
