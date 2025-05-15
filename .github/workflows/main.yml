@@ -3,13 +3,13 @@ name: Build and Deploy MCAddon
 on:
   push:
     branches:
-      - master # Or the branch you use for releases
+      - master # Replace with the branch you use for releases
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest # Or your preferred OS
     permissions:
-      contents: write
+      contents: write # Grant write permission for creating releases
 
     steps:
       - name: Checkout code
@@ -18,6 +18,8 @@ jobs:
       - name: Package Resource Pack
         run: |
           # Assume your resource pack is in a folder named 'resources'
+          # This command zips the contents of the folder.
+          # Adjust 'resources/*' if your resource pack folder has a different name.
           zip -r addon_resource_pack.mcpack resources/*
 
       - name: Package Behavior Pack
@@ -25,33 +27,50 @@ jobs:
           # Your behavior pack files are at the root of the repository.
           # Zip the contents of the current directory (.) excluding
           # certain files/folders that are not part of the behavior pack.
+          # CAREFULLY list all items at the root to exclude that ARE NOT
+          # part of your behavior pack.
           zip -r addon_behavior_pack.mcpack . \
             -x ".git/*" \
             -x ".github/*" \
             -x "resources/*" \
             -x "addon_temp/*" \
             -x "addon_resource_pack.mcpack" \
-            # Add other exclusions here if needed
+            # Add other exclusions here if needed (e.g., build scripts, documentation)
 
       - name: Combine Packs and Rename to MCAddon
         run: |
+          # Create a temporary directory to combine the packs
           mkdir addon_temp
+
+          # Copy the resource pack .mcpack into the temporary directory
           cp addon_resource_pack.mcpack addon_temp/
+
+          # Copy the behavior pack .mcpack into the temporary directory
           cp addon_behavior_pack.mcpack addon_temp/
+
+          # Zip the contents of the temporary directory to create the .mcaddon
+          # The name 'addon.zip' is temporary before renaming
           zip -r addon.zip addon_temp/*
+
+          # Rename the zip file to .mcaddon
+          # Replace 'your_addon_name' with the desired name for your mcaddon file.
           mv addon.zip your_addon_name.mcaddon
+
+          # Clean up temporary directory and the temporary .mcpack files
           rm -rf addon_temp addon_resource_pack.mcpack addon_behavior_pack.mcpack
 
       - name: Create Release
-        id: create_release
+        id: create_release # Give this step an ID so we can reference its outputs
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
+          # Uses the run number as a simple version. You can customize this.
           tag_name: v${{ github.run_number }}
           release_name: Release v${{ github.run_number }}
           body: |
             Automated release of the addon.
+            Download the .mcaddon file below.
           draft: false
           prerelease: false
 
@@ -60,17 +79,49 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
+          # Use the upload_url output from the create_release step
           upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # Ensure this matches the file name from the Combine Packs step
           asset_path: ./your_addon_name.mcaddon
+          # The name the asset will have on the release page
           asset_name: your_addon_name.mcaddon
+          # Standard content type for binary files
           asset_content_type: application/octet-stream
 
-      - name: Send to Discord
-        uses: rjstone/discord-webhook-notify@v1.0.4
-        with:
-          severity: info
-          color: 0000ff
-          description: |
-            A new version of the addon has been released! Download the .mcaddon file from the GitHub release.
-            [Download Link](${{ steps.create_release.outputs.html_url }})
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Send to Discord using curl
+        run: |
+          # Define the path to your generated .mcaddon file
+          # Make sure this path is correct based on where your Combine Packs step places the final file.
+          ADDON_FILE_PATH="./your_addon_name.mcaddon"
+
+          # Define your message content
+          MESSAGE_CONTENT="A new version of the addon has been released! **v${{ github.run_number }}**"
+
+          # Link to the GitHub release page
+          RELEASE_URL="${{ steps.create_release.outputs.html_url }}"
+
+          # Construct the JSON payload with a simple embed
+          # Ensure your JSON is valid and properly escaped if it contains special characters
+          PAYLOAD_JSON='{
+            "content": null, # Set content to null when using embeds as the main message
+            "embeds": [
+              {
+                "title": "New Addon Release Available!",
+                "description": "'"${MESSAGE_CONTENT}"'",
+                "color": 3447003, # A nice blue color
+                "url": "'"${RELEASE_URL}"'", # Link to the release
+                "footer": {
+                  "text": "Automated Release"
+                }
+              }
+            ]
+          }'
+
+          # Use curl to send the file and the payload to the webhook
+          # We use the secret directly in the curl command, as it's a single-line
+          # script within 'run'. Using an env variable is also an option.
+          curl -X POST -H "Content-Type: multipart/form-data" \
+            -F "file=@${ADDON_FILE_PATH}" \
+            -F "payload_json=${PAYLOAD_JSON}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+
