@@ -3,7 +3,7 @@ name: Build and Deploy MCAddon
 on:
   push:
     branches:
-      - master # Replace with the branch you use for releases
+      - master # Replace with the branch you use for releases (e.g., master, release)
 
 jobs:
   build_and_deploy:
@@ -88,7 +88,10 @@ jobs:
           # Standard content type for binary files
           asset_content_type: application/octet-stream
 
-      - name: Send to Discord using curl
+      - name: Install jq (if needed)
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Send to Discord using curl with embed (using jq for JSON)
         run: |
           # Define the path to your generated .mcaddon file
           # Make sure this path is correct based on where your Combine Packs step places the final file.
@@ -98,28 +101,32 @@ jobs:
           MESSAGE_CONTENT="A new version of the addon has been released! **v${{ github.run_number }}**"
 
           # Link to the GitHub release page
+          # Accessing the output of the create_release step using its ID
           RELEASE_URL="${{ steps.create_release.outputs.html_url }}"
 
-          # Construct the JSON payload with a simple embed
-          # Ensure your JSON is valid and properly escaped if it contains special characters
-          PAYLOAD_JSON='{
-            "content": null, # Set content to null when using embeds as the main message
-            "embeds": [
-              {
-                "title": "New Addon Release Available!",
-                "description": "'"${MESSAGE_CONTENT}"'",
-                "color": 3447003, # A nice blue color
-                "url": "'"${RELEASE_URL}"'", # Link to the release
-                "footer": {
-                  "text": "Automated Release"
+          # Use jq to construct the JSON payload, ensuring proper escaping
+          # We use heredoc (<<<) to pass the base JSON structure to jq
+          PAYLOAD_JSON=$(jq -n \
+            --arg content "$MESSAGE_CONTENT" \
+            --arg release_url "$RELEASE_URL" \
+            '{
+              "content": null, # Set content to null when using embeds as the main message
+              "embeds": [
+                {
+                  "title": "New Addon Release Available!",
+                  "description": $content, # jq handles the escaping for $content
+                  "color": 3447003, # A nice blue color (you can change this)
+                  "url": $release_url,     # jq handles the escaping for $release_url
+                  "footer": {
+                    "text": "Automated Release"
+                  }
                 }
-              }
-            ]
-          }'
+              ]
+            }')
 
           # Use curl to send the file and the payload to the webhook
-          # We use the secret directly in the curl command, as it's a single-line
-          # script within 'run'. Using an env variable is also an option.
+          # We use the secret directly in the curl command for simplicity in a single-line script.
+          # Using an env variable in the 'env:' block of the step is also a valid option.
           curl -X POST -H "Content-Type: multipart/form-data" \
             -F "file=@${ADDON_FILE_PATH}" \
             -F "payload_json=${PAYLOAD_JSON}" \
