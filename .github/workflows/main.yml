@@ -3,7 +3,7 @@ name: Build and Deploy MCAddon
 on:
   push:
     branches:
-      - master # Replace with the branch you use for releases (e.g., master, release)
+      - master # Changed from main to master
 
 jobs:
   build_and_deploy:
@@ -15,12 +15,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get Version from Commit Message
+        id: get_version
+        run: |
+          # Get the latest commit message
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+
+          # Use grep and sed to find the version number after 'v'
+          # This will extract the first occurrence of a 'v' followed by numbers and dots.
+          # If no version is found, it will default to 'latest'.
+          VERSION=$(echo "$COMMIT_MESSAGE" | grep -oP 'v\d+(\.\d+)*' | head -1 | sed 's/^v//')
+
+          # If no version was found, set a default or indicate it.
+          if [ -z "$VERSION" ]; then
+            VERSION="latest" # Default version if not found
+          fi
+
+          echo "Extracted Version: $VERSION"
+          echo "ADDON_VERSION=$VERSION" >> $GITHUB_ENV # Set as environment variable for later steps
+
       - name: Package Resource Pack
         run: |
           # Assume your resource pack is in a folder named 'resources'
           # This command zips the contents of the folder.
           # Adjust 'resources/*' if your resource pack folder has a different name.
-          zip -r addon_resource_pack.mcpack resources/*
+          zip -r Feather_Essentials_RP.mcpack resources/*
 
       - name: Package Behavior Pack
         run: |
@@ -29,35 +48,22 @@ jobs:
           # certain files/folders that are not part of the behavior pack.
           # CAREFULLY list all items at the root to exclude that ARE NOT
           # part of your behavior pack.
-          zip -r addon_behavior_pack.mcpack . \
+          zip -r Feather_Essentials_BP.mcpack . \
             -x ".git/*" \
             -x ".github/*" \
             -x "resources/*" \
             -x "addon_temp/*" \
-            -x "addon_resource_pack.mcpack" \
+            -x "Feather_Essentials_RP.mcpack" \
             # Add other exclusions here if needed (e.g., build scripts, documentation)
 
       - name: Combine Packs and Rename to MCAddon
         run: |
-          # Create a temporary directory to combine the packs
-          mkdir addon_temp
+          # Create the .mcaddon file directly by zipping the .mcpack files
+          # Ensure the .mcpack files are at the root of the zip
+          zip Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon Feather_Essentials_RP.mcpack Feather_Essentials_BP.mcpack
 
-          # Copy the resource pack .mcpack into the temporary directory
-          cp addon_resource_pack.mcpack addon_temp/
-
-          # Copy the behavior pack .mcpack into the temporary directory
-          cp addon_behavior_pack.mcpack addon_temp/
-
-          # Zip the contents of the temporary directory to create the .mcaddon
-          # The name 'addon.zip' is temporary before renaming
-          zip -r addon.zip addon_temp/*
-
-          # Rename the zip file to .mcaddon
-          # Replace 'your_addon_name' with the desired name for your mcaddon file.
-          mv addon.zip your_addon_name.mcaddon
-
-          # Clean up temporary directory and the temporary .mcpack files
-          rm -rf addon_temp addon_resource_pack.mcpack addon_behavior_pack.mcpack
+          # Clean up the temporary .mcpack files
+          rm Feather_Essentials_RP.mcpack Feather_Essentials_BP.mcpack
 
       - name: Create Release
         id: create_release # Give this step an ID so we can reference its outputs
@@ -65,11 +71,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
-          # Uses the run number as a simple version. You can customize this.
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
+          # Use the extracted version for the tag and release name
+          tag_name: v${{ env.ADDON_VERSION }}
+          release_name: Feather Essentials Release v${{ env.ADDON_VERSION }}
           body: |
-            Automated release of the addon.
+            Automated release of Feather Essentials.
+            Version: ${{ env.ADDON_VERSION }}
             Download the .mcaddon file below.
           draft: false
           prerelease: false
@@ -79,13 +86,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
-          # Use the upload_url output from the create_release step
+          # Use the extracted version in the asset path and name
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          # Ensure this matches the file name from the Combine Packs step
-          asset_path: ./your_addon_name.mcaddon
-          # The name the asset will have on the release page
-          asset_name: your_addon_name.mcaddon
-          # Standard content type for binary files
+          asset_path: ./Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon
+          asset_name: Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon
           asset_content_type: application/octet-stream
 
       - name: Install jq (if needed)
@@ -94,18 +98,17 @@ jobs:
       - name: Send to Discord using curl with embed (using jq for JSON)
         run: |
           # Define the path to your generated .mcaddon file
-          # Make sure this path is correct based on where your Combine Packs step places the final file.
-          ADDON_FILE_PATH="./your_addon_name.mcaddon"
+          # Use the extracted version in the file name
+          ADDON_FILE_PATH="./Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon"
 
           # Define your message content
-          MESSAGE_CONTENT="A new version of the addon has been released! **v${{ github.run_number }}**"
+          MESSAGE_CONTENT="A new version of Feather Essentials has been released! **v${{ env.ADDON_VERSION }}**"
 
           # Link to the GitHub release page
           # Accessing the output of the create_release step using its ID
           RELEASE_URL="${{ steps.create_release.outputs.html_url }}"
 
           # Use jq to construct the JSON payload, ensuring proper escaping
-          # We use heredoc (<<<) to pass the base JSON structure to jq
           PAYLOAD_JSON=$(jq -n \
             --arg content "$MESSAGE_CONTENT" \
             --arg release_url "$RELEASE_URL" \
@@ -113,7 +116,7 @@ jobs:
               "content": null, # Set content to null when using embeds as the main message
               "embeds": [
                 {
-                  "title": "New Addon Release Available!",
+                  "title": "New Feather Essentials Release Available!",
                   "description": $content, # jq handles the escaping for $content
                   "color": 3447003, # A nice blue color (you can change this)
                   "url": $release_url,     # jq handles the escaping for $release_url
@@ -125,8 +128,6 @@ jobs:
             }')
 
           # Use curl to send the file and the payload to the webhook
-          # We use the secret directly in the curl command for simplicity in a single-line script.
-          # Using an env variable in the 'env:' block of the step is also a valid option.
           curl -X POST -H "Content-Type: multipart/form-data" \
             -F "file=@${ADDON_FILE_PATH}" \
             -F "payload_json=${PAYLOAD_JSON}" \
