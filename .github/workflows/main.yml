@@ -22,8 +22,6 @@ jobs:
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
 
           # Use grep and sed to find the version number after 'v'
-          # This will extract the first occurrence of a 'v' followed by numbers and dots.
-          # If no version is found, it will default to 'latest'.
           VERSION=$(echo "$COMMIT_MESSAGE" | grep -oP 'v\d+(\.\d+)*' | head -1 | sed 's/^v//')
 
           # If no version was found, set a default or indicate it.
@@ -37,9 +35,11 @@ jobs:
       - name: Package Resource Pack
         run: |
           # Assume your resource pack is in a folder named 'resources'
-          # This command zips the contents of the folder.
-          # Adjust 'resources/*' if your resource pack folder has a different name.
-          zip -r Feather_Essentials_RP.mcpack resources/*
+          # Change directory into the 'resources' folder to zip its contents directly
+          cd resources
+          zip -r ../Feather_Essentials_RP.mcpack ./*
+          # Change back to the root directory
+          cd ..
 
       - name: Package Behavior Pack
         run: |
@@ -54,7 +54,7 @@ jobs:
             -x "resources/*" \
             -x "addon_temp/*" \
             -x "Feather_Essentials_RP.mcpack" \
-            # Add other exclusions here if needed (e.g., build scripts, documentation)
+            # Add other exclusions here that are at the root and NOT part of the BP
 
       - name: Combine Packs and Rename to MCAddon
         run: |
@@ -71,7 +71,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
-          # Use the extracted version for the tag and release name
           tag_name: v${{ env.ADDON_VERSION }}
           release_name: Feather Essentials Release v${{ env.ADDON_VERSION }}
           body: |
@@ -86,7 +85,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
-          # Use the extracted version in the asset path and name
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon
           asset_name: Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon
@@ -97,29 +95,21 @@ jobs:
 
       - name: Send to Discord using curl with embed (using jq for JSON)
         run: |
-          # Define the path to your generated .mcaddon file
-          # Use the extracted version in the file name
           ADDON_FILE_PATH="./Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon"
-
-          # Define your message content
           MESSAGE_CONTENT="A new version of Feather Essentials has been released! **v${{ env.ADDON_VERSION }}**"
-
-          # Link to the GitHub release page
-          # Accessing the output of the create_release step using its ID
           RELEASE_URL="${{ steps.create_release.outputs.html_url }}"
 
-          # Use jq to construct the JSON payload, ensuring proper escaping
           PAYLOAD_JSON=$(jq -n \
             --arg content "$MESSAGE_CONTENT" \
             --arg release_url "$RELEASE_URL" \
             '{
-              "content": null, # Set content to null when using embeds as the main message
+              "content": null,
               "embeds": [
                 {
                   "title": "New Feather Essentials Release Available!",
-                  "description": $content, # jq handles the escaping for $content
-                  "color": 3447003, # A nice blue color (you can change this)
-                  "url": $release_url,     # jq handles the escaping for $release_url
+                  "description": $content,
+                  "color": 3447003,
+                  "url": $release_url,
                   "footer": {
                     "text": "Automated Release"
                   }
@@ -127,9 +117,7 @@ jobs:
               ]
             }')
 
-          # Use curl to send the file and the payload to the webhook
           curl -X POST -H "Content-Type: multipart/form-data" \
             -F "file=@${ADDON_FILE_PATH}" \
             -F "payload_json=${PAYLOAD_JSON}" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
-
