@@ -3,7 +3,7 @@ name: Build and Deploy MCAddon
 on:
   push:
     branches:
-      - main # Or the branch you use for releases
+      - master # Or the branch you use for releases
 
 jobs:
   build_and_deploy:
