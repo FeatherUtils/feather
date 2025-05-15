@@ -11,7 +11,6 @@ import playerStorage from './Libraries/playerStorage'
 import formatter from './Formatting/formatter'
 import './Openers/form'
 import './IconPacks/index'
-import http from './Networking/currentNetworkingLib'
 import binding from './Modules/binding'
 import actionParser from './Modules/actionParser'
 
