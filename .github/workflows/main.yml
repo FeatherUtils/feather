@@ -58,8 +58,6 @@ jobs:
 
       - name: Combine Packs and Rename to MCAddon
         run: |
-          # Create the .mcaddon file directly by zipping the .mcpack files
-          # Ensure the .mcpack files are at the root of the zip
           zip Feather_Essentials_${{ env.ADDON_VERSION }}.mcaddon Feather_Essentials_RP.mcpack Feather_Essentials_BP.mcpack
 
           # Clean up the temporary .mcpack files
