@@ -3,11 +3,13 @@ name: Build and Deploy MCAddon
 on:
   push:
     branches:
-      - master # Or the branch you use for releases
+      - main # Or the branch you use for releases
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest # Or your preferred OS
+    permissions: # Add this section to grant necessary permissions
+      contents: write # Grant write permission for creating releases
 
     steps:
       - name: Checkout code
@@ -16,16 +18,13 @@ jobs:
       - name: Package Resource Pack
         run: |
           # Assume your resource pack is in a folder named 'resources'
-          # This command zips the contents of the folder.
           zip -r addon_resource_pack.mcpack resources/*
-          # You might need to adjust 'resources/*' based on your project structure.
 
       - name: Package Behavior Pack
         run: |
           # Your behavior pack files are at the root of the repository.
           # Zip the contents of the current directory (.) excluding
           # certain files/folders that are not part of the behavior pack.
-          # You need to carefully list the items to exclude.
           zip -r addon_behavior_pack.mcpack . \
             -x ".git/*" \
             -x ".github/*" \
@@ -36,33 +35,20 @@ jobs:
 
       - name: Combine Packs and Rename to MCAddon
         run: |
-          # Create a temporary directory to combine the packs
           mkdir addon_temp
-
-          # Copy the resource pack .mcpack into the temporary directory
           cp addon_resource_pack.mcpack addon_temp/
-
-          # Copy the behavior pack .mcpack into the temporary directory
           cp addon_behavior_pack.mcpack addon_temp/
-
-          # Zip the contents of the temporary directory
           zip -r addon.zip addon_temp/*
-
-          # Rename the zip file to .mcaddon
           mv addon.zip your_addon_name.mcaddon
-
-          # Clean up temporary directory and the temporary .mcpack files
           rm -rf addon_temp addon_resource_pack.mcpack addon_behavior_pack.mcpack
-
-          # You'll need to replace 'your_addon_name' with the desired name of your mcaddon file.
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
-          tag_name: v${{ github.run_number }} # Uses the run number as a simple version
+          tag_name: v${{ github.run_number }}
           release_name: Release v${{ github.run_number }}
           body: |
             Automated release of the addon.
@@ -72,10 +58,10 @@ jobs:
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the automatically provided token
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./your_addon_name.mcaddon # Ensure this matches the file name from the previous step
+          asset_path: ./your_addon_name.mcaddon
           asset_name: your_addon_name.mcaddon
           asset_content_type: application/octet-stream
 
@@ -83,7 +69,7 @@ jobs:
         uses: rjstone/discord-webhook-notify@v1.0.4
         with:
           severity: info
-          color: 0000ff # Hex color code for the embed
+          color: 0000ff
           description: |
             A new version of the addon has been released! Download the .mcaddon file from the GitHub release.
             [Download Link](${{ steps.create_release.outputs.html_url }})
