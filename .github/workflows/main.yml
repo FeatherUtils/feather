@@ -8,8 +8,8 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest # Or your preferred OS
-    permissions: # Add this section to grant necessary permissions
-      contents: write # Grant write permission for creating releases
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
