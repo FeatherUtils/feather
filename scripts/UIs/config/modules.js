@@ -22,7 +22,7 @@ uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
     form.dropdown(`${translate(config.lang.config.modules.lang)}`, langs.map(_=>_.name), {defaultValueIndex: langs.findIndex(_=>_.val==modules.get('language'))})
     form.show(player).then((res) => {
         if(res.canceled) return uiManager.open(player, config.uinames.config.root);
-        let[cr,dev,l] = res.formValues
+        let[a,a2,a3,a4,cr,dev,a5,l] = res.formValues
         let lang = langs[l]
         modules.set('devMode', dev)
         modules.set('cr', cr)

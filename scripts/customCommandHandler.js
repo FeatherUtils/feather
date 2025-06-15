@@ -2,6 +2,7 @@ import { system } from '@minecraft/server'
 import { CommandPermissionLevel, CustomCommandParamType, world, Player, CustomCommandStatus } from "@minecraft/server"
 import binding from './Modules/binding'
 import { transferPlayer } from "@minecraft/server-admin"
+import warps from './Modules/warps'
 
 if(system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
@@ -96,18 +97,74 @@ if(system.beforeEvents.startup) {
         init.customCommandRegistry.registerCommand({
             name: "feather:addwarp",
             description: "Create a warp",
-            permissionLevel: CommandPermissionLevel.GameDirectors
-        }, (asd, cmd) => {
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "name",
+                    type: CustomCommandParamType.String
+                }
+            ],
+        }, (asd, name) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
                 if(!player) return;
-                let inventory = player.getComponent('inventory');
-                let container = inventory.container;
-                
-                if (!container.getItem(player.selectedSlotIndex)) return player.error("You need to be holding an item");
-                
-                let item = container.getItem(player.selectedSlotIndex);
-                binding.remove(item.typeId)
+                let dim = player.dimension.id
+                warps.add(name,player.location,dim)
+                player.success('Created successfully')
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:warp",
+            description: "Warp",
+            permissionLevel: CommandPermissionLevel.Any,
+            mandatoryParameters: [
+                {
+                    name: "name",
+                    type: CustomCommandParamType.String
+                }
+            ],
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                if(!player) return;
+                let id = warps.db.findFirst({name}).id
+                warps.tp(player,id)
+                player.success('Teleported successfully')
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:listwarp",
+            description: "List warps",
+            permissionLevel: CommandPermissionLevel.Any,
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                if(!player) return;
+                let docs = warps.db.findDocuments()
+                let as = ['§7-=-=-=- §bWarps §7-=-=-=-'];
+                for(const doc of docs) {
+                    as.push(`§b${doc.data.name}`)
+                }
+                player.sendMessage(as.join(`\n§r`))
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:delwarp",
+            description: "Delete Warp",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "name",
+                    type: CustomCommandParamType.String
+                }
+            ],
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                if(!player) return;
+                let id = warps.db.findFirst({name}).id
+                warps.del(id)
+                player.success('Deleted successfully')
             })
         })
     })

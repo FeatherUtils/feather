@@ -45,6 +45,11 @@ export default {
             extra: 'config_extra | Config/Extra',
             misc: 'config_misc | Config/Misc'
         },
+        homes: {
+            view: 'homes_view | Homes/View',
+            root: 'homes | Homes',
+            create: 'homes_create | Homes/Create'
+        },
         ranks: {
             root: 'ranks | Ranks',
             add: "ranks_add | Ranks/Add",

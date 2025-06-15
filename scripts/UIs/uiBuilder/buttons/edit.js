@@ -32,9 +32,11 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.edit, 'edit button', (player, u
         form2.textField('Subtext', `This button's subtext`, {defaultValue: b.subtext})
         form2.textField(`Required Tag`, `Required tag of this button`, {defaultValue: b.requiredTag})
         form2.show(player).then((res) => {
-            let [text, subtext, requiredTag] = res.formValues
+            console.log(res.formValues)
+            let [a, text, subtext, requiredTag] = res.formValues
             if (!text) return player.error('Please enter text'), uiManager.open(player, config.uinames.uiBuilder.buttons.editall, uiID);
-            uiBuilder.editButton(uiID, id, text, subtext, requiredTag, b.icon);
+            
+            uiBuilder.editButton(uiID, id, requiredTag, b.icon);
             uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
         })
     })
