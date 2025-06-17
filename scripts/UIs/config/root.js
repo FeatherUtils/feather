@@ -28,5 +28,9 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     form.button(`${NUT_UI_LEFT_HALF}${translate(config.lang.config.mainSettings.ranks)}`, `textures/blossom_icons/rank`, (player) => {
         uiManager.open(player, config.uinames.ranks.root)
     })
+    form.button(`§dModeration\n§7Moderate users on your server`, `textures/azalea_icons/5`, (player) => {
+        if(!prismarineDb.permissions.hasPermission(player, 'moderation')) return;
+        uiManager.open(player, config.uinames.moderation.root)
+    })
     form.show(player)
 })

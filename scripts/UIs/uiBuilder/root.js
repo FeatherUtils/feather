@@ -10,6 +10,7 @@ import { world } from '@minecraft/server'
 import modules from '../../Modules/modules'
 import icons from '../../Modules/icons'
 import { ModalFormData } from '@minecraft/server-ui'
+import { themes } from '../../cherryThemes'
 
 uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player) => {
     let form = new ActionForm()
@@ -17,12 +18,12 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
     form.button(`${consts.header}§cBack\n§7Go back to main menu`, `textures/azalea_icons/2`, (player) => {
         uiManager.open(player, config.uinames.config.root)
     })
-    form.button(`${modules.get('devMode') ? consts.left : ''}${modules.get('devMode') ? consts.disablevertical : ''}${consts.alt}§rMy UIs`, null, (player) => {
+    form.button(`${consts.alt}§rMy UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
     if (modules.get('devMode')) {
-        form.button(`${consts.right}§rTab UIs`, null, (player) => {
-            uiManager.open(player, config.uinames.uiBuilder.root)
+        form.button(`${consts.alt}${themes[2][0]}§rFeather UIs`, `textures/folders/pink`, (player) => {
+            player.sendMessage('WIP')
         })
     }
     form.button(`${consts.disablevertical}${consts.left}§r§aCreate UI\n§7Make a UI`, `textures/azalea_icons/1`, (player) => {
@@ -38,6 +39,20 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
             if (!name) return player.error("Enter name please"), uiManager.open(player, config.uinames.uiBuilder.root);
             uiBuilder.addFolder(name)
             uiManager.open(player, config.uinames.uiBuilder.root)
+        })
+    })
+    form.button(`§rImport`, icons.resolve(`azalea/Import`), (player) => {
+        let form2 = new ModalFormData();
+        form2.title(`Code Editor`)
+        form2.textField(`Code`, `Code`)
+        form2.show(player).then((res) => {
+            let[code] = res.formValues;
+            try {
+                uiBuilder.import(code)
+            } catch (e) {
+                player.error(`${e} | ${e.stack}`)   
+            }
+            uiManager.open(player, config.uinames.uiBuilder.root);
         })
     })
     form.button(`§r§bTrash\n§7View UIs in Trash`, `textures/azalea_icons/SidebarTrash`, (player) => {
@@ -66,16 +81,17 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
         }
         form2.show(player)
     })
-    for(const folder of uiBuilder.db.getFolders()) {
-        form.button(`§b${folder}`, `textures/folders/rainbow`, (player)=>{
-            uiManager.open(player,config.uinames.uiBuilder.folders.view,folder)
+    for (const folder of uiBuilder.db.getFolders()) {
+        form.button(`§b${folder}`, `textures/folders/rainbow`, (player) => {
+            uiManager.open(player, config.uinames.uiBuilder.folders.view, folder)
         })
     }
     for (const doc of uiBuilder.db.findDocuments()) {
         if (doc.data.type == '__keyval__') continue;
+        if (doc.data.type == 'feather-built-in') continue;
         let text = `§b${doc.data.name}\n`
         let subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()} | ${emojis.chat} ${doc.data.scriptevent}`
-        if(subtext.length > 43) subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}`
+        if (subtext.length > 43) subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}`
         form.button(text + subtext, `${doc.data.icon ?? `textures/azalea_icons/ClickyClick`}`, async (player) => {
             uiManager.open(player, config.uinames.uiBuilder.edit, doc.id)
         })

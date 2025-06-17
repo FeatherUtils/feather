@@ -10,6 +10,14 @@ class uiBuilder {
             this.kv = await this.db.keyval('values')
         })
     }
+    import(datastring) {
+        let data = JSON.parse(datastring)
+        if(!data) throw new Error('UIBuilderError: String is not JSON');
+        // if(!data.type != 'UI') throw new Error('UIBuilderError: The provided JSON is not supported by UI Builder.')
+        if(this.db.findFirst({scriptevent: data.scriptevent})) throw new Error('UIBuilderError: There was a scriptevent found with the imported uis scriptevent, please delete the other ui')
+        let ui = this.db.insertDocument(data)
+        return ui;
+    }
     create(name, body, scriptevent, layout) {
         if(this.db.findFirst({scriptevent})) throw new Error('UIBuilderError: Scriptevent already found, please choose another one');
         let ui = this.db.insertDocument({
@@ -89,6 +97,19 @@ class uiBuilder {
         if(action === -1) throw new Error(`UIBuilderError: Could not find action`);
         btn.actions.splice(action, 1)
         this.db.overwriteDataByID(uiID, ui.data)
+    }
+    meta(uiID,bid,meta) {
+        let ui = this.db.getByID(uiID)
+        if(!ui) throw new Error('UIBuilderError: Could not find UI');
+        let btn = ui.data.buttons.find(_=>_.id === bid)
+        if(!btn) throw new Error('UIBuilderError: Could not find button');
+        btn.meta = meta
+        this.db.overwriteDataByID(uiID, ui.data)
+    }
+    getExportData(uiID) {
+        let ui = this.db.getByID(uiID)
+        if(!ui) throw new Error('UIBuilderError: Could not find UI');
+        return JSON.stringify(ui.data, null, 4)
     }
     moveActioninButton(uiID,bid,actionID, direction){
         const doc = this.db.getByID(uiID);

@@ -9,8 +9,10 @@ import handleChat from './handleChat'
 import modules from './Modules/modules'
 import playerStorage from './Libraries/playerStorage'
 import formatter from './Formatting/formatter'
+import moment from './Libraries/moment'
 import './Openers/form'
 import './IconPacks/index'
+import moderation from './Modules/moderation'
 import binding from './Modules/binding'
 import actionParser from './Modules/actionParser'
 
@@ -99,7 +101,11 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
 
 world.beforeEvents.chatSend.subscribe(e => {
     if(e.message.startsWith('.')) return;
-    if (!modules.get('cr')) return;
+    if (!modules.get('cr')) {
+        let mute = moderation.Database.findFirst({type:'MUTE',player:playerStorage.getID(e.sender)})
+                if (mute) return e.sender.sendMessage(`§cYou have been §4muted! §eReason: ${mute.data.reason}. Expires ${mute.data.time ? moment(mute.data.time).fromNow() : 'in forever'}`), e.cancel = true;
+        return;
+    }
     e.cancel = true;
     handleChat(e)
 })

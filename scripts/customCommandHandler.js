@@ -3,8 +3,11 @@ import { CommandPermissionLevel, CustomCommandParamType, world, Player, CustomCo
 import binding from './Modules/binding'
 import { transferPlayer } from "@minecraft/server-admin"
 import warps from './Modules/warps'
+import uiManager from './Libraries/uiManager'
+import config from './config'
+import actionParser from './Modules/actionParser'
 
-if(system.beforeEvents.startup) {
+if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
         init.customCommandRegistry.registerCommand({
             name: "feather:open",
@@ -65,14 +68,14 @@ if(system.beforeEvents.startup) {
         }, (asd, cmd) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
-                if(!player) return;
+                if (!player) return;
                 console.log('meow')
                 console.log(binding.db.findDocuments().map(_ => _.typeID))
                 let inventory = player.getComponent('inventory');
                 let container = inventory.container;
-                
+
                 if (!container.getItem(player.selectedSlotIndex)) return player.error("You need to be holding an item");
-                
+
                 let item = container.getItem(player.selectedSlotIndex);
                 binding.add(item.typeId, cmd)
             })
@@ -84,12 +87,12 @@ if(system.beforeEvents.startup) {
         }, (asd, cmd) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
-                if(!player) return;
+                if (!player) return;
                 let inventory = player.getComponent('inventory');
                 let container = inventory.container;
-                
+
                 if (!container.getItem(player.selectedSlotIndex)) return player.error("You need to be holding an item");
-                
+
                 let item = container.getItem(player.selectedSlotIndex);
                 binding.remove(item.typeId)
             })
@@ -107,9 +110,9 @@ if(system.beforeEvents.startup) {
         }, (asd, name) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
-                if(!player) return;
+                if (!player) return;
                 let dim = player.dimension.id
-                warps.add(name,player.location,dim)
+                warps.add(name, player.location, dim)
                 player.success('Created successfully')
             })
         })
@@ -126,9 +129,9 @@ if(system.beforeEvents.startup) {
         }, (asd, name) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
-                if(!player) return;
-                let id = warps.db.findFirst({name}).id
-                warps.tp(player,id)
+                if (!player) return;
+                let id = warps.db.findFirst({ name }).id
+                warps.tp(player, id)
                 player.success('Teleported successfully')
             })
         })
@@ -139,10 +142,10 @@ if(system.beforeEvents.startup) {
         }, (asd, name) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
-                if(!player) return;
+                if (!player) return;
                 let docs = warps.db.findDocuments()
                 let as = ['§7-=-=-=- §bWarps §7-=-=-=-'];
-                for(const doc of docs) {
+                for (const doc of docs) {
                     as.push(`§b${doc.data.name}`)
                 }
                 player.sendMessage(as.join(`\n§r`))
@@ -161,10 +164,53 @@ if(system.beforeEvents.startup) {
         }, (asd, name) => {
             system.run(() => {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
-                if(!player) return;
-                let id = warps.db.findFirst({name}).id
+                if (!player) return;
+                let id = warps.db.findFirst({ name }).id
                 warps.del(id)
                 player.success('Deleted successfully')
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:uis",
+            description: "View all UIS",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [],
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                if (!player) return;
+                let text = [];
+                text.push(`§8----------- §aList §r§8-----------`);
+                for (const ui of uiManager.uis) {
+                    text.push(
+                        `§e${ui.id} | ${ui.altId} §r§7${ui.description ? ui.description : "No Description"
+                        }`
+                    );
+                }
+                text.push(``);
+                text.push(
+                    `§2You can open a UI by doing §f/scriptevent ${config.config.openui}§eui_id`
+                );
+                text.push(
+                    `§2Example: the ui §ehomes §r§2would be §a/scriptevent §b${config.config.openui}§ehomes`
+                );
+                player.sendMessage(text.join("\n§r"));
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:delay",
+            description: "Delay a command",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [{ type: CustomCommandParamType.Integer, name: "ticks" }, {
+                name: "command",
+                type: CustomCommandParamType.String
+            }],
+        }, (asd, ticks, command) => {
+            system.run(async () => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                if (!player) return;
+                await system.waitTicks(ticks)
+                actionParser.runAction(player,command)
             })
         })
     })

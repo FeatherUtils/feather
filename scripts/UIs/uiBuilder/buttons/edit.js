@@ -4,7 +4,7 @@ import uiBuilder from "../../../Modules/uiBuilder";
 import { consts } from "../../../cherryUIConsts";
 import uiManager from "../../../Libraries/uiManager";
 import icons from "../../../Modules/icons";
-import { ModalFormData } from "@minecraft/server-ui";
+import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 import preview from "../../../preview";
 
 uiManager.addUI(config.uinames.uiBuilder.buttons.edit, 'edit button', (player, uiID, id) => {
@@ -36,12 +36,29 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.edit, 'edit button', (player, u
             let [a, text, subtext, requiredTag] = res.formValues
             if (!text) return player.error('Please enter text'), uiManager.open(player, config.uinames.uiBuilder.buttons.editall, uiID);
             
-            uiBuilder.editButton(uiID, id, requiredTag, b.icon);
+            uiBuilder.editButton(uiID, id, text, subtext, requiredTag, b.icon);
             uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
         })
     })
     form.button(`§aEdit Actions\n§7Edit this button's actions`, icons.resolve('azalea/CustomCommands2'), (player) => {
         uiManager.open(player,config.uinames.uiBuilder.buttons.editActions,uiID,id)
+    })
+    form.button(`§eEdit Meta\n§7Make the button behave differently`, icons.resolve('azalea/ExtIcon'), (player) => {
+        let form2 = new ActionForm();
+        form2.title(`${consts.tag}§rEdit Meta`)
+        form2.button(`${!b.meta ? `${consts.alt}§rNo meta` : `§rNo meta`}\n§7Remove meta`, icons.resolve('azalea/Delete'), (player) => {
+            uiBuilder.meta(uiID,id,null)
+            uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
+        })
+        form2.button(`${b.meta === 'warp' ? `${consts.alt}§rWarps` : `§rWarps`}\n§7Warps list (<warpname>)`, icons.resolve('azalea/WarpEditor'), (player) => {
+            uiBuilder.meta(uiID,id,'warp')
+            uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
+        })
+        form2.button(`${b.meta === 'playerlist' ? `${consts.alt}§rPlayer List` : `§rPlayer List`}\n§7Player list (<name2>)`, icons.resolve('azalea/8-old'), (player) => {
+            uiBuilder.meta(uiID,id,'playerlist')
+            uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
+        })
+        form2.show(player)
     })
     form.button(`§cDelete Button\n§7Delete this button`, icons.resolve(`azalea/SidebarTrash`), (player) => {
         function ye(player) {

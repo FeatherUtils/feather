@@ -50,6 +50,19 @@ export default {
             root: 'homes | Homes',
             create: 'homes_create | Homes/Create'
         },
+        moderation: {
+            root: 'moderation | Moderation',
+            bans: {
+                view: 'bans_view | Bans/View',
+                root: 'bans | Bans',
+                create: 'bans_create | Bans/Create'
+            },
+            mutes: {
+                view: 'mutes_view | Mutes/View',
+                root: 'mutes | Mutes',
+                create: 'mutes_create | Mutes/Create'
+            }
+        },
         ranks: {
             root: 'ranks | Ranks',
             add: "ranks_add | Ranks/Add",
@@ -58,7 +71,8 @@ export default {
         },
         basic: {
             confirmation: 'basic_confirm | Basic/Confirmation',
-            iconViewer: 'basic_iconviewer | Basic/IconViewer'
+            iconViewer: 'basic_iconviewer | Basic/IconViewer',
+            warps: 'basic_warps | Basic/Warps'
         },
         uiBuilder: {
             root: 'uibuilder_root | UIBuilder/Root',

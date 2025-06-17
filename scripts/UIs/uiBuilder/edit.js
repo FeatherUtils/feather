@@ -12,11 +12,11 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
     let ui = uiBuilder.get(id)
     if (!ui) return uiManager.open(player, config.uinames.uiBuilder.root);
     let pre = ``
-    if(ui.data.theme) {
+    if (ui.data.theme) {
         pre = `${consts.themed}${ui.data.theme}`
     }
     form.title(`${pre}${consts.tag}§rEdit UI`)
-    if(ui.data.layout == 3) {
+    if (ui.data.layout == 3) {
         form.body(`Warning: Body doesn't work in Player Model UIs`)
     }
     form.button(`${consts.header}§r§cBack\n§7Go back to UI Builder`, `textures/azalea_icons/2`, (player) => {
@@ -39,23 +39,29 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
     form.button(`§aEdit Body\n§7Edit the body of this ui`, `textures/blossom_icons/edit`, (player) => {
         let form2 = new ModalFormData();
         form2.title('Code Editor')
-        form2.textField(`Body`, `Enter body here..`, {defaultValue: ui.data.body})
+        form2.textField(`Body`, `Enter body here..`, { defaultValue: ui.data.body })
         form2.show(player).then((res) => {
             let [body] = res.formValues
-            uiBuilder.edit(id,ui.data.name,body,ui.data.scriptevent,ui.data.layout)
+            uiBuilder.edit(id, ui.data.name, body, ui.data.scriptevent, ui.data.layout)
             uiManager.open(player, config.uinames.uiBuilder.edit, id)
         })
     })
-    if(ui.data.layout === 4) {
-        form.button(`§9Edit Theme\n§7Edit the theme of this UI`, icons.resolve('azalea/RainbowPaintBrush'), (player)=>{
+    form.button(`§bExport\n§7Export the data of this UI`, icons.resolve(`azalea/export`), (player) => {
+        let form2 = new ModalFormData();
+        form2.title('Code Editor')
+        form2.textField(`Code`, `Code`, { defaultValue: uiBuilder.getExportData(id) })
+        form2.show(player)
+    })
+    if (ui.data.layout === 4) {
+        form.button(`§9Edit Theme\n§7Edit the theme of this UI`, icons.resolve('azalea/RainbowPaintBrush'), (player) => {
             let form = new ActionForm();
             form.title(`${consts.tag}§rTheme`)
-            form.button(`${consts.header}§cBack\n§7Go back to UI`, icons.resolve('azalea/2'), (player)=>{
+            form.button(`${consts.header}§cBack\n§7Go back to UI`, icons.resolve('azalea/2'), (player) => {
                 uiManager.open(player, config.uinames.uiBuilder.edit, id)
             })
-            for(const theme of themes) {
-                form.button(`${theme[1]}`, theme[2], (player)=>{
-                    uiBuilder.editTheme(id,theme[0])
+            for (const theme of themes) {
+                form.button(`${theme[1]}`, theme[2], (player) => {
+                    uiBuilder.editTheme(id, theme[0])
                     uiManager.open(player, config.uinames.uiBuilder.edit, id)
                 })
             }
