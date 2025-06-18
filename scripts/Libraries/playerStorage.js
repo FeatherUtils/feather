@@ -88,6 +88,13 @@ class PlayerStorage {
             }
         },10)
     }
+    a2() {
+        system.runInterval(async () => {
+            for(const plr of world.getPlayers()) {
+                this.saveData(plr)
+            }
+        },10)
+    }
     getIDAsync(player) {
         return new Promise((resolve, reject)=>{
             system.run(async ()=>{

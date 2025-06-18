@@ -7,7 +7,7 @@
     },
     "header": {
       "name": "§b§lFeather Essentials §e- §bv0.1",
-      "description": "Feather Essentials - Made with <3 by FruitKitty",
+      "description": "Feather Essentials - Made with <3 by FruitKitty BF1",
       "min_engine_version": [
         1,
         20,
@@ -17,7 +17,7 @@
       "version": [
         1,
         0,
-        2
+        4
       ]
     },
     "modules": [
@@ -27,7 +27,7 @@
         "version": [
           1,
           0,
-          2
+          4
         ]
       },
       {
@@ -38,18 +38,18 @@
         "version": [
           1,
           0,
-          2
+          4
         ]
       }
     ],
     "dependencies": [
       {
         "module_name": "@minecraft/server",
-        "version": "2.0.0-beta"
+        "version": "2.1.0-beta"
       },
       {
         "module_name": "@minecraft/server-ui",
-        "version": "2.0.0-beta"
+        "version": "2.1.0-beta"
       },
       {
         "module_name": "@minecraft/server-admin",

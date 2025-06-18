@@ -28,42 +28,28 @@ Player.prototype.info = function (msg) {
 
 system.run(() => {
     world.sendMessage(`§d${config.info.name} §e- §b${config.info.versionString()} §e- §bLoaded!`)
-    if(!prismarineDb.permissions.getRole('admin')) prismarineDb.permissions.createRole('admin')
+    if (!prismarineDb.permissions.getRole('admin')) prismarineDb.permissions.createRole('admin')
     prismarineDb.permissions.setAdmin('admin', true)
 })
 
 world.beforeEvents.itemUse.subscribe(e => {
-    for(const bind of binding.db.findDocuments()) {
-        if(bind.data.typeID == e.itemStack.typeId) {
+    for (const bind of binding.db.findDocuments()) {
+        if (bind.data.typeID == e.itemStack.typeId) {
             e.cancel = true
             actionParser.runAction(e.source, bind.data.cmd)
         }
     }
     system.run(() => {
         if (e.itemStack.typeId == `${config.config.ui}`) {
-            if (e.source.isOp()) {
-                if (!e.source.hasTag('admin')) {
-                    e.source.addTag('admin');
-                    if (e.source.hasTag('admin')) {
-                        e.source.success('You have been granted admin privileges because you are already an operator.');
-                        if(!prismarineDb.permissions.hasPermission(e.source, 'config')) return e.source.error('FATAL ERROR: COULD NOT FIND ADMIN ROLE. RESTART THE SERVER TO FIX THIS.')
-                    } else {
-                        e.source.error('Failed to automatically give "admin" tag.');
-                    }
-                } else {
-                    if(!prismarineDb.permissions.hasPermission(e.source, 'config')) return e.source.error('FATAL ERROR: COULD NOT FIND ADMIN ROLE. RESTART THE SERVER TO FIX THIS.')
-                }
-            }
             uiManager.open(e.source, config.uinames.config.root);
-            
         }
-        
+
     });
 });
 
 system.runInterval(() => {
     for (const plr of world.getPlayers()) {
-        plr.nameTag = `${formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`   
+        plr.nameTag = `${formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
     }
 }, 20)
 
@@ -100,10 +86,10 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
 })
 
 world.beforeEvents.chatSend.subscribe(e => {
-    if(e.message.startsWith('.')) return;
+    if (e.message.startsWith('.')) return;
     if (!modules.get('cr')) {
-        let mute = moderation.Database.findFirst({type:'MUTE',player:playerStorage.getID(e.sender)})
-                if (mute) return e.sender.sendMessage(`§cYou have been §4muted! §eReason: ${mute.data.reason}. Expires ${mute.data.time ? moment(mute.data.time).fromNow() : 'in forever'}`), e.cancel = true;
+        let mute = moderation.Database.findFirst({ type: 'MUTE', player: playerStorage.getID(e.sender) })
+        if (mute) return e.sender.sendMessage(`§cYou have been §4muted! §eReason: ${mute.data.reason}. Expires ${mute.data.time ? moment(mute.data.time).fromNow() : 'in forever'}`), e.cancel = true;
         return;
     }
     e.cancel = true;

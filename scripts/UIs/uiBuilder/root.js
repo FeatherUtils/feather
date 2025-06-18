@@ -21,6 +21,10 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
     form.button(`${consts.alt}§rMy UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
+    form.button(`${consts.alt}§rReset built-in UIs`, null, (player) => {
+        uiBuilder.forceresetbuiltinuis()
+        uiManager.open(player, config.uinames.uiBuilder.root)
+    })
     if (modules.get('devMode')) {
         form.button(`${consts.alt}${themes[2][0]}§rFeather UIs`, `textures/folders/pink`, (player) => {
             player.sendMessage('WIP')

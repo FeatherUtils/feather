@@ -45,13 +45,13 @@ if (system.beforeEvents.startup) {
                 },
                 {
                     name: "port",
-                    "type": CustomCommandParamType.String
+                    "type": CustomCommandParamType.Integer
                 }
             ],
         }, (origin, players, ip, port) => {
             system.run(() => {
                 for (const player of players) {
-                    transferPlayer(player, ip, +port)
+                    transferPlayer(player, {hostname: ip, port:+port})
                 }
             })
         })
