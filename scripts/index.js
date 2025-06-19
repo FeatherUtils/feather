@@ -14,6 +14,7 @@ import './Openers/form'
 import './IconPacks/index'
 import moderation from './Modules/moderation'
 import binding from './Modules/binding'
+import sidebarEditor from './Modules/sidebarEditor'
 import actionParser from './Modules/actionParser'
 
 Player.prototype.error = function (msg) {

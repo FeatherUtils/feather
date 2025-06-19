@@ -12,6 +12,7 @@ import {
     ModalFormResponse,
   } from '@minecraft/server-ui';
 import debug_buttons from './debug_buttons';
+import icons from '../Modules/icons';
   
   export const content = {
       warn(...messages) {
@@ -165,8 +166,10 @@ import debug_buttons from './debug_buttons';
           if (typeof text !== 'string') throw new Error(`text: ${label}, at params[0] is not a String!`);
           if (iconPath && typeof iconPath !== 'string') throw new Error(`iconPath: ${defaultValue}, at params[1] is defined and is not a String!`);
           if (callback && !(callback instanceof Function)) throw new Error(`callback at params[2] is defined and is not a Function!`);
+          let newiconpath = iconPath;
+          if(newiconpath) if(newiconpath.startsWith('.')) newiconpath = icons.resolve(newiconpath.replace('.', ''))
           this.callbacks.push(callback);
-          this.form.button(text, iconPath);
+          this.form.button(text, newiconpath);
           return this;
       }
       /**

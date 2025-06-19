@@ -63,6 +63,13 @@ export default {
                 create: 'mutes_create | Mutes/Create'
             }
         },
+        sidebarEditor: {
+            create: 'se_create | SE/Create',
+            root: 'se | SE',
+            view: 'se_view | SE/View',
+            viewlines: 'se_viewlines | SE/ViewLines',
+            editline: 'se_editline | SE/EditLine'
+        },
         ranks: {
             root: 'ranks | Ranks',
             add: "ranks_add | Ranks/Add",

@@ -6,6 +6,24 @@ import actionParser from "../Modules/actionParser";
 import { system, world } from "@minecraft/server";
 import warps from "../Modules/warps";
 import formatter from "../Formatting/formatter";
+import { ModalFormData } from "@minecraft/server-ui";
+import uiManager from "../Libraries/uiManager";
+import config from "../config";
+import { prismarineDb } from "../Libraries/prismarinedb";
+
+function hasItem(player, typeId) {
+    let amount = 0
+    let inventory = player.getComponent('inventory')
+    for (let i = 0; i < inventory.inventorySize; i++) {
+        let item1 = inventory.container.getItem(i)
+        if (item1 && item1.typeId == typeId) {
+            amount = amount + item1.amount
+            console.log(item1.typeId)
+            continue;
+        }
+    }
+    return amount;
+}
 
 system.afterEvents.scriptEventReceive.subscribe(e => {
     if (e.id != 'feather:open') return;
@@ -31,29 +49,99 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
     }
     for (const button of u.buttons) {
         let rqt = formatter.format(button.requiredTag, e.sourceEntity)
+        if (button.meta === 'sellbutton') {
+            let rqtf2 = rqt
+            if (rqtf2) {
+                if (!e.sourceEntity.hasTag(rqtf2.replace('!', '')) && !rqtf2.startsWith('!')) continue;
+                if (e.sourceEntity.hasTag(rqtf2.replace('!', '')) && rqtf2.startsWith('!')) continue;
+            }
+            form.button(`§r${formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
+                let form2 = new ModalFormData();
+                form2.title(`Quantity Selector`)
+                form2.slider('Quantity', 1, 64)
+                form2.show(player).then((res) => {
+                    let [quantity] = res.formValues;
+                    let price = +button.sellButtonSettings.price * quantity
+                    function ye(player) {
+                        if (!prismarineDb.economy.getCurrency(button.sellButtonSettings.scoreboard)) prismarineDb.economy.addCurrency(button.sellButtonSettings.scoreboard, '$', `${button.sellButtonSettings.scoreboard}`)
+                        let money = prismarineDb.economy.getMoney(player, button.sellButtonSettings.scoreboard)
+
+                        if (hasItem(player, button.sellButtonSettings.item) < quantity) return player.runCommand(`feather:open @s "${e.message}"`), player.runCommand(`playsound random.glass`);
+                        if (button.sellButtonSettings.item) {
+                            prismarineDb.economy.addMoney(player, price, button.sellButtonSettings.scoreboard)
+                            player.runCommand(`clear @s ${button.sellButtonSettings.item} 0 ${quantity}`)
+                        }
+                        player.runCommand(`playsound random.orb`)
+                        player.runCommand(`feather:open @s "${e.message}"`)
+                    }
+                    function nah(player) {
+                        player.runCommand(`feather:open @s "${e.message}"`)
+                    }
+                    uiManager.open(player, config.uinames.basic.confirmation, `Are you sure you want to get ${price} ${button.sellButtonSettings.scoreboard} from selling ${button.sellButtonSettings.item}?`, ye, nah)
+                })
+            })
+            continue;
+        }
         if (button.meta === 'warp') {
             for (const warp of warps.db.findDocuments()) {
                 let rqtf = rqt.replaceAll('<warpname>', warp.data.name)
                 if (rqtf) {
-                    if (!e.sourceEntity.hasTag(rqtf) && !rqtf.startsWith('!')) continue;
-                    if (e.sourceEntity.hasTag(rqtf) && rqtf.startsWith('!')) continue;
+                    if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
+                    if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
                 }
-                form.button(`${formatter.format(button.text.replaceAll('<warpname>', warp.data.name), e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext.replaceAll('<warpname>', warp.data.name), e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
+                form.button(`§r${formatter.format(button.text.replaceAll('<warpname>', warp.data.name), e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext.replaceAll('<warpname>', warp.data.name), e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
                     for (const action of button.actions) {
-                        actionParser.runAction(e.sourceEntity, formatter.format(action.action.replaceAll('<warpname>', warp.data.name),e.sourceEntity))
+                        actionParser.runAction(e.sourceEntity, formatter.format(action.action.replaceAll('<warpname>', warp.data.name), e.sourceEntity))
                     }
                 })
             }
+            continue;
+        }
+
+        if (button.meta === 'buybutton') {
+            let rqtf = rqt
+            if (rqtf) {
+                if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
+                if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
+            }
+            form.button(`§r${formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
+                let form2 = new ModalFormData();
+                form2.title(`Quantity Selector`)
+                form2.slider('Quantity', 1, 64)
+                form2.show(player).then((res) => {
+                    let [quantity] = res.formValues;
+                    let price = +button.buyButtonSettings.price * quantity
+                    function ye(player) {
+                        if (!prismarineDb.economy.getCurrency(button.buyButtonSettings.scoreboard)) prismarineDb.economy.addCurrency(button.buyButtonSettings.scoreboard, '$', `${button.buyButtonSettings.scoreboard}`)
+                        let money = prismarineDb.economy.getMoney(player, button.buyButtonSettings.scoreboard)
+                        if (money < price) return player.runCommand(`feather:open @s "${e.message}"`), player.runCommand(`playsound random.glass`);
+                        prismarineDb.economy.removeMoney(player, price, button.buyButtonSettings.scoreboard)
+                        if (button.buyButtonSettings.item) {
+                            player.runCommand(`give @s ${button.buyButtonSettings.item} ${quantity}`)
+                        } else {
+                            for (const action of button.actions) {
+                                actionParser.runAction(e.sourceEntity, formatter.format(action.action.replaceAll('<name2>', plr.name), e.sourceEntity))
+                            }
+                        }
+                        player.runCommand(`playsound random.orb`)
+                        player.runCommand(`feather:open @s "${e.message}"`)
+                    }
+                    function nah(player) {
+                        player.runCommand(`feather:open @s "${e.message}"`)
+                    }
+                    uiManager.open(player, config.uinames.basic.confirmation, `Are you sure you want to spend ${price} ${button.buyButtonSettings.scoreboard} on this?`, ye, nah)
+                })
+            })
             continue;
         }
         if (button.meta === 'playerlist') {
             for (const plr of world.getPlayers()) {
                 let rqtf = rqt.replaceAll('<name2>', plr.name)
                 if (rqtf) {
-                    if (!e.sourceEntity.hasTag(rqtf) && !rqtf.startsWith('!')) continue;
-                    if (e.sourceEntity.hasTag(rqtf) && rqtf.startsWith('!')) continue;
+                    if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
+                    if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
                 }
-                form.button(`${formatter.format(button.text.replaceAll('<name2>', plr.name), e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext.replaceAll('<name2>', plr.name), e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
+                form.button(`§r${formatter.format(button.text.replaceAll('<name2>', plr.name), e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext.replaceAll('<name2>', plr.name), e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
                     for (const action of button.actions) {
                         actionParser.runAction(e.sourceEntity, formatter.format(action.action.replaceAll('<name2>', plr.name), e.sourceEntity))
                     }
@@ -61,15 +149,16 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
             }
             continue;
         }
-        if (button.requiredTag) {
-            if (!e.sourceEntity.hasTag(button.requiredTag) && !button.requiredTag.startsWith('!')) continue;
-            if (e.sourceEntity.hasTag(button.requiredTag) && button.requiredTag.startsWith('!')) continue;
+        let rqtf = rqt
+        if (rqtf) {
+            if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
+            if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
         }
-        form.button(`${formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
+        form.button(`§r${formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
             for (const action of button.actions) {
-                actionParser.runAction(e.sourceEntity, formatter.format(action.action,e.sourceEntity))
+                actionParser.runAction(e.sourceEntity, formatter.format(action.action, e.sourceEntity))
             }
         })
     }
-    form.show(e.sourceEntity)
+    form.show(e.sourceEntity);
 })

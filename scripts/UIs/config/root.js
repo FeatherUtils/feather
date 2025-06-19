@@ -1,5 +1,6 @@
-import { ActionForm, prismarineDb } from '../../Libraries/prismarinedb';
+import { prismarineDb } from '../../Libraries/prismarinedb';
 import uiManager from '../../Libraries/uiManager'
+import { ActionForm } from '../../Libraries/form_func';
 import config from '../../config'
 import { consts, NUT_UI_TAG, NUT_UI_RIGHT_HALF, NUT_UI_DISABLE_VERTICAL_SIZE_KEY, NUT_UI_LEFT_HALF } from '../../cherryUIConsts';
 import preview from '../../preview';
@@ -31,6 +32,9 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     form.button(`§dModeration\n§7Moderate users on your server`, `textures/azalea_icons/5`, (player) => {
         if(!prismarineDb.permissions.hasPermission(player, 'moderation')) return;
         uiManager.open(player, config.uinames.moderation.root)
+    })
+    form.button(`§bSidebar Editor\n§7Create custom sidebars easily`, '.azalea/Sidebar', (player) => {
+        uiManager.open(player,config.uinames.sidebarEditor.root)
     })
     form.show(player)
 })

@@ -58,8 +58,50 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.edit, 'edit button', (player, u
             uiBuilder.meta(uiID,id,'playerlist')
             uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
         })
+        form2.button(`${b.meta === 'buybutton' ? `${consts.alt}§rBuy Button` : `§rBuy Button`}\n§7Buy Button (adds settings)`, icons.resolve('vanilla/emerald'), (player) => {
+            uiBuilder.meta(uiID,id,'buybutton')
+            if(!b.buyButtonSettings) uiBuilder.buyButtonSettings(uiID,id,{price:'0',item:null,scoreboard:'money'})
+            uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
+        })
+        form2.button(`${b.meta === 'sellbutton' ? `${consts.alt}§rSell Button` : `§rSell Button`}\n§7Sell Button (adds settings)`, icons.resolve('vanilla/diamond'), (player) => {
+            uiBuilder.meta(uiID,id,'sellbutton')
+            if(!b.sellButtonSettings) uiBuilder.sellButtonSettings(uiID,id,{price:'0',item:null,scoreboard:'money'})
+            uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id);
+        })
         form2.show(player)
     })
+    if(b.meta === 'buybutton') {
+        form.button(`§aBuy Button Settings\n§7Configure buy button`, `.vanilla/emerald`, (player) => {
+            let form2 = new ModalFormData();
+            form2.title('Buy Button Settings')
+            form2.textField('Price', `Example: 50`, {defaultValue: b.buyButtonSettings.price})
+            form2.textField('Scoreboard', `Example: money`, {defaultValue: b.buyButtonSettings.scoreboard})
+            form2.textField('Item', `Example: minecraft:wheat`, {defaultValue: b.buyButtonSettings.item ?? null})
+            form2.show(player).then((res) => {
+                let [price,scoreboard,item] = res.formValues;
+                if(isNaN(+price)) return player.error('Price is not a number')
+                if(!item) item = null
+                uiBuilder.buyButtonSettings(uiID,id,{price,scoreboard,item})
+                uiManager.open(player,config.uinames.uiBuilder.buttons.edit,uiID,id)
+            })
+        })
+    }
+    if(b.meta === 'sellbutton') {
+        form.button(`§aSell Button Settings\n§7Configure sell button`, `.vanilla/diamond`, (player) => {
+            let form2 = new ModalFormData();
+            form2.title('Sell Button Settings')
+            form2.textField('Price', `Example: 50`, {defaultValue: b.sellButtonSettings.price})
+            form2.textField('Scoreboard', `Example: money`, {defaultValue: b.sellButtonSettings.scoreboard})
+            form2.textField('Item', `Example: minecraft:wheat`, {defaultValue: b.sellButtonSettings.item ?? null})
+            form2.show(player).then((res) => {
+                let [price,scoreboard,item] = res.formValues;
+                if(isNaN(+price)) return player.error('Price is not a number')
+                if(!item) item = null
+                uiBuilder.sellButtonSettings(uiID,id,{price,scoreboard,item})
+                uiManager.open(player,config.uinames.uiBuilder.buttons.edit,uiID,id)
+            })
+        })
+    }
     form.button(`§cDelete Button\n§7Delete this button`, icons.resolve(`azalea/SidebarTrash`), (player) => {
         function ye(player) {
             let id1 = uiID

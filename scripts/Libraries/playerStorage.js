@@ -68,6 +68,7 @@ class PlayerStorage {
         this.keyval = keyval;
         this.rewardsKeyval = rewardsKeyval;
         this.a();
+        this.a2()
     }
     a() {
         system.runInterval(async ()=>{

@@ -137,6 +137,24 @@ class uiBuilder {
         this.db.overwriteDataByID(uiID, doc.data);
         return newIndex;
     }
+    buyButtonSettings(uiID,id,object) {
+        let ui = this.db.getByID(uiID)
+        if(!ui) return;
+        let btn = ui.data.buttons.find(_ => _.id===id)
+        if(!btn) return;
+        btn.buyButtonSettings = object
+        this.db.overwriteDataByID(uiID, ui.data)
+        return true;
+    }
+    sellButtonSettings(uiID,id,object) {
+        let ui = this.db.getByID(uiID)
+        if(!ui) return;
+        let btn = ui.data.buttons.find(_ => _.id===id)
+        if(!btn) return;
+        btn.sellButtonSettings = object
+        this.db.overwriteDataByID(uiID, ui.data)
+        return true;
+    }
     moveButtonInUI(id, id2, direction) {
         const doc = this.getByID(id);
         if (!doc) return;

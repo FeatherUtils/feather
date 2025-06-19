@@ -32,14 +32,17 @@ uiManager.addUI(config.uinames.moderation.bans.create,'add ban cuz funny :3',(pl
             form2.textField(`Hours`, `How many hours to ban player for`)
             form2.textField(`Days`, `How many days to ban player for`)
             form2.show(player).then((res) => {
-                let [reason,se,mi,ho,da] = res.formValues;
+                let [reason,a,a2,a3,se,mi,ho,da] = res.formValues;
                 if(!reason) return player.error('Please enter a reason')
                 if(!se && !mi && !ho && !da) {
                     moderation.addBan(plr2, reason)
                     player.sendMessage(`${plr.name} was banned!`)
                     return;
                 }
-                if(isNaN(+se) || isNaN(+mi) || isNaN(+ho) || isNaN(+da)) return player.sendMessage(`One of the time fields are not a number`)
+                if(isNaN(+se)) se = '0'
+                if(isNaN(+mi)) mi = '0'
+                if(isNaN(+ho)) ho = '0'
+                if(isNaN(+da)) da = '0'
                 let date = new Date()
                 date.setSeconds(date.getSeconds() + +se)
                 date.setMinutes(date.getMinutes() + +mi)
