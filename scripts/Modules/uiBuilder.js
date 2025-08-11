@@ -156,13 +156,13 @@ class uiBuilder {
         return true;
     }
     moveButtonInUI(id, id2, direction) {
-        const doc = this.getByID(id);
-        if (!doc) return;
+        const doc = this.db.getByID(id)
+        if (!doc) return console.log('a');
         let index = doc.data.buttons.findIndex(_ => _.id === id2)
-        if (index = -1) return;
+        if (index == -1) return;
         let newIndex = direction == "up" ? index - 1 < 0 ? 0 : index - 1 : index + 1 >= doc.data.buttons.length ? doc.data.buttons.length - 1 : index + 1
         array_move(doc.data.buttons, index, newIndex);
-        this.db.overwriteDataByID(id, doc.data);
+        this.db.overwriteDataByID(doc.id, doc.data);
         return newIndex;
     }
     async removeFromFolder(id, name) {
@@ -199,6 +199,50 @@ class uiBuilder {
         doc.data.icon = icon
         this.db.overwriteDataByID(id, doc.data)
         return true;
+    }
+    addLabel(id2, text) {
+        let doc = this.db.getByID(id2)
+        if(!doc) throw new Error('Invalid ID or UI without any properties');
+        let id = Date.now();
+        doc.data.buttons.push({
+            text,
+            id,
+            type: 'label'
+        })
+        this.db.overwriteDataByID(id2,doc.data)
+        return id;
+    }
+    addDivider(id2) {
+        let doc = this.db.getByID(id2)
+        if(!doc) throw new Error('cant do that cuz no ui');
+        let id = Date.now();
+        doc.data.buttons.push({
+            id,
+            type:'divider'
+        })
+        this.db.overwriteDataByID(id2,doc.data)
+        return id;
+    }
+    editHeaderorLabel(id,id2,text) {
+        let doc = this.db.getByID(id)
+        if(!doc) throw new Error('No doc found');
+        let btn = doc.data.buttons.find(_=>_.id===id2);
+        if(!btn) throw new Error('No btn found');
+        if(btn.type == 'button') throw new Error('Item is a button, not header or label')
+        btn.text = text;
+        return btn.id;
+    }
+    addHeader(id2, text) {
+        let doc = this.db.getByID(id2)
+        if(!doc) throw new Error('Invalid ID or UI without any properties');
+        let id = Date.now();
+        doc.data.buttons.push({
+            text,
+            id,
+            type: 'header'
+        })
+        this.db.overwriteDataByID(id2,doc.data)
+        return id;
     }
     addButton(id2, text, subtext, requiredTag, icon, action) {
         let doc = this.db.getByID(id2)

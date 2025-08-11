@@ -18,9 +18,9 @@ class Homes {
         })
     }
     create(plr, name) {
-        if (this.db.findFirst({ plrid: playerStorage.getID(plr), name })) return plr.error('You have hit the maximum amount of homes. Consider deleting a home.');
+        if (this.db.findFirst({ plrid: plr.id, name })) return plr.error('You have hit the maximum amount of homes. Consider deleting a home.');
         this.db.insertDocument({
-            plrid: playerStorage.getID(plr),
+            plrid: plr.id,
             name,
             loc: { pos: plr.location, dim: plr.dimension.id },
             shares: []
@@ -28,7 +28,7 @@ class Homes {
         return true;
     }
     editName(plr, id, name) {
-        if (this.db.findFirst({ plrid: playerStorage.getID(plr), name })) return false;
+        if (this.db.findFirst({ plrid: plr.id, name })) return false;
         let home = this.db.getByID(id)
         home.data.name = name
         this.db.overwriteDataByID(id, home.data)
@@ -39,14 +39,14 @@ class Homes {
         return true;
     }
     getFromPlayer(plr) {
-        return this.db.findDocuments({ plrid: playerStorage.getID(plr) });
+        return this.db.findDocuments({ plrid: plr.id });
     }
     getSharedFromPlayer(plr) {
         let homes = [];
         let allhomes = this.db.findDocuments();
         for (const home of allhomes) {
             if(!home.data.shares) continue;
-            if (home.data.shares.find(_ => _ === playerStorage.getID(plr))) {
+            if (home.data.shares.find(_ => _ === plr.id)) {
                 home.data.shared = true
                 homes.push(home)
             }
@@ -56,7 +56,7 @@ class Homes {
     }
     share(id, target) {
         let home = this.db.getByID(id)
-        home.data.shares.push(playerStorage.getID(target))
+        home.data.shares.push(target.id)
         this.db.overwriteDataByID(id, home.data)
         return true;
     }

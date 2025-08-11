@@ -6,6 +6,8 @@ import { prismarineDb } from "../../Libraries/prismarinedb";
 import { ModalFormData } from "@minecraft/server-ui";
 import modules from "../../Modules/modules";
 import { translate } from "../../translate";
+import clans from "../../Modules/clans";
+import { world } from "@minecraft/server";
 
 uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     let form = new ActionForm();
@@ -27,6 +29,22 @@ uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
             if(crf === '') return modules.set('crf', config.info.defaultChatRankFormat), uiManager.open(player, config.uinames.config.misc);
             modules.set('crf', crf)
             uiManager.open(player, config.uinames.config.misc)
+        })
+    })
+    form.button(`§bPlatform Settings`, `.azalea/devices(little changes)`, (player) => {
+        uiManager.open(player,config.uinames.platformSettings.root)
+    })
+    form.button(`§6Clans Settings`, '.vanilla/diamond_sword', (player) => {
+        let form2 = new ModalFormData();
+        let currencyScoreboard = clans.settingsKV.get('currencyScoreboard')
+        form2.title('Clans Settings')
+        form2.textField(`Currency Scoreboard`, 'money', {defaultValue: currencyScoreboard,tooltip:'This is for the clan bank. This is the scoreboard used for money usually'})
+        form2.show(player).then((res) => {
+            let[scoreboard] = res.formValues;
+            if(!scoreboard) return player.error('Please enter a scoreboard');
+            if(!world.scoreboard.getObjective(scoreboard)) world.scoreboard.addObjective(scoreboard);
+            if(!prismarineDb.economy.getCurrencies().find(_=>_.scoreboard === scoreboard)) prismarineDb.economy.addCurrency(scoreboard, '$', scoreboard);
+            clans.settingsKV.set('currencyScoreboard', scoreboard)
         })
     })
     form.show(player)

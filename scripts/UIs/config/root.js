@@ -36,5 +36,8 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     form.button(`§bSidebar Editor\n§7Create custom sidebars easily`, '.azalea/Sidebar', (player) => {
         uiManager.open(player,config.uinames.sidebarEditor.root)
     })
+    form.button(`§eEvents\n§7Do something when an event is triggered`, '.blossom/event2', (player) => {
+        uiManager.open(player,config.uinames.events.root)
+    })
     form.show(player)
 })

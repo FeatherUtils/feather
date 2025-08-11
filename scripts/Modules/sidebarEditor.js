@@ -11,17 +11,17 @@ class SidebarEditor {
         })
     }
     run() {
-        system.runInterval(() => {
+        system.runInterval(async () => {
             for (const plr of world.getPlayers()) {
                 let sd = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)
                 if (!sd) {
                     let sd2 = this.getDefault();
                     if (!sd2) continue;
-                    let rawtext = this.parseSidebar(sd2.id, plr)
+                    let rawtext = await this.parseSidebar(sd2.id, plr)
                     plr.onScreenDisplay.setTitle(rawtext)
                     continue;
                 }
-                let rawtext = this.parseSidebar(sd.id, plr)
+                let rawtext = await this.parseSidebar(sd.id, plr)
                 plr.onScreenDisplay.setTitle(rawtext)
                 continue;
             }
@@ -105,17 +105,17 @@ class SidebarEditor {
         this.db.overwriteDataByID(sdid, sd.data)
         return true;
     }
-    parseLine(sdid, id, plr) {
+    async parseLine(sdid, id, plr) {
         let ln = this.getLine(sdid, id)
         if (!ln) return false;
-        return formatter.format(ln.text, plr);
+        return await formatter.format(ln.text, plr);
     }
-    parseSidebar(id, plr) {
+    async parseSidebar(id, plr) {
         let sd = this.get(id)
         if (!sd) return false;
         let lines = [];
         for (const ln of sd.data.lines) {
-            let ln2 = this.parseLine(sd.id, ln.id, plr)
+            let ln2 = await this.parseLine(sd.id, ln.id, plr)
             lines.push(ln2)
         }
         return lines.join(`\n§r`)

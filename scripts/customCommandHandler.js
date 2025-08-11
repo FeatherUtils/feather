@@ -1,4 +1,4 @@
-import { system } from '@minecraft/server'
+import { GameMode, system } from '@minecraft/server'
 import { CommandPermissionLevel, CustomCommandParamType, world, Player, CustomCommandStatus } from "@minecraft/server"
 import binding from './Modules/binding'
 import { transferPlayer } from "@minecraft/server-admin"
@@ -6,9 +6,61 @@ import warps from './Modules/warps'
 import uiManager from './Libraries/uiManager'
 import config from './config'
 import actionParser from './Modules/actionParser'
+import formatter from './Formatting/formatter'
 
 if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
+        init.customCommandRegistry.registerEnum('feather:gamemodetypes', ['0', '1', '2', '3', 's', 'c', 'a', 'sp', 'survival', 'creative', 'adventure', 'spectator'])
+        init.customCommandRegistry.registerCommand({
+            name: "feather:gm",
+            description: "Switch gamemode",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: 'feather:gamemodetypes',
+                    type: CustomCommandParamType.Enum
+                }
+            ],
+            optionalParameters: [
+                {
+                    name: "players",
+                    type: CustomCommandParamType.PlayerSelector
+                },
+            ]
+        }, (origin, gm, players) => {
+            system.run(() => {
+                if (players) {
+                    for (const player of players) {
+                        if (gm == '0' || gm == 's' || gm == 'survival') {
+                            player.setGameMode(GameMode.Survival)
+                        }
+                        if (gm == '1' || gm == 'c' || gm == 'creative') {
+                            player.setGameMode(GameMode.Creative)
+                        }
+                        if (gm == '2' || gm == 'a' || gm == 'adventure') {
+                            player.setGameMode(GameMode.Adventure)
+                        }
+                        if (gm == '3' || gm == 'sp' || gm == 'spectator') {
+                            player.setGameMode(GameMode.Spectator)
+                        }
+                    }
+                } else {
+                    let player = origin.sourceEntity
+                    if (gm == '0' || gm == 's' || gm == 'survival') {
+                        player.setGameMode(GameMode.Survival)
+                    }
+                    if (gm == '1' || gm == 'c' || gm == 'creative') {
+                        player.setGameMode(GameMode.Creative)
+                    }
+                    if (gm == '2' || gm == 'a' || gm == 'adventure') {
+                        player.setGameMode(GameMode.Adventure)
+                    }
+                    if (gm == '3' || gm == 'sp' || gm == 'spectator') {
+                        player.setGameMode(GameMode.Spectator)
+                    }
+                }
+            })
+        })
         init.customCommandRegistry.registerCommand({
             name: "feather:open",
             description: "Open any Feather Essentials UI",
@@ -51,7 +103,7 @@ if (system.beforeEvents.startup) {
         }, (origin, players, ip, port) => {
             system.run(() => {
                 for (const player of players) {
-                    transferPlayer(player, {hostname: ip, port:+port})
+                    transferPlayer(player, { hostname: ip, port: +port })
                 }
             })
         })
@@ -114,6 +166,97 @@ if (system.beforeEvents.startup) {
                 let dim = player.dimension.id
                 warps.add(name, player.location, dim)
                 player.success('Created successfully')
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:addft",
+            description: "Add floating text",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "text",
+                    type: CustomCommandParamType.String
+                }
+            ],
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                let overworld = world.getDimension('overworld')
+                let ft = overworld.spawnEntity('feather:floating_text', player.location)
+                ft.nameTag = name
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:killft",
+            description: "Kill floating text",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "range",
+                    type: CustomCommandParamType.Integer
+                }
+            ],
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                player.runCommand(`kill @e[type=feather:floating_text,r=${name}]`)
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:announce",
+            description: "Send a server announcement",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "text",
+                    type: CustomCommandParamType.String
+                }
+            ],
+        }, (asd, name) => {
+            system.run(async () => {
+                for (const player of world.getPlayers()) {
+                    player.sendMessage(`§b§lANNOUNCEMENT §r§7>> §r${await formatter.format(name, player)}`)
+                }
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:repeat",
+            description: "Repeat a command multiple times",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "command",
+                    type: CustomCommandParamType.String
+                },
+                {
+                    name: "amount",
+                    type: CustomCommandParamType.Integer
+                }
+            ],
+        }, (asd, cmd, int) => {
+            system.run(async () => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                for (let i = 0; i < int; i++) {
+                    actionParser.runAction(player, cmd)
+                }
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:inventorysee",
+            description: "View and take items from someone's inventory",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "player",
+                    type: CustomCommandParamType.PlayerSelector
+                }
+            ],
+        }, (asd, cmd) => {
+            system.run(async () => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                for (const user of cmd) {
+                    uiManager.open(player, config.uinames.inventorySee, user)
+                }
             })
         })
         init.customCommandRegistry.registerCommand({
@@ -183,7 +326,7 @@ if (system.beforeEvents.startup) {
                 text.push(`§8----------- §aList §r§8-----------`);
                 for (const ui of uiManager.uis) {
                     text.push(
-                        `§e${ui.id} | ${ui.altId} §r§7${ui.description ? ui.description : "No Description"
+                        `§e${ui.id} §8| §r§7${ui.description ? ui.description : "No Description"
                         }`
                     );
                 }
@@ -210,7 +353,7 @@ if (system.beforeEvents.startup) {
                 const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
                 if (!player) return;
                 await system.waitTicks(ticks)
-                actionParser.runAction(player,command)
+                actionParser.runAction(player, command)
             })
         })
     })

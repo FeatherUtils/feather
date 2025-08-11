@@ -1,12 +1,11 @@
-import { ChestFormData } from "../Libraries/ChestUI/chestUI";
-import { ModalForm } from "../Libraries/form_func";
+import { ModalForm, ActionForm } from "../Libraries/form_func";
 import { prismarineDb } from "../Libraries/prismarinedb";
 import uiManager from "../Libraries/uiManager";
-import common from "../Libraries/ChestUI/common";
 import config from "../config";
 import icons from "./icons";
 import * as _ from "./underscore";
-let rowCount = 4;
+import { consts } from "../cherryUIConsts";
+
 uiManager.addUI(
     config.uinames.basic.iconViewer,
     "Icon Viewer",
@@ -25,13 +24,7 @@ uiManager.addUI(
             let recentlyUsed = pdbTable.has("RecentlyUsed")
                 ? pdbTable.get("RecentlyUsed")
                 : [];
-// give me terminal access uwu
-// fuck no
-// plssssssss
-// ur going to turn my pc into hitlerOS
-// i promise i wont
-// there
-// ip and port: november-radar.gl.at.ply.gg:4462
+
             if (iconIDSearch) {
                 let modalForm = new ModalForm();
                 modalForm.textField(
@@ -40,7 +33,8 @@ uiManager.addUI(
                     defaultIconID
                 );
                 modalForm.title(
-                    iconIDSearchError ? "§cIcon not found" : "Input Icon ID"
+                    `${consts.tag}${iconIDSearchError ? "§cIcon not found" : "Input Icon ID"
+                    }`
                 );
                 modalForm.show(player, false, function (player, response) {
                     if (response.canceled)
@@ -72,24 +66,28 @@ uiManager.addUI(
                 });
                 return;
             }
-            let keys = Array.from(icons.icons.keys());
-            if (favoritedOnly == true)
-                keys = keys.filter((_) => player.hasTag(`favorited-icon:${_}`));
 
-            if (favoritedOnly == "RECENTLY_USED")
+            let keys = Array.from(icons.icons.keys());
+            if (favoritedOnly === true) {
+                keys = keys.filter((_) => player.hasTag(`favorited-icon:${_}`));
+            }
+
+            if (favoritedOnly === "RECENTLY_USED") {
                 keys = recentlyUsed.filter((_) =>
                     Array.from(icons.icons.keys()).includes(_)
                 );
-            let tags = player
-                .getTags()
-                .filter((_) => _.startsWith(`favorited-icon:`));
-            let icons_ = _.chunk(keys, rowCount * 9);
+            }
+
+            let iconsPerPage = 25;
+            let icons_ = _.chunk(keys, iconsPerPage);
+            let totalPages = icons_.length ? icons_.length : 1;
+
             if (typeof page !== "number") {
                 if (page === "PAGE_SELECT") {
                     let modalForm = new ModalForm();
-                    modalForm.title("Page Select");
+                    modalForm.title(`${consts.tag}Page Select`);
                     modalForm.textField(
-                        `Page Number (Max: ${icons_.length}, Min: 1)`,
+                        `Page Number (Max: ${totalPages}, Min: 1)`,
                         `Example: 5`,
                         undefined
                     );
@@ -108,7 +106,7 @@ uiManager.addUI(
                             response.formValues.length &&
                             /^\d+$/.test(response.formValues[0]) &&
                             parseInt(response.formValues[0]) > 0 &&
-                            parseInt(response.formValues[0]) <= icons_.length
+                            parseInt(response.formValues[0]) <= totalPages
                         ) {
                             uiManager.open(
                                 player,
@@ -130,82 +128,66 @@ uiManager.addUI(
                     return;
                 }
             }
-            let icons2 = icons_.length ? icons_[page] : [];
-            let chest = new ChestFormData((9 * 5).toString());
-            chest.title(
-                `${
-                    favoritedOnly == true
-                        ? "Favorited Icons"
-                        : favoritedOnly == "RECENTLY_USED"
+
+            let currentIcons = icons_.length ? icons_[page] : [];
+            let form = new ActionForm();
+            form.title(
+                `${consts.tag}${favoritedOnly === true
+                    ? "Favorited Icons"
+                    : favoritedOnly === "RECENTLY_USED"
                         ? "Recently Used"
                         : "Icon Viewer"
-                } (Page ${page + 1}/${
-                    icons_ && icons_.length ? icons_.length : 1
-                })`
+                } (Page ${page + 1}/${totalPages})`
             );
-            for (let i = 0; i < 9 * 5; i++) {
-                chest.button(
-                    i,
-                    `§cX`,
-                    [],
-                    `textures/blocks/tinted_glass`,
-                    1,
-                    false,
-                    () => {
+            for (let i = 0; i < currentIcons.length; i++) {
+                let iconID = currentIcons[i];
+                let iconData = icons.getIconData(iconID);
+                let buttonText =
+                    iconData && iconData.name ? iconData.name : iconID;
+                let iconPath = icons.resolve(iconID);
+
+                if (i % 2 === 0) {
+                    buttonText = `${consts.right}${buttonText}`;
+                } else {
+                    if (i === currentIcons.length && currentIcons.length % 2 != 0) {
+                        buttonText = `${consts.left}${buttonText}`;
+                    } else {
+                        buttonText = `${consts.disablevertical}${consts.left}${buttonText}`;
+                    }
+                }
+                /*
+                `${
+                                    i == ids_sliced.length && ids_sliced.length % 2 != 0
+                                        ? ``
+                                        : i % 2 != 0
+                                        ? `${NUT_UI_RIGHT_HALF}${NUT_UI_DISABLE_VERTICAL_SIZE_KEY}`
+                                        : `${NUT_UI_LEFT_HALF}`
+                                }§r${ids_online.includes(id) ? "§a" : "§v"}${
+                                    player.name
+                                }\n§r§7${
+                                    ids_online.includes(id) ? "Online Player" : "Offline Player"
+                                }`
+                */
+                form.button(buttonText, iconPath, () => {
+                    let actionsForm = new ActionForm();
+                    actionsForm.title(`${consts.tag}${iconID} actions`);
+
+                    actionsForm.button("§cGo Back", "textures/blocks/barrier", () => {
                         uiManager.open(
                             player,
                             config.uinames.basic.iconViewer,
                             page,
                             callbackFn,
-                            favoritedOnly,
-                            iconIDSearch,
-                            iconIDSearchError,
-                            defaultIconID
+                            favoritedOnly
                         );
-                    }
-                );
-            }
-            for (let i = 0; i < icons2.length; i++) {
-                let iconData = icons.getIconData(icons2[i]);
-                let lore = [];
-                if (iconData && iconData.name) {
-                    lore.push(`§8${icons2[i]}`);
-                }
-                chest.button(
-                    i,
-                    iconData && iconData.name ? iconData.name : icons2[i],
-                    lore,
-                    icons.resolve(icons2[i]),
-                    favoritedOnly
-                        ? 1
-                        : player.hasTag(`favorited-icon:${icons2[i]}`)
-                        ? 2
-                        : 1,
-                    false,
-                    () => {
-                        let hopper = new ChestFormData("27");
-                        hopper.title(`${icons2[i]} actions`);
-                        for (let i = 0; i < 27; i++) {
-                            hopper.button(
-                                i,
-                                `§cX`,
-                                [],
-                                `textures/blocks/glass_gray`,
-                                1,
-                                false,
-                                () => {
-                                    hopper.show(player).then((res) => {});
-                                }
-                            );
-                        }
-                        hopper.button(
-                            common.rowColToSlotId(2, 2),
-                            "§cGo Back",
-                            ["Go back to the previous page"],
-                            "textures/blocks/barrier",
-                            1,
-                            false,
+                    });
+
+                    if (player.hasTag(`favorited-icon:${iconID}`)) {
+                        actionsForm.button(
+                            "§eUnfavorite",
+                            "textures/ui/sidebar_icons/star",
                             () => {
+                                player.removeTag(`favorited-icon:${iconID}`);
                                 uiManager.open(
                                     player,
                                     config.uinames.basic.iconViewer,
@@ -215,126 +197,97 @@ uiManager.addUI(
                                 );
                             }
                         );
-                        if (player.hasTag(`favorited-icon:${icons2[i]}`)) {
-                            hopper.button(
-                                common.rowColToSlotId(2, 8),
-                                "§eUnfavorite",
-                                ["Unfavorite this icon"],
-                                "textures/ui/sidebar_icons/star",
-                                1,
-                                false,
-                                () => {
-                                    player.removeTag(
-                                        `favorited-icon:${icons2[i]}`
-                                    );
-                                    uiManager.open(
-                                        player,
-                                        config.uinames.basic.iconViewer,
-                                        page,
-                                        callbackFn,
-                                        favoritedOnly
-                                    );
-                                }
-                            );
-                        } else {
-                            hopper.button(
-                                common.rowColToSlotId(2, 8),
-                                "§eAdd to favorites",
-                                ["Favorite this icon"],
-                                "textures/ui/sidebar_icons/star",
-                                1,
-                                false,
-                                () => {
-                                    player.addTag(
-                                        `favorited-icon:${icons2[i]}`
-                                    );
-                                    uiManager.open(
-                                        player,
-                                        config.uinames.basic.iconViewer,
-                                        page,
-                                        callbackFn,
-                                        favoritedOnly
-                                    );
-                                }
-                            );
-                        }
-                        if (callbackFn) {
-                            hopper.button(
-                                common.rowColToSlotId(2, 5),
-                                "§dUse",
-                                ["Use this icon"],
-                                "textures/ui/check.png",
-                                1,
-                                false,
-                                () => {
-                                    recentlyUsed.unshift(icons2[i]);
-                                    recentlyUsed = recentlyUsed.slice(0, 45);
-                                    pdbTable.set("RecentlyUsed", recentlyUsed);
-                                    callbackFn(player, icons2[i]);
-                                }
-                            );
-                        }
-                        hopper.show(player).then((res) => {});
-                        // if(callbackFn) {
-                        //     return callbackFn(player, icons2[i]);
-                        // }
-                        // if(player.hasTag(`favorited-icon:${icons2[i]}`)) {
-                        //     player.removeTag(`favorited-icon:${icons2[i]}`)
-                        // } else {
-                        //     player.addTag(`favorited-icon:${icons2[i]}`);
-                        // }
-                        // uiManager.open(player, config.uiNames.IconViewer, page, callbackFn, favoritedOnly);
-                    }
-                );
-            }
-            for (let i = 0; i < 9; i++) {
-                chest.button(
-                    9 * rowCount + i,
-                    "§cX",
-                    [],
-                    "textures/blocks/glass_gray",
-                    1,
-                    false,
-                    () => {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            page,
-                            callbackFn,
-                            favoritedOnly,
-                            iconIDSearch,
-                            iconIDSearchError,
-                            defaultIconID
+                    } else {
+                        actionsForm.button(
+                            "§eAdd to favorites",
+                            "textures/ui/sidebar_icons/star",
+                            () => {
+                                player.addTag(`favorited-icon:${iconID}`);
+                                uiManager.open(
+                                    player,
+                                    config.uinames.basic.iconViewer,
+                                    page,
+                                    callbackFn,
+                                    favoritedOnly
+                                );
+                            }
                         );
                     }
-                );
+
+                    if (callbackFn) {
+                        actionsForm.button(
+                            "§dUse",
+                            "textures/ui/check.png",
+                            () => {
+                                recentlyUsed.unshift(iconID);
+                                recentlyUsed = recentlyUsed.slice(0, 45);
+                                pdbTable.set("RecentlyUsed", recentlyUsed);
+                                callbackFn(player, iconID);
+                            }
+                        );
+                    }
+                    actionsForm.show(player);
+                });
             }
-            // chest.button(9 * 5, "§cBack", ["Go back 1 page"], "textures/ui/arrow_left.png", 1, false, ()=>{
-            chest.button(
-                9 * rowCount,
-                "§cBack",
-                ["Go back 1 page"],
-                "textures/blocks/glass_red",
-                1,
-                false,
-                () => {
-                    let prevPage = page - 1 < 0 ? icons_.length - 1 : page - 1;
-                    uiManager.open(
-                        player,
-                        config.uinames.basic.iconViewer,
-                        prevPage,
-                        callbackFn,
-                        favoritedOnly
-                    );
-                }
-            );
-            chest.button(
-                callbackFn ? 9 * rowCount + 3 : 9 * rowCount + 3,
-                "§dGo to page",
-                ["Select a page to go to"],
+
+            let baseNavButtonsCount = 3;
+            let totalNavButtons = baseNavButtonsCount;
+            if (player.getTags().filter((_) => _.startsWith(`favorited-icon:`)).length > 0) {
+                totalNavButtons++;
+            }
+            if (favoritedOnly === "RECENTLY_USED" || favoritedOnly === true) {
+                totalNavButtons++;
+            }
+            if (callbackFn) {
+                totalNavButtons += 4;
+            }
+
+            let backButtonText = "§cBack (Page " + (page === 0 ? totalPages : page) + ")";
+
+            let backButtonIndex = currentIcons.length;
+            if (backButtonIndex % 2 === 0) {
+                backButtonText = `${consts.right}${backButtonText}`;
+            } else {
+                backButtonText = `${consts.disablevertical}${consts.left}${backButtonText}`;
+            }
+            form.button(backButtonText, "textures/ui/arrow_left", () => {
+                let prevPage = page - 1 < 0 ? totalPages - 1 : page - 1;
+                uiManager.open(
+                    player,
+                    config.uinames.basic.iconViewer,
+                    prevPage,
+                    callbackFn,
+                    favoritedOnly
+                );
+            });
+            let nextButtonText = "§aNext (Page " + (page + 2 > totalPages ? 1 : page + 2) + ")";
+            let nextButtonIndex = currentIcons.length + 1;
+            if (nextButtonIndex % 2 === 0) {
+                nextButtonText = `${consts.right}${nextButtonText}`;
+            } else {
+                nextButtonText = `${consts.disablevertical}${consts.left}${nextButtonText}`;
+            }
+            form.button(nextButtonText, "textures/ui/arrow_right", () => {
+                let nextPage = page + 1 >= totalPages ? 0 : page + 1;
+                uiManager.open(
+                    player,
+                    config.uinames.basic.iconViewer,
+                    nextPage,
+                    callbackFn,
+                    favoritedOnly
+                );
+            });
+
+            let goToPageButtonText = "§dGo to page";
+            let goToPageButtonIndex = currentIcons.length + 2;
+            if (goToPageButtonIndex % 2 === 0) {
+                goToPageButtonText = `${consts.right}${goToPageButtonText}`;
+            } else {
+                goToPageButtonText = `${consts.disablevertical}${consts.left}${goToPageButtonText}`;
+            }
+            form.button(
+                goToPageButtonText,
                 "textures/items/compass_item",
-                1,
-                false,
                 () => {
                     uiManager.open(
                         player,
@@ -345,83 +298,21 @@ uiManager.addUI(
                     );
                 }
             );
-            // chest.button((9 * 5) + 1, "§dFirst page", ["Go to the first page"], "textures/blocks/glass_light_blue", 1, false, ()=>{
-            //     uiManager.open(player, config.uiNames.IconViewer, 0, callbackFn, favoritedOnly);
-            // });
-            // chest.button((9 * 5) + 7, "§dLast page", ["Go to the last page"], "textures/blocks/glass_light_blue", 1, false, ()=>{
-            //     uiManager.open(player, config.uiNames.IconViewer, icons_.length - 1, callbackFn, favoritedOnly);
-            // });
-            if (callbackFn) {
-                chest.button(
-                    9 * rowCount + 1,
-                    "§cCancel",
-                    ["Cancel"],
-                    "textures/ui/cancel",
-                    1,
-                    false,
-                    () => {
-                        callbackFn(player, null);
-                    }
-                );
 
-                chest.button(
-                    9 * rowCount + 2,
-                    "§dUse Icon ID",
-                    ["Manually input an icon ID"],
-                    "textures/items/spyglass",
-                    1,
-                    false,
-                    () => {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            0,
-                            callbackFn,
-                            favoritedOnly,
-                            true
-                        );
-                    }
-                );
-                chest.button(
-                    9 * rowCount + 6,
-                    "§eRecently Used",
-                    ["View recently used icons"],
-                    "textures/items/clock_item",
-                    1,
-                    false,
-                    () => {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            0,
-                            callbackFn,
-                            favoritedOnly == "RECENTLY_USED" ||
-                                favoritedOnly == true
-                                ? false
-                                : "RECENTLY_USED"
-                        );
-                    }
-                );
-                chest.button(
-                    9 * rowCount + 7,
-                    "§cRemove Icon",
-                    ["Remove the icon"],
-                    "textures/ui/icon_trash",
-                    1,
-                    false,
-                    () => {
-                        callbackFn(player, "");
-                    }
-                );
-                // textures/ui/icon_trash.png
+            let tags = player
+                .getTags()
+                .filter((_) => _.startsWith(`favorited-icon:`));
+
+            let favoritesButtonText = "§6Favorites (" + tags.length + ")";
+            let favoritesButtonIndex = currentIcons.length + 3;
+            if (favoritesButtonIndex % 2 === 0) {
+                favoritesButtonText = `${consts.right}${favoritesButtonText}`;
+            } else {
+                favoritesButtonText = `${consts.disablevertical}${consts.left}${favoritesButtonText}`;
             }
-            chest.button(
-                9 * rowCount + 4,
-                "§6Favorites",
-                ["Favorited icons"],
+            form.button(
+                favoritesButtonText,
                 "textures/ui/sidebar_icons/star",
-                tags.length,
-                false,
                 () => {
                     uiManager.open(
                         player,
@@ -432,19 +323,29 @@ uiManager.addUI(
                     );
                 }
             );
-            chest.button(
-                callbackFn ? 9 * rowCount + 5 : 9 * rowCount + 5,
-                favoritedOnly == "RECENTLY_USED"
-                    ? "§dClear Recently Used"
-                    : "§cClear Favorites",
-                favoritedOnly == "RECENTLY_USED"
-                    ? ["Clear icons you have recently used"]
-                    : ["Clear all the icons you have favorited"],
+
+            let clearButtonText =
+                favoritedOnly === "RECENTLY_USED"
+                    ? "§eClear Recently Used"
+                    : "§cClear Favorites";
+            let clearButtonIndex = currentIcons.length + 4;
+            const isLastNavButton =
+                !callbackFn && clearButtonIndex === currentIcons.length + totalNavButtons - 1;
+
+            if (clearButtonIndex % 2 === 0) {
+                clearButtonText = `${consts.right}${clearButtonText}`;
+            } else {
+                if (isLastNavButton) {
+                    clearButtonText = `${consts.left}${clearButtonText}`;
+                } else {
+                    clearButtonText = `${consts.disablevertical}${consts.left}${clearButtonText}`;
+                }
+            }
+            form.button(
+                clearButtonText,
                 "textures/blocks/barrier",
-                1,
-                false,
                 () => {
-                    if (favoritedOnly == "RECENTLY_USED") {
+                    if (favoritedOnly === "RECENTLY_USED") {
                         pdbTable.set("RecentlyUsed", []);
                         uiManager.open(
                             player,
@@ -475,38 +376,80 @@ uiManager.addUI(
                 }
             );
 
-            // chest.button((9 * 5) + 8, "§aNext", ["Go next 1 page"], "textures/ui/arrow_right.png", 1, false, ()=>{
-            chest.button(
-                9 * rowCount + 8,
-                "§aNext",
-                ["Go next 1 page"],
-                "textures/blocks/glass_lime",
-                1,
-                false,
-                () => {
-                    try {
-                        let nextPage = page + 1 >= icons_.length ? 0 : page + 1;
-                        // console.warn(nextPage);
+            if (callbackFn) {
+                let cancelButtonText = "§cCancel";
+                let cancelButtonIndex = currentIcons.length + 5;
+                if (cancelButtonIndex % 2 === 0) {
+                    cancelButtonText = `${consts.right}${cancelButtonText}`;
+                } else {
+                    cancelButtonText = `${consts.disablevertical}${consts.left}${cancelButtonText}`;
+                }
+                form.button(cancelButtonText, "textures/ui/cancel", () => {
+                    callbackFn(player, null);
+                });
+                let useIconIDButtonText = "§dUse Icon ID";
+                let useIconIDButtonIndex = currentIcons.length + 6;
+                if (useIconIDButtonIndex % 2 === 0) {
+                    useIconIDButtonText = `${consts.right}${useIconIDButtonText}`;
+                } else {
+                    useIconIDButtonText = `${consts.disablevertical}${consts.left}${useIconIDButtonText}`;
+                }
+                form.button(
+                    useIconIDButtonText,
+                    "textures/items/spyglass",
+                    () => {
                         uiManager.open(
                             player,
                             config.uinames.basic.iconViewer,
-                            nextPage,
+                            0,
                             callbackFn,
-                            favoritedOnly
+                            favoritedOnly,
+                            true
                         );
-                    } catch (e) {
-                        // console.warn(e);
                     }
+                );
+                let recentlyUsedButtonText = "§eRecently Used";
+                let recentlyUsedButtonIndex = currentIcons.length + 7;
+                if (recentlyUsedButtonIndex % 2 === 0) {
+                    recentlyUsedButtonText = `${consts.right}${recentlyUsedButtonText}`;
+                } else {
+                    recentlyUsedButtonText = `${consts.disablevertical}${consts.left}${recentlyUsedButtonText}`;
                 }
-            );
-            // chest.range((9 * 5) + 1, (9 * 5) + 7, (loopIndex, slotID)=>{
-            //     chest.button(slotID, "§cX", [], "textures/blocks/gray_glass", 1, false, ()=>{
-            //         uiManager.open(player, config.uiNames.IconViewer, page, callbackFn, favoritedOnly);
-            //     });
-            // })
-            chest.show(player);
+                form.button(
+                    recentlyUsedButtonText,
+                    "textures/items/clock_item",
+                    () => {
+                        uiManager.open(
+                            player,
+                            config.uinames.basic.iconViewer,
+                            0,
+                            callbackFn,
+                            favoritedOnly === "RECENTLY_USED" ||
+                                favoritedOnly === true
+                                ? false
+                                : "RECENTLY_USED"
+                        );
+                    }
+                );
+                let removeIconButtonText = "§cRemove Icon";
+                let removeIconButtonIndex = currentIcons.length + 8;
+                if (removeIconButtonIndex % 2 === 0) {
+                    removeIconButtonText = `${consts.right}${removeIconButtonText}`;
+                } else {
+                    removeIconButtonText = `${consts.left}${removeIconButtonText}`;
+                }
+                form.button(
+                    removeIconButtonText,
+                    "textures/ui/icon_trash",
+                    () => {
+                        callbackFn(player, "");
+                    }
+                );
+            }
+
+            form.show(player);
         } catch (e) {
-            // console.warn(e);
+            console.warn(e, e.stack);
         }
     }
 );

@@ -1,18 +1,6 @@
-/*
-5
-
-December 10, 2025:
-
-It has nearly been a full year. Trashy still hasnt let us out. We are starting to enjoy the frozen milk, and sometimes she gives us ice cream.
-
-Maybe it isnt so bad here, theres tons of miku plushies here too.
-*/
-
 class Icons {
     constructor() {
-        this.icons = new Map([
-            ["vanilla/iron_sword", "textures/items/iron_sword"]
-        ]);
+        this.icons = new Map();
         this.iconData = new Map();
     }
     install(pack, ignoreNamespace = false) {

@@ -1,4 +1,5 @@
 import { world, system, ScriptEventSource, Player } from '@minecraft/server'
+import events from './Modules/events'
 import './UIs/index'
 import { prismarineDb } from './Libraries/prismarinedb'
 import './Networking/currentNetworkingLib'
@@ -33,6 +34,13 @@ system.run(() => {
     prismarineDb.permissions.setAdmin('admin', true)
 })
 
+world.afterEvents.playerSpawn.subscribe(e => {
+    const ban = moderation.Database.findFirst({type:'BAN',id:e.player.id})
+    if(ban) {
+        world.getDimension('minecraft:overworld').runCommand(`kick "${e.player.name}" You are banned for ${moment(ban.data.time).fromNow()}.\nReason:\n${ban}`)
+    }
+})
+
 world.beforeEvents.itemUse.subscribe(e => {
     for (const bind of binding.db.findDocuments()) {
         if (bind.data.typeID == e.itemStack.typeId) {
@@ -48,9 +56,9 @@ world.beforeEvents.itemUse.subscribe(e => {
     });
 });
 
-system.runInterval(() => {
+system.runInterval(async () => {
     for (const plr of world.getPlayers()) {
-        plr.nameTag = `${formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
+        plr.nameTag = `${await formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
     }
 }, 20)
 
@@ -87,9 +95,8 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
 })
 
 world.beforeEvents.chatSend.subscribe(e => {
-    if (e.message.startsWith('.')) return;
     if (!modules.get('cr')) {
-        let mute = moderation.Database.findFirst({ type: 'MUTE', player: playerStorage.getID(e.sender) })
+        let mute = moderation.Database.findFirst({ type: 'MUTE', player: e.sender.id })
         if (mute) return e.sender.sendMessage(`§cYou have been §4muted! §eReason: ${mute.data.reason}. Expires ${mute.data.time ? moment(mute.data.time).fromNow() : 'in forever'}`), e.cancel = true;
         return;
     }

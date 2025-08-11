@@ -3,6 +3,7 @@ import emojis from './emojis'
 import ranks from "../Modules/ranks";
 import { getTPS } from "./format/tps";
 import { getPlayers } from "./format/online";
+import events from "../Modules/events";
 
 class BlossomFormatting {
     #vars;
@@ -23,7 +24,7 @@ class BlossomFormatting {
     getName(player) {
         return player.name
     }
-    format(text, player, msg = undefined) {
+    async format(text, player, msg = undefined) {
         function extractBracketValue(line) {
             if (typeof line === 'string') {
                 const match = line.match(/{{(.*?)}}/);
@@ -31,14 +32,14 @@ class BlossomFormatting {
             }
             return null;
         }
-    
+
         let value = extractBracketValue(text);
         let newLine = text;
-    
+
         let rs = ranks.getRanks(player);
         let rns = [];
         let nc, cc, bc;
-    
+
         for (const r of rs) {
             rns.push(r.name);
         }
@@ -49,14 +50,13 @@ class BlossomFormatting {
             nc = r.nc;
             cc = r.cc;
             bc = r.bc;
-            break;
         }
         this.#vars.nc = () => nc;
         this.#vars.cc = () => cc;
         this.#vars.bc = () => bc;
 
         this.#vars.arrow = () => '»'
-    
+
         this.#vars.player = this.getName;
         this.#vars.name = this.getName;
         this.#vars.username = this.getName;
@@ -72,7 +72,7 @@ class BlossomFormatting {
             }
         }
         let msg2 = msg;
-        if (typeof msg2 === "string" && msg2.includes(':')) {  
+        if (typeof msg2 === "string" && msg2.includes(':')) {
             let emojisUsedMsg = msg2.match(/:([a-z0-9_-]+):/g) || [];
             for (const emoji of emojisUsedMsg) {
                 let emojiKey = emoji.substring(1, emoji.length - 1);
@@ -81,9 +81,21 @@ class BlossomFormatting {
                 }
             }
         }
-    
+
+        if (newLine.includes("<event_rng:")) {
+            const matches = [...newLine.matchAll(/<event_rng:([^>]+)>/g)];
+
+            for (const match of matches) {
+                const fullMatch = match[0];
+                const key = match[1];
+                const value = await events.randomNumberKeyval.get(key) ?? fullMatch;
+                newLine = newLine.replace(fullMatch, value);
+            }
+        }
+
+
         this.#vars.msg = () => msg2;
-    
+
         if (text.includes("{{joined_ranks}}")) {
             newLine = newLine.replaceAll("{{joined_ranks}}", rns.join(`§r${bc}] [§r`));
         }
@@ -95,17 +107,17 @@ class BlossomFormatting {
             let score = obj.hasParticipant(player) ? obj.getScore(player.scoreboardIdentity) : 0;
             newLine = newLine.replaceAll(`{{${obj.id}}}`, score);
         }
-    
+
         newLine = newLine.replaceAll(/{{(?!vars)(.*?)}}/g, 0);
         for (const variable in this.#vars) {
             if (text.includes(`<${variable}>`)) {
                 newLine = newLine.replaceAll(`<${variable}>`, this.#vars[variable](player));
             }
         }
-    
+
         return newLine;
     }
-    
+
 
 
 

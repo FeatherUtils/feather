@@ -63,6 +63,22 @@ export default {
                 create: 'mutes_create | Mutes/Create'
             }
         },
+        clans: {
+            create: 'clans_create',
+            public: 'clans_public',
+            root: 'clans_root',
+            viewMember: 'clans_viewmember',
+            viewMembers: 'clans_viewmembers',
+            bank: 'clans_bank',
+            settings: 'clans_settings',
+            adminSettings: 'admin_settings'
+        },
+        events: {
+            root: 'ev | EV',
+            add: 'ev_add | EV/Add',
+            edit: 'ev_edit | EV/Edit',
+            editactions: 'ev_editactions | EV/EditActions'
+        }, 
         sidebarEditor: {
             create: 'se_create | SE/Create',
             root: 'se | SE',
@@ -94,13 +110,18 @@ export default {
             folders: {
                 view: "uibuilder_folders_view | UIBuilder/Folders/View"
             }
+        },
+        inventorySee: 'invsee | InventorySee',
+        platformSettings: {
+            root: 'pfst_root | PlatformSettings/Root',
+            whitelist: 'pfst_whitelist | PlatformSettings/Whitelist'
         }
     },
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
         release: 'DEV',
-        version: [0, 1],
+        version: [0, 3],
         versionString() {
             return `${this.release} ${this.version.join('.')}`;
         },

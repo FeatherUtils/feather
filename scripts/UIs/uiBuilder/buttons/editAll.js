@@ -19,24 +19,24 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.editall, 'edit all buttons', (p
         pre = `${consts.themed}${u.theme}` + pre + `§r`
     }
     form.title(`${pre}${u.name}`)
-    form.body(`Welcome to the §l§fVIEW BUTTONS MENU\n§r§dEdit buttons under here!`)
+    form.body(`Welcome to the §l§fVIEW ITEMS MENU\n§r§dEdit items under here!`)
     if(u.layout == 4) {
         form.button(`${consts.disablevertical}${consts.left}§cBack\n§7Go back to UI`, icons.resolve('azalea/2'), (player)=>{
             uiManager.open(player,config.uinames.uiBuilder.edit,uiID)
         })
-        form.button(`${consts.right}§aCreate\n§7Create a button`, icons.resolve('azalea/1'), (player)=>{
+        form.button(`${consts.right}§aCreate\n§7Create an item`, icons.resolve('azalea/1'), (player)=>{
             uiManager.open(player,config.uinames.uiBuilder.buttons.create,uiID)
         })
     } else {
         form.button(`§cBack\n§7Go back to UI`, icons.resolve('azalea/2'), (player)=>{
             uiManager.open(player,config.uinames.uiBuilder.edit,uiID)
         })
-        form.button(`§aCreate\n§7Create a button`, icons.resolve('azalea/1'), (player)=>{
+        form.button(`§aCreate\n§7Create an item`, icons.resolve('azalea/1'), (player)=>{
             uiManager.open(player,config.uinames.uiBuilder.buttons.create,uiID)
         })
     }
     for(const button of u.buttons) {
-        form.button(`${button.text}${button.subtext ? `\n§r§7${button.subtext}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player)=>{
+        form.button(`${button.text ? button.text : ''}${button.subtext ? `\n§r§7${button.subtext}` : `\n§7${button.type}`}`, button.icon ? icons.resolve(button.icon) : null, (player)=>{
             uiManager.open(player,config.uinames.uiBuilder.buttons.edit,uiID,button.id)
         })
     }

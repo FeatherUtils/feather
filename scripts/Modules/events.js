@@ -1,0 +1,172 @@
+import { system, world } from "@minecraft/server";
+import { prismarineDb } from "../Libraries/prismarinedb";
+import actionParser from "./actionParser";
+import formatter from "../Formatting/formatter";
+
+class Events {
+    constructor() {
+        system.run(async () => {
+            this.db = prismarineDb.table(`FTR:EVENTS`)
+            this.allowedTypes = ['KILL', 'DEATH', 'JOIN', 'CHAT', 'RANDOMNUMBER', 'BREAKBLOCK', 'PLACEBLOCK']
+            this.allowedActionTypes = ['DEATH', 'KILL', 'JOIN', 'CHAT', 'BREAKBLOCK', 'PLACEBLOCK']
+            this.allowedManualTriggers = ['RANDOMNUMBER']
+            this.randomNumberKeyval = await this.db.keyval('randomnumbers')
+            function random(min, max) {
+                const minCeiled = Math.ceil(min);
+                const maxFloored = Math.floor(max);
+                return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+            }
+            async function runAction(plr, ac) {
+                return actionParser.runAction(plr, await formatter.format(ac, plr))
+            }
+            world.afterEvents.entityDie.subscribe(e => {
+                if (e.damageSource.damagingEntity) {
+                    if (e.damageSource.damagingEntity?.typeId === 'minecraft:player') {
+                        if (e.deadEntity.typeId === 'minecraft:player') {
+                            for (const ev of this.db.findDocuments({ type: 'KILL' })) {
+                                for (const ac of ev.data.actions) {
+                                    runAction(e.damageSource.damagingEntity, ac.action)
+                                }
+                            }
+                        }
+                    }
+                }
+                if (e.deadEntity.typeId === 'minecraft:player') {
+                    for (const ev of this.db.findDocuments({ type: 'DEATH' })) {
+                        for (const ac of ev.data.actions) {
+                            runAction(e.deadEntity, ac.action)
+                        }
+                    }
+                }
+            })
+            system.afterEvents.scriptEventReceive.subscribe(async e => {
+                if (e.id == 'feather:trigger_event') {
+                    let ev = this.db.findFirst({ identifier: e.message })
+                    if (!ev) return console.log('no event found');
+                    if (!this.allowedManualTriggers.find(_ => _ === ev.data.type)) return e.sourceEntity.error('This event does not support manual triggers');
+                    if (ev.data.type == 'RANDOMNUMBER') {
+                        if (!ev.data.settings) return console.log('RNG Settings have not been configured or are malformed');
+                        let number = random(ev.data.settings.startingNumber, ev.data.settings.endingNumber)
+                        await this.randomNumberKeyval.set(ev.data.identifier, number)
+                    }
+                }
+            })
+            world.beforeEvents.chatSend.subscribe(async e => {
+                let chatevents = this.db.findDocuments({ type: 'CHAT' })
+                for (const ev of chatevents) {
+                    if (!ev.data.settings) continue;
+                    if (await formatter.format(ev.data.settings?.message, e.sender) == e.message) {
+                        if (ev.data.settings?.cancel == true) e.cancel = true;
+                        if (ev.data.settings.closeChat) {
+                            const player = e.sender
+                            player.success("Close chat and move to open UI.");
+
+                            let ticks = 0;
+                            let initialLocation = { x: player.location.x, y: player.location.y, z: player.location.z };
+
+                            let interval = system.runInterval(() => {
+                                ticks++;
+
+                                if (ticks >= (20 * 10)) {
+                                    system.clearRun(interval);
+                                    player.error("Timed out. You didn't move!");
+                                }
+
+                                if (player.location.x !== initialLocation.x ||
+                                    player.location.y !== initialLocation.y ||
+                                    player.location.z !== initialLocation.z) {
+
+                                    system.clearRun(interval);
+                                    for (const ac of ev.data.actions) {
+                                        runAction(e.sender, ac.action)
+                                    }
+                                }
+                            }, 1);
+                        } else {
+                            for (const ac of ev.data.actions) {
+                                runAction(e.sender, ac.action)
+                            }
+                        }
+                    }
+                }
+            })
+            world.beforeEvents.playerBreakBlock.subscribe(async e => {
+                for (const ev of this.db.findDocuments({ type: 'BREAKBLOCK' })) {       
+                    if (ev.data.settings?.block == e.block.typeId || ev.data.settings?.block == 'ALL' || !ev.data.settings) {
+                        for (const ac of ev.data.actions) {
+                            runAction(e.player,ac.action.replaceAll('<typeID>', e.block.typeId))
+                        }
+                    }
+                }
+            })
+            world.afterEvents.playerPlaceBlock.subscribe(async e => {
+                for (const ev of this.db.findDocuments({ type: 'PLACEBLOCK' })) {
+                    if (ev.data.settings?.block == e.block.typeId || ev.data.settings?.block == 'ALL' || !ev.data.settings) {
+                        for (const ac of ev.data.actions) {
+                            runAction(e.player,ac.action.replaceAll('<typeID>', e.block.typeId))
+                        }
+                    }
+                }
+            })
+            world.afterEvents.playerSpawn.subscribe(e => {
+                for (const ev of this.db.findDocuments({ type: 'JOIN' })) {
+                    for (const ac of ev.data.actions) {
+                        if (e.initialSpawn == true) {
+                            runAction(e.player, ac.action)
+                        }
+                    }
+                }
+            })
+        })
+    }
+    add(identifier, type, settings = null) {
+        if (this.db.findFirst({ identifier })) return false;
+        if (!this.allowedTypes.find(_ => _ === type)) return false;
+        this.db.insertDocument({
+            identifier,
+            type,
+            actions: []
+        })
+        return true;
+    }
+    editSettings(id, settings) {
+        let ev = this.db.getByID(id)
+        if (!ev) return false;
+        ev.data.settings = settings
+        this.db.overwriteDataByID(id, ev.data)
+        return true;
+    }
+    remove(id) {
+        this.db.deleteDocumentByID(id)
+    }
+    addAction(eventID, action, type) {
+        let event = this.db.getByID(eventID);
+        if (!this.allowedActionTypes.find(_ => _ === type)) return false;
+        event.data.actions.push({
+            action,
+            type,
+            id: Date.now()
+        })
+        this.db.overwriteDataByID(event.id, event.data)
+        return true;
+    }
+    editAction(eventID, id, newAction) {
+        let event = this.db.getByID(eventID);
+        let action = event.data.actions.find(_ => _.id === id)
+        if (!action) return false;
+        action.action = newAction
+        this.db.overwriteDataByID(event.id, event.data)
+        return true;
+    }
+    removeAction(eventID, id) {
+        let event = this.db.getByID(eventID);
+        let action = event.data.actions.find(_ => _.id === id)
+        let actionIndex = event.data.actions.findIndex(_ => _.id === id)
+        if (actionIndex == -1) return false;
+        event.data.actions.splice(actionIndex, 1)
+        this.db.overwriteDataByID(event.id, event.data)
+        return true;
+    }
+}
+
+export default new Events();
