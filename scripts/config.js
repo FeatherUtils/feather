@@ -115,6 +115,11 @@ export default {
         platformSettings: {
             root: 'pfst_root | PlatformSettings/Root',
             whitelist: 'pfst_whitelist | PlatformSettings/Whitelist'
+        },
+        economyEditor: {
+            root: 'economy_root',
+            editCurrency: 'economy_editcurrency',
+            create: 'economy_create'
         }
     },
     info: {

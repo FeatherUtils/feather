@@ -52,6 +52,7 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
         form2.textField(`Code`, `Code`, { defaultValue: uiBuilder.getExportData(id) })
         form2.show(player)
     })
+    /**
     if (ui.data.layout === 4) {
         form.button(`§9Edit Theme\n§7Edit the theme of this UI`, icons.resolve('azalea/RainbowPaintBrush'), (player) => {
             let form = new ActionForm();
@@ -68,6 +69,7 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
             form.show(player)
         })
     }
+    */
     form.button(`§bTrash\n§7Send this UI to the Trash`, `textures/azalea_icons/SidebarTrash`, (player) => {
         uiBuilder.delete(id)
         uiManager.open(player, config.uinames.uiBuilder.root)
