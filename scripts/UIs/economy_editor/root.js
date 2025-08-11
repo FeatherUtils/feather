@@ -15,5 +15,10 @@ uiManager.addUI(config.uinames.economyEditor.root, 'ec root', (player) => {
     form.button(`§aCreate\n§7Create a currency`, `.azalea/1`, (player) => {
         uiManager.open(player,config.uinames.economyEditor.create)
     })
+    for(const currency of prismarineDb.economy.getCurrencies()) {
+        form.button(`§b${currency.displayName}\n§r§7${currency.scoreboard}`, '.vanilla/emerald', (player) => {
+            uiManager.open(player,config.uinames.economyEditor.editCurrency,currency.scoreboard)
+        })
+    }
     form.show(player)
 })

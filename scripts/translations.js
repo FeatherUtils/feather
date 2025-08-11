@@ -5,7 +5,7 @@ export default {
         [config.lang.config.root.desc1]: `§bThis is where you will edit §d${config.info.abName}!`,
         [config.lang.config.root.desc2]: `§dHey! Welcome to ${config.info.abName + " " + config.info.versionString()} `,
         [config.lang.config.root.title]: `Config UI - Root`,
-        [config.lang.config.root.modules]: `§dModules\n§7Configure modules in ${config.info.abName}`,
+        [config.lang.config.root.modules]: `§6Modules\n§7Configure modules in ${config.info.abName}`,
         [config.lang.config.root.main_settings]: `Main Settings`,
         [config.lang.noperms.config.root]: `You don't have permission to use Config UI! If you are an operator, do /tag @s add admin`,
         [config.lang.config.modules.header]: `§d§lMODULES`,
@@ -16,7 +16,7 @@ export default {
         [config.lang.config.modules.text.desc.crf]: `Enter chat rank format here..`,
         [config.lang.noperms.default]: `You are not allowed to do this!`,
         [config.lang.config.mainSettings.title]: `Config UI - Main Settings`,
-        [config.lang.config.mainSettings.ranks]: `§dRanks\n§7Configure ranks`
+        [config.lang.config.mainSettings.ranks]: `§aRanks\n§7Configure ranks`
     },
     es: {
         [config.lang.config.root.header]: `§bInterfaz de Configuración`,

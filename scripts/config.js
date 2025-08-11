@@ -120,7 +120,8 @@ export default {
             root: 'economy_root',
             editCurrency: 'economy_editcurrency',
             create: 'economy_create'
-        }
+        },
+        pay: 'pay'
     },
     info: {
         name: 'Feather Essentials',

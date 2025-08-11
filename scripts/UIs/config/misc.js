@@ -20,7 +20,7 @@ uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'misc_settings')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.misc)
     })
-    form.button(`Chat Rank Format`, null, (player)=>{
+    form.button(`§cChat Rank Format`, '.blossom/rank', (player)=>{
         let form2 = new ModalFormData();
         form2.title(`Code Editor`)
         form2.textField(`${translate(config.lang.config.modules.text.crf)}`, `${translate(config.lang.config.modules.text.desc.crf)}`, {defaultValue: modules.get('crf')})
@@ -33,6 +33,9 @@ uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     })
     form.button(`§bPlatform Settings`, `.azalea/devices(little changes)`, (player) => {
         uiManager.open(player,config.uinames.platformSettings.root)
+    })
+    form.button(`§eEconomy Editor`, `.vanilla/emerald`, (player) => {
+        uiManager.open(player,config.uinames.economyEditor.root)
     })
     form.button(`§6Clans Settings`, '.vanilla/diamond_sword', (player) => {
         let form2 = new ModalFormData();

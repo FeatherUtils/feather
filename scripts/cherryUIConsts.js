@@ -20,5 +20,6 @@ let left = NUT_UI_RIGHT_HALF
 let right = NUT_UI_LEFT_HALF
 let disablevertical = NUT_UI_DISABLE_VERTICAL_SIZE_KEY
 let themed = NUT_UI_THEMED
+let modal = '§c§h§e§r§r§y§r§f'
 
-export let consts = {alt,header,tag,left,right,disablevertical,themed}
+export let consts = {alt,header,tag,left,right,disablevertical,themed,modal}
