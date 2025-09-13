@@ -10,7 +10,8 @@ class Modules {
             this.kv = await this.db.keyval('Modules')
             if(!this.has('cr')) this.set('cr', true);
             if(!this.get('crf')) this.set('crf', config.info.defaultChatRankFormat);
-            if(!this.get('language')) this.set('language', 'en')
+            if(!this.get('language')) this.set('language', 'en');
+            if(!this.has('pay')) this.set('pay', true)
         })
     }
     get(key) {

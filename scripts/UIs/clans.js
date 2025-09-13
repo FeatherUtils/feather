@@ -24,10 +24,27 @@ uiManager.addUI(config.uinames.clans.root, 'clans root', async (player) => {
         form.button(`§bMembers\n§7View all players in clan`, `.azalea/8-old`, (player) => {
             uiManager.open(player, config.uinames.clans.viewMembers)
         })
+        if (clan.data.base) {
+            form.button(`§aTeleport\n§7Teleport to the clan base`, `.vanilla/ender_pearl`, async (player) => {
+                let asd = await clans.teleportToBase(player)
+                if(asd === false) return player.error('Something went wrong while teleporting.')
+            })
+        }
         form.button(`§6Bank\n§7Contribute to the Clan Bank`, `.feather/bank`, (player) => {
             uiManager.open(player, config.uinames.clans.bank)
         })
         if (role > 1) {
+            if (clan.data.base) {
+                form.button(`§cDelete Clan Base\n§7Delete the clan base`, `.azalea/SidebarTrash`, (player) => {
+                    clans.delBase(clan.id)
+                    uiManager.open(player, config.uinames.clans.root)
+                })
+            } else {
+                form.button(`§aSet Clan Base\n§7Set the clan base to your location`, '.azalea/1', (player) => {
+                    clans.setBase(player)
+                    uiManager.open(player, config.uinames.clans.root)
+                })
+            }
             let invites = clans.inviteDB.findDocuments({ clanID: clan.id, type: 'Request' })
             form.button(`§aJoin Requests\n§7View join requests for clan (${invites.length})`, `.azalea/RequestIncoming`, (player) => {
                 let form2 = new ActionForm();

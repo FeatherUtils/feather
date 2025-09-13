@@ -6,18 +6,32 @@ import { consts, NUT_UI_TAG, NUT_UI_RIGHT_HALF, NUT_UI_DISABLE_VERTICAL_SIZE_KEY
 import preview from '../../preview';
 import { translate } from '../../translate';
 import { ActionFormData } from '@minecraft/server-ui'
+import { themes } from '../../cherryThemes';
+import api from './api';
+import actionParser from '../../Modules/actionParser';
 
 uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     if (!prismarineDb.permissions.hasPermission(player, 'config')) return player.error(`${translate(config.lang.noperms.config.root)}`)
     let form = new ActionForm();
-    form.title(`${NUT_UI_TAG}§r${translate(config.lang.config.root.title)}`)
-    form.button(`${consts.disablevertical}${consts.left}${consts.alt}§r${translate(config.lang.config.root.main_settings)}`, null, (player) => {
+    form.title(`${NUT_UI_TAG}${consts.themed}${themes[50][0]}§r${translate(config.lang.config.root.title)}`)
+    form.button(`${consts.disablevertical}${consts.left}§a§l§t§b§t§n§f§t§1§r${translate(config.lang.config.root.main_settings)}`, null, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'main_settings')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.root)
     })
     form.button(`${consts.right}§rMisc Settings`, null, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'misc_settings')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.misc)
+    })
+    for (const btn of api.get()) {
+        form.button(`${btn.text}\n§7${btn.subtext}`, btn.icon ?? null, (player) => {
+            for(const ac of btn.actions) {
+                console.log(ac)
+                actionParser.runAction(player, `${ac}`)
+            }
+        })
+    }
+    form.button(`§gCredits\n§7People who contributed to the addon`, `.azalea/credits(little changes)`, (player) => {
+        uiManager.open(player, config.uinames.config.credits)
     })
     form.button(`${translate(config.lang.config.root.modules)}`, `textures/blossom_icons/edit`, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'modules')) return player.error(`${translate(config.lang.noperms.default)}`)
@@ -30,14 +44,14 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
         uiManager.open(player, config.uinames.ranks.root)
     })
     form.button(`§cModeration\n§7Moderate users on your server`, `textures/azalea_icons/5`, (player) => {
-        if(!prismarineDb.permissions.hasPermission(player, 'moderation')) return;
+        if (!prismarineDb.permissions.hasPermission(player, 'moderation')) return;
         uiManager.open(player, config.uinames.moderation.root)
     })
     form.button(`§bSidebar Editor\n§7Create custom sidebars easily`, '.azalea/Sidebar', (player) => {
-        uiManager.open(player,config.uinames.sidebarEditor.root)
+        uiManager.open(player, config.uinames.sidebarEditor.root)
     })
     form.button(`§eEvents\n§7Do something when an event is triggered`, '.blossom/event2', (player) => {
-        uiManager.open(player,config.uinames.events.root)
+        uiManager.open(player, config.uinames.events.root)
     })
     form.show(player)
 })

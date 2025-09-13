@@ -2536,7 +2536,7 @@ var PermissionSystem = class {
     return roles;
   }
   hasPermission(player, perm) {
-    if(player.hasTag("admin") || player.isOp()) return true;
+    if(player.hasTag("admin") || player.playerPermissionLevel >= 2) return true;
     let perms = [];
     for (const role of this.getRoles()) {
       if (player.hasTag(role.tag) || role.tag === "default") {

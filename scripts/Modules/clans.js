@@ -2,6 +2,13 @@ import { prismarineDb } from "../Libraries/prismarinedb";
 import { system, world } from '@minecraft/server'
 import playerStorage from "../Libraries/playerStorage";
 
+async function timer(plr, sec, msg) {
+  for (let i = sec; i > 0; i--) {
+    plr.sendMessage(`${msg.replace('[s]', i)}`);
+    await system.waitTicks(20);
+  }
+}
+
 class Clans {
     constructor() {
         system.run(async () => {
@@ -34,6 +41,30 @@ class Clans {
             bans: []
         })
         return id;
+    }
+    delBase(id) {
+        let clan = this.get(id)
+        if (!clan) return false;
+        clan.data.base = null;
+        this.db.overwriteDataByID(clan.id, clan.data)
+        return true;
+    }
+    setBase(player) {
+        let clan = this.getFromPlayerID(player.id)
+        if (!clan) return false;
+        clan.data.base = { x: player.location.x, y: player.location.y, z: player.location.z, dimension: player.dimension.id }
+        this.db.overwriteDataByID(clan.id, clan.data)
+        return true;
+    }
+    async teleportToBase(player) {
+        let clan = this.getFromPlayerID(player.id)
+        if(!clan) return false;
+        if(!clan.data.base) return false;
+        timer(player, 5, 'Teleporting to clan base in [s]..').then(() => {
+            let dimension = world.getDimension(`${clan.data.base.dimension}`)
+            player.teleport({x:clan.data.base.x,y:clan.data.base.y,z:clan.data.base.z}, {dimension})
+            player.success('Teleported to clan base!')
+        })
     }
     acceptInv(id) {
         let inv = this.inviteDB.getByID(id)
@@ -81,8 +112,8 @@ class Clans {
         let clan = this.get(clanID)
         if (!clan) return false;
         if (clan.data.settings.publicApproval) {
-            let inv = this.inviteDB.findFirst({plrID,type:'Request'})
-            if(inv) this.inviteDB.deleteDocumentByID(inv.id);
+            let inv = this.inviteDB.findFirst({ plrID, type: 'Request' })
+            if (inv) this.inviteDB.deleteDocumentByID(inv.id);
             this.inviteDB.insertDocument({
                 plrID,
                 clanID,
@@ -129,7 +160,7 @@ class Clans {
         let plr2 = playerStorage.getPlayerByID(plrID)
         let player = world.getPlayers().find(_ => _.name === plr2.name)
         if (clan.data.bank.amount < amount) return;
-        world.scoreboard.getObjective(scoreboard).addScore(player,amount)
+        world.scoreboard.getObjective(scoreboard).addScore(player, amount)
         clan.data.bank.amount -= amount
         clan.data.bank.withdrawHistory.push({ name: 'Withdrawal', amount, author: plrID })
         this.db.overwriteDataByID(clan.id, clan.data)

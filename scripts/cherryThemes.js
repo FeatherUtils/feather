@@ -64,7 +64,6 @@ export let themes = [
     ["§p§r§2", "Purple 2", "textures/example/headerpurple2"],
     ["§l§l§o§1", "Lemon Lime", "textures/example/headerlemonlime"],
     ["§u§w§u§2", "UwU #2", "textures/example/headeruwu2"],
-    ["§l§f§3§0", "Leaf Essentials V3.0", "textures/example/leafess3"],
     ["§t§b§1", "Twilight Bloom", "textures/example/headertwilightbloom"],
     ["§r§t§1", "Random Theme 1", "textures/example/headerrandom1"],
     ["§r§t§2", "Random Theme 2", "textures/example/headerrandom2"],
@@ -91,7 +90,5 @@ export let themes = [
     ["§r§t§n", "Random Theme 23", "textures/example/headerrandom23"],
     ["§r§t§o", "Random Theme 24", "textures/example/headerrandom24"],
     ["§r§t§p", "Random Theme 25", "textures/example/headerrandom25"],
-    ["§b§s§0§1", "Basic", "textures/example/button"],
-    ["§g§a§1", "Pride", "textures/example/headerpride"],
-    ["§g§a§2", "Pride - Trans", "textures/example/headerpride2"],
+    ["§f§t§1", "Feather Essentials v0.3", "textures/featherCherryThemes/headerfeather"]
 ];

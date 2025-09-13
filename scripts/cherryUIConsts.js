@@ -6,11 +6,11 @@ export let NUT_UI_RIGHT_HALF = "§p§2§2§r";
 export let NUT_UI_LEFT_THIRD = "§p§2§2§p§2§1§r";
 export let NUT_UI_MIDDLE_THIRD = "§p§2§1§p§1§2§r";
 export let NUT_UI_RIGHT_THIRD = "§p§1§1§p§1§2§r";
-export let NUT_UI_THEMED = "§t§h§e§m§0§1§r";
+export let NUT_UI_THEMED = "§t§h§e§m§0§1";
 export let NUT_UI_PAPERDOLL = "§p§l§0§1§r";
 export let NUT_UI_OCEAN = "§o§c§e§a§n§r";
 export let NUT_UI_HEADER_BUTTON = "§p§4§0§r";
-export let NUT_UI_ALT = "§a§l§t§b§t§n§r";
+export let NUT_UI_ALT = "§a§l§t§b§t§n";
 export let NUT_UI_DISABLE_VERTICAL_SIZE_KEY = "§p§0§0§r";
 
 let alt = NUT_UI_ALT

@@ -6,7 +6,7 @@
       ]
     },
     "header": {
-      "name": "§b§lFeather Essentials §e- §bv0.2.1",
+      "name": "§b§lFeather Essentials §e- §bv0.3",
       "description": "Feather Essentials - Made with <3 by FruitKitty",
       "min_engine_version": [
         1,
@@ -17,7 +17,7 @@
       "version": [
         1,
         0,
-        11
+        12
       ]
     },
     "modules": [
@@ -27,7 +27,7 @@
         "version": [
           1,
           0,
-          11
+          12
         ]
       },
       {
@@ -38,7 +38,7 @@
         "version": [
           1,
           0,
-          11
+          12
         ]
       }
     ],

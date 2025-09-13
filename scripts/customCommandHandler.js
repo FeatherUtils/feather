@@ -7,6 +7,7 @@ import uiManager from './Libraries/uiManager'
 import config from './config'
 import actionParser from './Modules/actionParser'
 import formatter from './Formatting/formatter'
+import modules from './Modules/modules'
 
 if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
@@ -60,6 +61,36 @@ if (system.beforeEvents.startup) {
                     }
                 }
             })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:smite',
+            description: 'Smite someone',
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: 'players',
+                    type: CustomCommandParamType.PlayerSelector
+                }
+            ]
+        }, (origin, plrs) => {
+            system.run(() => {
+                let player = origin.sourceEntity
+                let players = []
+                for (const plr of plrs) {
+                    plr.runCommand('summon lightning_bolt')
+                    players.push(plr.name)
+                }
+                player.sendMessage(`Smited ${players.join(', ')}`)
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:pay',
+            description: "Pay users",
+            permissionLevel: CommandPermissionLevel.Any,
+        }, (origin) => {
+            let player = origin.sourceEntity
+            if (!modules.get(`pay`)) return player.error('/pay is disabled :(')
+            uiManager.open(player, config.uinames.pay)
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:open",

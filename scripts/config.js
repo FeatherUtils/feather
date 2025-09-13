@@ -43,7 +43,8 @@ export default {
             modules: 'config_modules | Config/Modules',
             main: 'config_main | Config/Main',
             extra: 'config_extra | Config/Extra',
-            misc: 'config_misc | Config/Misc'
+            misc: 'config_misc | Config/Misc',
+            credits: 'config_credits'
         },
         homes: {
             view: 'homes_view | Homes/View',
@@ -148,4 +149,9 @@ export default {
         {perm:'ui_builder',display:'UI Builder'},
         {perm:'misc_settings',display:'Misc Settings'}
     ],
+    credits: [
+        {name:'Isabella (isabelladakitty)', description:'Main contributor/Lead dev/Founder'},
+        {name:'Fern (arandomfern)', description:'Secondary contributor/Developer'},
+        {name:'TrashyDaFox (trashydafox)', description:'All JSON UI, Database, UI Manager + more'}
+    ]
 };
