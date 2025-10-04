@@ -415,10 +415,8 @@ export default {
     chest23: "\uE15B",
     azalea: "\uE15C",
     candy: "\uE15E",
-    random_asss_bow: "\uE15F",
     nimecoin: "\uE160",
     cheddar: "\uE161",
-    pansexual: "\uE198",
 };
 
 export const emojiCategories = {

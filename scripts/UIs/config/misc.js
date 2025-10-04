@@ -12,12 +12,12 @@ import { themes } from "../../cherryThemes";
 
 uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     let form = new ActionForm();
-    form.title(`${consts.tag}${consts.themed}${themes[50][0]}§rConfig UI - Misc`)
+    form.title(`${consts.tag}${consts.themed}${themes[51][0]}§rConfig UI - Misc`)
     form.button(`${consts.left}${consts.disablevertical}§rMain Settings`, null, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'main_settings')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.root)
     })
-    form.button(`${consts.right}${consts.alt}${themes[50][0]}§rMisc Settings`, null, (player) => {
+    form.button(`${consts.right}${consts.alt}${themes[51][0]}§rMisc Settings`, null, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'misc_settings')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.misc)
     })

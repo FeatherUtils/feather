@@ -90,5 +90,6 @@ export let themes = [
     ["§r§t§n", "Random Theme 23", "textures/example/headerrandom23"],
     ["§r§t§o", "Random Theme 24", "textures/example/headerrandom24"],
     ["§r§t§p", "Random Theme 25", "textures/example/headerrandom25"],
-    ["§f§t§1", "Feather Essentials v0.3", "textures/featherCherryThemes/headerfeather"]
+    ["§f§t§1", "Feather Essentials v0.3", "textures/featherCherryThemes/headerfeather"],
+    ["§u§p§d§4", "Feather Essentials v0.4", "textures/featherCherryThemes/headerupdate4"]
 ];

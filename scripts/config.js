@@ -62,6 +62,11 @@ export default {
                 view: 'mutes_view | Mutes/View',
                 root: 'mutes | Mutes',
                 create: 'mutes_create | Mutes/Create'
+            },
+            warns: {
+                create: 'warns_create',
+                view: 'warns_view',
+                root: 'warns'
             }
         },
         clans: {
@@ -122,7 +127,28 @@ export default {
             editCurrency: 'economy_editcurrency',
             create: 'economy_create'
         },
-        pay: 'pay'
+        pay: 'pay',
+        voting: {
+            admin: 'voting_admin',
+            edit: 'voting_edit',
+            root: 'voting_root',
+            start: 'voting_start',
+            view: 'voting_view'
+        },
+        bounty: {
+            leaderboard: 'bounty_leaderboard',
+            root: 'bounty',
+            add: 'bounty_add'
+        },
+        shop: {
+            root: 'shop_root',
+            addCategory: 'shop_addCategory',
+            editCategory: 'shop_editCategory',
+            addItem: 'shop_addItem',
+            editItem: 'shop_editItem',
+            viewCategory: 'shop_viewCategory',
+            viewItem: 'shop_viewItem'
+        }
     },
     info: {
         name: 'Feather Essentials',

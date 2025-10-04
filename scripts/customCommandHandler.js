@@ -8,10 +8,27 @@ import config from './config'
 import actionParser from './Modules/actionParser'
 import formatter from './Formatting/formatter'
 import modules from './Modules/modules'
+import emojis from './Formatting/emojis'
 
 if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
         init.customCommandRegistry.registerEnum('feather:gamemodetypes', ['0', '1', '2', '3', 's', 'c', 'a', 'sp', 'survival', 'creative', 'adventure', 'spectator'])
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:emojis',
+            description: 'see all emojis',
+            permissionLevel: CommandPermissionLevel.Any
+        }, (origin) => {
+            let player = origin.sourceEntity;
+            let text = [[]];
+            for (const key in emojis) {
+                if (text[text.length - 1].length < 1) {
+                    text[text.length - 1].push(`:${key}: ${emojis[key]}`);
+                } else {
+                    text.push([`:${key}: ${emojis[key]}`])
+                }
+            }
+            player.sendMessage([text.map(_ => _.join('        ')).join('\n§r'), '', '§aTo use emojis, do :emoji_name: in chat. Example:   :skull:'].join('\n§r'))
+        })
         init.customCommandRegistry.registerCommand({
             name: "feather:gm",
             description: "Switch gamemode",
@@ -84,6 +101,23 @@ if (system.beforeEvents.startup) {
             })
         })
         init.customCommandRegistry.registerCommand({
+            name: 'feather:nick',
+            description: 'Set a nickname for yourself',
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: 'name',
+                    type: CustomCommandParamType.String
+                }
+            ]
+        }, (origin, name) => {
+            system.run(() => {
+                let player = origin.sourceEntity
+                if (!modules.get('nick')) return player.error('/nick is disabled >:(')
+                player.setDynamicProperty('nickname', name.replaceAll(' ', '').replaceAll('.', ''))
+            })
+        })
+        init.customCommandRegistry.registerCommand({
             name: 'feather:pay',
             description: "Pay users",
             permissionLevel: CommandPermissionLevel.Any,
@@ -91,6 +125,77 @@ if (system.beforeEvents.startup) {
             let player = origin.sourceEntity
             if (!modules.get(`pay`)) return player.error('/pay is disabled :(')
             uiManager.open(player, config.uinames.pay)
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:warptime',
+            description: 'Customize how long it takes to warp',
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: 'seconds',
+                    type: CustomCommandParamType.Integer
+                }
+            ]
+        }, (origin,seconds) => {
+            modules.set('warptime', seconds),
+            origin.sourceEntity.success('Set warp time to ' + `${seconds}`)
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:homes',
+            description: "Open homes ui",
+            permissionLevel: CommandPermissionLevel.Any,
+        }, (origin) => {
+            let player = origin.sourceEntity
+            if (!modules.get(`homes`)) return player.error('/homes is disabled :(')
+            uiManager.open(player, config.uinames.homes.root)
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:vote',
+            description: "Open voting ui",
+            permissionLevel: CommandPermissionLevel.Any,
+        }, (origin) => {
+            let player = origin.sourceEntity
+            if (!modules.get(`vote`)) return player.error('/vote is disabled :(')
+            uiManager.open(player, config.uinames.voting.root)
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:bounty',
+            description: "Open bounty ui",
+            permissionLevel: CommandPermissionLevel.Any,
+        }, (origin) => {
+            let player = origin.sourceEntity
+            if (!modules.get(`bounty`)) return player.error('/bounty is disabled :(')
+            uiManager.open(player, config.uinames.bounty.root)
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:sudo',
+            description: 'Talk as other players or run commands as them',
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "players",
+                    type: CustomCommandParamType.PlayerSelector
+                },
+                {
+                    name: "action",
+                    type: CustomCommandParamType.String
+                }
+            ]
+        }, (origin, players, action) => {
+            let plr = origin.sourceEntity
+            let ac = action
+            if (action.startsWith('/')) ac = action.replace('/', '')
+            for (const player of players) {
+                if (action.startsWith('/')) {
+                    system.run(() => {
+                        player.runCommand(ac)
+                    })
+                } else {
+                    system.run(async () => {
+                        world.sendMessage(await formatter.format(`${modules.get('crf')}`, player, ac))
+                    })
+                }
+            }
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:open",
@@ -306,7 +411,6 @@ if (system.beforeEvents.startup) {
                 if (!player) return;
                 let id = warps.db.findFirst({ name }).id
                 warps.tp(player, id)
-                player.success('Teleported successfully')
             })
         })
         init.customCommandRegistry.registerCommand({

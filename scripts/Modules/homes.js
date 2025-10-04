@@ -1,6 +1,7 @@
 import { prismarineDb } from "../Libraries/prismarinedb";
 import { system, world } from '@minecraft/server'
 import playerStorage from '../Libraries/playerStorage'
+import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
 
 async function timer(plr, sec, msg) {
     for (let i = sec; i > 0; i--) {
@@ -12,8 +13,17 @@ async function timer(plr, sec, msg) {
 class Homes {
     constructor() {
         system.run(async () => {
-            this.db = prismarineDb.table('Homes')
+            this.oldDb = prismarineDb.table('Homes')
+            this.db = prismarineDb.customStorage('Homes', SegmentedStoragePrismarine)
+            
             this.kv = await this.db.keyval('Settings')
+            if(!this.oldDb.findDocuments().length == 0) {
+                for(const doc of this.oldDb.findDocuments()) {
+                    this.db.insertDocument(doc.data)
+                    this.oldDb.deleteDocumentByID(doc.id)
+                }
+                this.kv.set('MIGRATION1', true)
+            }
             if (!this.kv.get('maxHomes')) this.kv.set('maxHomes', 20)
         })
     }

@@ -34,7 +34,7 @@ uiManager.addUI(config.uinames.events.root, 'ev root', (player) => {
 })
 uiManager.addUI(config.uinames.events.add, 'events add', (player) => {
     let form = new ModalFormData();
-    let types = ['KILL', 'DEATH', 'JOIN', 'CHAT', 'RANDOMNUMBER','BREAKBLOCK','PLACEBLOCK']
+    let types = ['KILL', 'DEATH', 'JOIN', 'CHAT', 'RANDOMNUMBER','BREAKBLOCK','PLACEBLOCK','PLAYERINTERACTWITHPLAYER','PLAYERHITPLAYER','WEATHERCHANGE','GAMEMODECHANGE']
     form.title(`Add Event`)
     form.textField(`Identifier`, `Example: Kill Scoreboard`, { tooltip: 'This is purely just for you to see on the events ui so you know what you are editing' })
     form.dropdown(`Type`, types, { tooltip: 'What will trigger the event' })
@@ -67,6 +67,12 @@ uiManager.addUI(config.uinames.events.edit, 'edit ev', async (player, id) => {
             })
         })
     }
+    if(ev.data.type == 'PLAYERINTERACTWITHPLAYER') {
+        form.body(`Use <name2> in actions to get the player that was interacted with's name. Normal formatting still applies for the main player. The commands are run as the main player.`)
+    }
+    if(ev.data.type == 'PLAYERHITPLAYER') {
+        form.body(`Use <name2> in actions to get the player that was hit's name. Normal formatting still applies for the main player. The commands are run as the main player.`)
+    }
     if (ev.data.type == 'RANDOMNUMBER') {
         let num = await events.randomNumberKeyval.get(`${ev.data.identifier}`) ?? '0'
         form.body(
@@ -85,6 +91,28 @@ uiManager.addUI(config.uinames.events.edit, 'edit ev', async (player, id) => {
                 let [startingNumber,endingNumber] = res.formValues;
                 if(isNaN(+startingNumber) || isNaN(+endingNumber)) return player.error('One of the fields are Not a Number');
                 events.editSettings(ev.id,{startingNumber:+startingNumber,endingNumber:+endingNumber})
+                uiManager.open(player,config.uinames.events.edit,ev.id)
+            })
+        })
+    }
+    if(ev.data.type == 'GAMEMODECHANGE') {
+        form.body(`Available formatting: <fromgamemode>, <togamemode>`)
+    }
+    if(ev.data.type == 'WEATHERCHANGE') {
+        form.body(`Available formatting: <weathertype>`)
+        form.button(`§eWeather Options\n§7Options for weather event`, '.azalea/Settings', (player) => {
+            let weathertypes = ['Any', 'Clear', 'Rain', 'Thunder']
+            let nw;
+            if(!ev.data.settings) nw = 'Any'
+            if(ev.data.settings) nw = ev.data.settings.newWeather;
+            let currentweathertype = weathertypes.findIndex(_=>_===nw)
+            let form2 = new ModalFormData();
+            form2.title('Weather Options')
+            form2.dropdown('New weather (If changes to this weather it will run)', weathertypes, {defaultValueIndex:currentweathertype})
+            form2.show(player).then((res) => {
+                let [newWeatherIndex] = res.formValues;
+                let newWeather = weathertypes[newWeatherIndex]
+                events.editSettings(ev.id,{newWeather})
                 uiManager.open(player,config.uinames.events.edit,ev.id)
             })
         })

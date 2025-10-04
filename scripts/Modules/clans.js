@@ -1,6 +1,7 @@
 import { prismarineDb } from "../Libraries/prismarinedb";
 import { system, world } from '@minecraft/server'
 import playerStorage from "../Libraries/playerStorage";
+import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
 
 async function timer(plr, sec, msg) {
   for (let i = sec; i > 0; i--) {
@@ -12,11 +13,28 @@ async function timer(plr, sec, msg) {
 class Clans {
     constructor() {
         system.run(async () => {
-            this.db = prismarineDb.table('Clans')
+            this.oldDb = prismarineDb.table('Clans')
+            this.db = prismarineDb.customStorage('Clans', SegmentedStoragePrismarine)
+            
 
             this.settingsKV = await this.db.keyval('settings')
+            if(!this.oldDb.findDocuments().length == 0) {
+                for(const doc of this.oldDb.findDocuments()) {
+                    this.db.insertDocument(doc.data)
+                    this.oldDb.deleteDocumentByID(doc.id)
+                }
+                this.settingsKV.set('MIGRATION1', true)
+            }
             if (!this.settingsKV.get(`currencyScoreboard`)) this.settingsKV.set(`currencyScoreboard`, 'money')
-            this.inviteDB = prismarineDb.table('Clans:Invites')
+            this.oldinviteDb = prismarineDb.table('Clans:Invites')
+            this.inviteDB = prismarineDb.customStorage('Clans:Invites', SegmentedStoragePrismarine)
+            if(!this.oldinviteDb.findDocuments().length == 0) {
+                for(const doc of this.oldinviteDb.findDocuments()) {
+                    this.inviteDB.insertDocument(doc.data)
+                    this.oldinviteDb.deleteDocumentByID(doc.id)
+                }
+                this.settingsKV.set('INVITEMIGRATION1', true)
+            }
         })
     }
     addClan(owner, name, isPublic) {

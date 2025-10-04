@@ -2,12 +2,13 @@
     "format_version": 2,
     "metadata": {
       "authors": [
-        "FruitKitty"
+        "IsabellaDaKitty",
+        "ARandomFern"
       ]
     },
     "header": {
-      "name": "§b§lFeather Essentials §e- §bv0.3",
-      "description": "Feather Essentials - Made with <3 by FruitKitty",
+      "name": "§b§lFeather Essentials §e- §bv0.4",
+      "description": "Feather Essentials - Made with <3 by IsabellaDaKitty & ARandomFern",
       "min_engine_version": [
         1,
         20,
@@ -17,7 +18,7 @@
       "version": [
         1,
         0,
-        12
+        15
       ]
     },
     "modules": [
@@ -27,7 +28,7 @@
         "version": [
           1,
           0,
-          12
+          15
         ]
       },
       {
@@ -38,14 +39,14 @@
         "version": [
           1,
           0,
-          12
+          15
         ]
       }
     ],
     "dependencies": [
       {
         "module_name": "@minecraft/server",
-        "version": "2.2.0-beta"
+        "version": "2.3.0-beta"
       },
       {
         "module_name": "@minecraft/server-ui",

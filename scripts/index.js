@@ -51,9 +51,24 @@ system.run(() => {
 })
 
 world.afterEvents.playerSpawn.subscribe(e => {
-    const ban = moderation.Database.findFirst({ type: 'BAN', id: e.player.id })
+    if(!e.initialSpawn) return;
+    const ban = moderation.Database.findFirst({ type: 'BAN', player: e.player.id })
     if (ban) {
         world.getDimension('minecraft:overworld').runCommand(`kick "${e.player.name}" You are banned for ${moment(ban.data.time).fromNow()}.\nReason:\n${ban}`)
+    }
+    const warnings = moderation.Database.findDocuments({type:'WARNING',player:e.player.id})
+    let warningsformatted = [];
+    if(warnings.length > 0) {
+        warningsformatted.push('-=-=-=-WARNINGS-=-=-=-')
+        warningsformatted.push('')
+    }
+    let i = 0
+    for(const warning of warnings) {
+        i++
+        warningsformatted.push(`Warning ${i}: ${warning.data.reason}`)
+    }
+    if(warningsformatted.length > 0) {
+        e.player.sendMessage(warningsformatted.join('\n'))
     }
 })
 

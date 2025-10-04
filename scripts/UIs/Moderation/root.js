@@ -15,5 +15,8 @@ uiManager.addUI(config.uinames.moderation.root, 'Moderation Root', (player) => {
     form.button(`§6Mutes\n§7Mute users who violate chat rules`, icons.resolve('azalea/view reports'), (player) => {
         uiManager.open(player,config.uinames.moderation.mutes.root)
     })
+    form.button(`§cWarnings\n§7Warn users who violate minor rules`, icons.resolve('azalea/5-oldmaybe'), (player) => {
+        uiManager.open(player,config.uinames.moderation.warns.root)
+    })
     form.show(player)
 })

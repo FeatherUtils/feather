@@ -4,6 +4,7 @@ import ranks from "../Modules/ranks";
 import { getTPS } from "./format/tps";
 import { getPlayers } from "./format/online";
 import events from "../Modules/events";
+import modules from "../Modules/modules";
 
 class BlossomFormatting {
     #vars;
@@ -22,6 +23,13 @@ class BlossomFormatting {
         return varis.join(', ')
     }
     getName(player) {
+        let n = player.getDynamicProperty('nickname')
+        if(modules.get('nick') && n) {
+            return n;
+        }
+        return player.name
+    }
+    getRealName(player) {
         return player.name
     }
     async format(text, player, msg = undefined, watchyoJET = false) {
@@ -58,6 +66,8 @@ class BlossomFormatting {
 
         this.#vars.arrow = () => '»'
 
+        
+        this.#vars.realname = this.getRealName;
         this.#vars.player = this.getName;
         this.#vars.name = this.getName;
         this.#vars.username = this.getName;

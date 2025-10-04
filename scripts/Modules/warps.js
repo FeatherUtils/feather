@@ -1,5 +1,6 @@
 import { system, world } from "@minecraft/server";
 import { prismarineDb } from "../Libraries/prismarinedb";
+import modules from "./modules";
 
 async function timer(plr, sec, msg) {
   for (let i = sec; i > 0; i--) {
@@ -28,9 +29,10 @@ class Warps {
     async tp(plr,id) {
         let doc = this.db.getByID(id)
         if(!doc) return plr.sendMessage('Could not find warp');
-        await timer(plr,5,'Teleporting in [s]..')
+        await timer(plr,modules.get('warptime') ?? 5,'Teleporting in [s]..')
         let dim = world.getDimension(`${doc.data.loc.dim}`)
         plr.teleport(doc.data.loc.coords, {dimension: dim})
+        plr.success('Teleported successfully')
     }
 }
 

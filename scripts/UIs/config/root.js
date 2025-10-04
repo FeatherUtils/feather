@@ -13,8 +13,8 @@ import actionParser from '../../Modules/actionParser';
 uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     if (!prismarineDb.permissions.hasPermission(player, 'config')) return player.error(`${translate(config.lang.noperms.config.root)}`)
     let form = new ActionForm();
-    form.title(`${NUT_UI_TAG}${consts.themed}${themes[50][0]}§r${translate(config.lang.config.root.title)}`)
-    form.button(`${consts.disablevertical}${consts.left}§a§l§t§b§t§n§f§t§1§r${translate(config.lang.config.root.main_settings)}`, null, (player) => {
+    form.title(`${NUT_UI_TAG}${consts.themed}${themes[51][0]}§r${translate(config.lang.config.root.title)}`)
+    form.button(`${consts.disablevertical}${consts.left}§a§l§t§b§t§n§u§p§d§4§r${translate(config.lang.config.root.main_settings)}`, null, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'main_settings')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.root)
     })
@@ -43,15 +43,18 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     form.button(`${NUT_UI_LEFT_HALF}${translate(config.lang.config.mainSettings.ranks)}`, `textures/blossom_icons/rank`, (player) => {
         uiManager.open(player, config.uinames.ranks.root)
     })
-    form.button(`§cModeration\n§7Moderate users on your server`, `textures/azalea_icons/5`, (player) => {
+    form.button(`${consts.left}${consts.disablevertical}§cModeration\n§7Moderate users`, `textures/azalea_icons/5`, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'moderation')) return;
         uiManager.open(player, config.uinames.moderation.root)
     })
-    form.button(`§bSidebar Editor\n§7Create custom sidebars easily`, '.azalea/Sidebar', (player) => {
+    form.button(`${consts.right}§bSidebar Editor\n§7Create sidebars`, '.azalea/Sidebar', (player) => {
         uiManager.open(player, config.uinames.sidebarEditor.root)
     })
     form.button(`§eEvents\n§7Do something when an event is triggered`, '.blossom/event2', (player) => {
         uiManager.open(player, config.uinames.events.root)
+    })
+    form.button(`§aVoting\n§7Allow your players to vote on things`, '.blossom/vote', (player) => {
+        uiManager.open(player, config.uinames.voting.root)
     })
     form.show(player)
 })

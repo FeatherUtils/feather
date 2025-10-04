@@ -11,7 +11,11 @@ class ActionParser {
             try {
                 player.runCommand(command);
             } catch (e) {
-                player.error(`${e.message}`)
+                try {
+                    player.error(`${e.message}`)
+                } catch {
+                    mc.world.sendMessage(e.message)
+                }
             }
         })
     }

@@ -60,6 +60,14 @@ class Moderation {
         }
         return mute;
     }
+    addWarning(player, reason) {
+        let warn = this.Database.insertDocument({
+            player,
+            reason,
+            type: 'WARNING'
+        })
+        return warn;
+    }
     delete(id) {
         return this.Database.deleteDocumentByID(id)
     }
