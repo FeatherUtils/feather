@@ -172,7 +172,7 @@ uiManager.addUI(config.uinames.events.editactions, 'editactions ev', (player, id
         })
     })
     for (const action of ev.data.actions) {
-        form.button(`${action.action}`, null, (player) => {
+        form.button(`§r${action.action}`, null, (player) => {
             let form2 = new ActionForm();
             form2.title(`${consts.tag}Action`)
             form2.button(`${consts.header}§cBack\n§7Go back to event actions ui`, `.azalea/2`, (player) => {
