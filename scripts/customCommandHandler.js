@@ -198,8 +198,16 @@ if (system.beforeEvents.startup) {
             }
         })
         init.customCommandRegistry.registerCommand({
+            name: "feather:config",
+            description: "Open the feather essentials config ui",
+            permissionLevel: CommandPermissionLevel.GameDirectors
+        }, (origin) => {
+            let player = origin.sourceEntity
+            uiManager.open(player,config.uinames.config.root)
+        })
+        init.customCommandRegistry.registerCommand({
             name: "feather:open",
-            description: "Open any Feather Essentials UI",
+            description: "Open any Feather Essentials UI BUILDER UI",
             permissionLevel: CommandPermissionLevel.GameDirectors,
             mandatoryParameters: [
                 {

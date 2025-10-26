@@ -141,12 +141,12 @@ export default {
             add: 'bounty_add'
         },
         shop: {
-            root: 'shop_root',
-            addCategory: 'shop_addCategory',
-            editCategory: 'shop_editCategory',
+            root: 'shop_root', // d
+            addCategory: 'shop_addCategory', // d
+            editCategory: 'shop_editCategory', // d
             addItem: 'shop_addItem',
             editItem: 'shop_editItem',
-            viewCategory: 'shop_viewCategory',
+            viewCategory: 'shop_viewCategory', // d
             viewItem: 'shop_viewItem'
         }
     },

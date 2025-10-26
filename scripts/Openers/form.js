@@ -44,16 +44,16 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
     if (u.body) {
         form.body(await formatter.format(u.body, e.sourceEntity))
     }
-    for(const button of u.buttons) {
-        if(button.type == 'header') form.header(button.text);
-        if(button.type == 'label') form.label(button.text);
-        if(button.type == 'divider') form.divider()
+    for (const button of u.buttons) {
+        if (button.type == 'header') form.header(button.text);
+        if (button.type == 'label') form.label(button.text);
+        if (button.type == 'divider') form.divider()
     }
     if (u.buttons.length < 1) {
         form.button(`§cClose UI`, icons.resolve('azalea/2'))
     }
     for (const button of u.buttons) {
-        if(button.type != 'button') continue;
+        if (button.type != 'button') continue;
         let rqt = await formatter.format(button.requiredTag, e.sourceEntity)
         if (button.meta === 'sellbutton') {
             let rqtf2 = rqt
@@ -110,33 +110,47 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
                 if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
                 if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
             }
-            form.button(`§r${await formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${await formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, (player) => {
-                let form2 = new ModalFormData();
-                form2.title(`Quantity Selector`)
-                form2.slider('Quantity', 1, 64)
-                form2.show(player).then((res) => {
-                    let [quantity] = res.formValues;
-                    let price = +button.buyButtonSettings.price * quantity
+            form.button(`§r${await formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${await formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, async (player) => {
+                if (button.buyButtonSettings.item) {
+                    let form2 = new ModalFormData();
+                    form2.title(`Quantity Selector`)
+                    form2.slider('Quantity', 1, 64)
+                    form2.show(player).then((res) => {
+                        let [quantity] = res.formValues;
+                        let price = +button.buyButtonSettings.price * quantity
+                        async function ye(player) {
+                            if (!prismarineDb.economy.getCurrency(button.buyButtonSettings.scoreboard)) prismarineDb.economy.addCurrency(button.buyButtonSettings.scoreboard, '$', `${button.buyButtonSettings.scoreboard}`)
+                            let money = prismarineDb.economy.getMoney(player, button.buyButtonSettings.scoreboard)
+                            if (money < price) return player.runCommand(`feather:open @s "${e.message}"`), player.runCommand(`playsound random.glass`);
+                            prismarineDb.economy.removeMoney(player, price, button.buyButtonSettings.scoreboard)
+                            player.runCommand(`give @s ${button.buyButtonSettings.item} ${quantity}`)
+                            player.runCommand(`playsound random.orb`)
+                            player.runCommand(`feather:open @s "${e.message}"`)
+                        }
+                        function nah(player) {
+                            player.runCommand(`feather:open @s "${e.message}"`)
+                        }
+                        uiManager.open(player, config.uinames.basic.confirmation, `Are you sure you want to spend ${price} ${button.buyButtonSettings.scoreboard} on this?`, ye, nah)
+                    })
+                } else {
+                    let price = +button.buyButtonSettings.price
                     async function ye(player) {
                         if (!prismarineDb.economy.getCurrency(button.buyButtonSettings.scoreboard)) prismarineDb.economy.addCurrency(button.buyButtonSettings.scoreboard, '$', `${button.buyButtonSettings.scoreboard}`)
                         let money = prismarineDb.economy.getMoney(player, button.buyButtonSettings.scoreboard)
                         if (money < price) return player.runCommand(`feather:open @s "${e.message}"`), player.runCommand(`playsound random.glass`);
                         prismarineDb.economy.removeMoney(player, price, button.buyButtonSettings.scoreboard)
-                        if (button.buyButtonSettings.item) {
-                            player.runCommand(`give @s ${button.buyButtonSettings.item} ${quantity}`)
-                        } else {
-                            for (const action of button.actions) {
-                                actionParser.runAction(e.sourceEntity, await formatter.format(action.action.replaceAll('<name2>', plr.name), e.sourceEntity))
-                            }
-                        }
                         player.runCommand(`playsound random.orb`)
                         player.runCommand(`feather:open @s "${e.message}"`)
+                        for (const action of button.actions) {
+                            actionParser.runAction(e.sourceEntity, await formatter.format(action.action, e.sourceEntity))
+                        }
                     }
                     function nah(player) {
                         player.runCommand(`feather:open @s "${e.message}"`)
                     }
                     uiManager.open(player, config.uinames.basic.confirmation, `Are you sure you want to spend ${price} ${button.buyButtonSettings.scoreboard} on this?`, ye, nah)
-                })
+                }
+
             })
             continue;
         }
@@ -147,7 +161,7 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
                     if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
                     if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
                 }
-                form.button(`§r${await formatter.format(button.text.replaceAll('<name2>', plr.name), e.sourceEntity)}${button.subtext ? `\n§r§7${await formatter.format(button.subtext.replaceAll('<name2>', plr.name), e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, async(player) => {
+                form.button(`§r${await formatter.format(button.text.replaceAll('<name2>', plr.name), e.sourceEntity)}${button.subtext ? `\n§r§7${await formatter.format(button.subtext.replaceAll('<name2>', plr.name), e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, async (player) => {
                     for (const action of button.actions) {
                         actionParser.runAction(e.sourceEntity, await formatter.format(action.action.replaceAll('<name2>', plr.name), e.sourceEntity))
                     }
@@ -160,7 +174,7 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
             if (!e.sourceEntity.hasTag(rqtf.replace('!', '')) && !rqtf.startsWith('!')) continue;
             if (e.sourceEntity.hasTag(rqtf.replace('!', '')) && rqtf.startsWith('!')) continue;
         }
-        form.button(`§r${await formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${await formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, async(player) => {
+        form.button(`§r${await formatter.format(button.text, e.sourceEntity)}${button.subtext ? `\n§r§7${await formatter.format(button.subtext, e.sourceEntity)}` : ''}`, button.icon ? icons.resolve(button.icon) : null, async (player) => {
             for (const action of button.actions) {
                 actionParser.runAction(e.sourceEntity, await formatter.format(action.action, e.sourceEntity))
             }

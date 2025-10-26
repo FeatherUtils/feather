@@ -16,13 +16,13 @@ uiManager.addUI(config.uinames.homes.root, 'homes root', (player,viewShared=fals
     })
     if(viewShared) {
         for(const home of homes.getSharedFromPlayer(player)) {
-            form.button(`${home.data.name}\n§7By @${playerStorage.getPlayerByID(home.data.plrid).name}`, `textures/azalea_icons/WarpEditor`, (player) => {
+            form.button(`§r${home.data.name}\n§7By @${playerStorage.getPlayerByID(home.data.plrid).name}`, `textures/azalea_icons/WarpEditor`, (player) => {
                 uiManager.open(player,config.uinames.homes.view,home.id,true)
             })
         }
     } else {
         for(const home of homes.getFromPlayer(player)) {
-            form.button(`${home.data.name}\n§7By @${playerStorage.getPlayerByID(home.data.plrid).name}`, `textures/azalea_icons/WarpEditor`, (player) => {
+            form.button(`§r${home.data.name}\n§7By @${playerStorage.getPlayerByID(home.data.plrid).name}`, `textures/azalea_icons/WarpEditor`, (player) => {
                 uiManager.open(player,config.uinames.homes.view,home.id,false)
             })
         }
