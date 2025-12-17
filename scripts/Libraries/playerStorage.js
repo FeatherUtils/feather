@@ -91,7 +91,6 @@ class PlayerStorage {
         this.db = db2;
         this.keyval = keyval;
         this.rewardsKeyval = rewardsKeyval;
-        this.a();
         if(!world.getDynamicProperty("TRANSITION3")) {
             this.transition();
             world.setDynamicProperty("TRANSITION3", true)

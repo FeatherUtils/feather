@@ -7,18 +7,18 @@
       ]
     },
     "header": {
-      "name": "§b§lFeather Essentials §e- §bv0.4.1",
+      "name": "§b§lFeather Essentials §e- §bv0.6.1",
       "description": "Feather Essentials - Made with <3 by IsabellaDaKitty & ARandomFern",
       "min_engine_version": [
         1,
-        20,
-        60
+        21,
+        120
       ],
       "uuid": "0364746b-2522-4e9c-94b5-32c15d30fe44",
       "version": [
         1,
         0,
-        16
+        31
       ]
     },
     "modules": [
@@ -28,7 +28,7 @@
         "version": [
           1,
           0,
-          16
+          31
         ]
       },
       {
@@ -39,22 +39,22 @@
         "version": [
           1,
           0,
-          16
+          31
         ]
       }
     ],
     "dependencies": [
       {
         "module_name": "@minecraft/server",
-        "version": "2.3.0-beta"
+        "version": "beta"
       },
       {
         "module_name": "@minecraft/server-ui",
-        "version": "2.1.0-beta"
+        "version": "beta"
       },
       {
         "module_name": "@minecraft/server-admin",
-        "version": "1.0.0-beta"
+        "version": "beta"
       }
     ],
     "capabilities": ["script_eval"]

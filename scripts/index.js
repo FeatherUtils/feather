@@ -46,6 +46,9 @@ Player.prototype.info = function (msg) {
 
 system.run(() => {
     world.sendMessage(`§d${config.info.name} §e- §b${config.info.versionString()} §e- §bLoaded!`)
+    if(!world.scoreboard.getObjective('feather:secondsplayed')) world.scoreboard.addObjective('feather:secondsplayed')
+    if(!world.scoreboard.getObjective('feather:minutesplayed')) world.scoreboard.addObjective('feather:minutesplayed')
+    if(!world.scoreboard.getObjective('feather:hoursplayed')) world.scoreboard.addObjective('feather:hoursplayed')
     if (!prismarineDb.permissions.getRole('admin')) prismarineDb.permissions.createRole('admin')
     prismarineDb.permissions.setAdmin('admin', true)
 })
@@ -74,7 +77,13 @@ world.afterEvents.playerSpawn.subscribe(e => {
 
 let btns = [];
 
-
+system.runInterval(() => {
+    for(const player of world.getPlayers()) {
+        system.run(() => {
+            playerStorage.saveData(player)
+        })
+    }
+}, 2)
 
 world.beforeEvents.itemUse.subscribe(e => {
     for (const bind of binding.db.findDocuments()) {
@@ -94,6 +103,46 @@ world.beforeEvents.itemUse.subscribe(e => {
 system.runInterval(async () => {
     for (const plr of world.getPlayers()) {
         plr.nameTag = `${await formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
+    }
+}, 20)
+
+function ensureIdentity(objName, plr) {
+    plr.runCommand(`scoreboard players add @s ${objName} 0`)
+}
+
+system.runInterval(() => {
+    const splayed = world.scoreboard.getObjective("feather:secondsplayed")
+    const mplayed = world.scoreboard.getObjective("feather:minutesplayed")
+    const hplayed = world.scoreboard.getObjective("feather:hoursplayed")
+
+    for (const plr of world.getPlayers()) {
+        ensureIdentity("feather:secondsplayed", plr)
+        ensureIdentity("feather:minutesplayed", plr)
+        ensureIdentity("feather:hoursplayed", plr)
+
+        let s = splayed.getScore(plr)
+        let m = mplayed.getScore(plr)
+        let h = hplayed.getScore(plr)
+
+        if (s === undefined) s = 0
+        if (m === undefined) m = 0
+        if (h === undefined) h = 0
+
+        s += 1
+
+        if (s > 59) {
+            s = 0
+            m += 1
+        }
+
+        if (m > 59) {
+            m = 0
+            h += 1
+        }
+
+        splayed.setScore(plr, s)
+        mplayed.setScore(plr, m)
+        hplayed.setScore(plr, h)
     }
 }, 20)
 

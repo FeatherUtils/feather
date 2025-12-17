@@ -79,9 +79,9 @@ class SidebarEditor {
     }
     moveLineInSidebar(id, id2, direction) {
         const doc = this.get(id);
-        if (!doc) return;
-        let index = doc.data.lines.findIndex(_ => _.id === id2)
-        if (index = -1) return;
+        if (!doc) return console.log('not found lil bro');
+        let index = this.getLineIndex(id, id2)
+        if (index == -1) return console.log('idk');
         let newIndex = direction == "up" ? index - 1 < 0 ? 0 : index - 1 : index + 1 >= doc.data.lines.length ? doc.data.lines.length - 1 : index + 1
         array_move(doc.data.lines, index, newIndex);
         this.db.overwriteDataByID(id, doc.data);

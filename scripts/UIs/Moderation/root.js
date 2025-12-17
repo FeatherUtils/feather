@@ -18,5 +18,8 @@ uiManager.addUI(config.uinames.moderation.root, 'Moderation Root', (player) => {
     form.button(`§cWarnings\n§7Warn users who violate minor rules`, icons.resolve('azalea/5-oldmaybe'), (player) => {
         uiManager.open(player,config.uinames.moderation.warns.root)
     })
+    form.button(`§aPlayer Management\n§7Moderate/view info on a player`, icons.resolve('azalea/AdminPlayerIcon'), (player) => {
+        uiManager.open(player,config.uinames.playerManagement.root)
+    })
     form.show(player)
 })

@@ -24,7 +24,7 @@ uiManager.addUI(config.uinames.clans.root, 'clans root', async (player) => {
         form.button(`§bMembers\n§7View all players in clan`, `.azalea/8-old`, (player) => {
             uiManager.open(player, config.uinames.clans.viewMembers)
         })
-        if (clan.data.base) {
+        if (clan.data.base && clans.settingsKV.get('clanBaseEnabled') == true) {
             form.button(`§aTeleport\n§7Teleport to the clan base`, `.vanilla/ender_pearl`, async (player) => {
                 let asd = await clans.teleportToBase(player)
                 if(asd === false) return player.error('Something went wrong while teleporting.')

@@ -8,18 +8,18 @@ import playerStorage from "../../../Libraries/playerStorage";
 import icons from "../../../Modules/icons";
 import moment from '../../../Libraries/moment'
 
-uiManager.addUI(config.uinames.moderation.mutes.create,'add mute cuz funny :3',(player)=>{
+uiManager.addUI(config.uinames.moderation.mutes.create,'add mute cuz funny :3',(player,name='')=>{
     let form = new ActionForm();
     form.title(`${consts.tag}§rCreate mute`)
     form.button(`§cBack\n§7Go back to mute ui`, null, (player) => {
         uiManager.open(player,config.uinames.moderation.mutes.root)
     })
-    let players = playerStorage.searchPlayersByName('')
+    let players = playerStorage.searchPlayersByName(name)
     for(const plr2 of players) {
         let plr = playerStorage.getPlayerByID(plr2)
         if(plr.name === player.name) continue;
         if(moderation.Database.findFirst({player:plr2,type:'MUTE'})) continue;
-        if(plr.tags.includes('admin')) continue;
+        if(plr.tags.includes('moderationexempt')) continue;
         form.button(`§c${plr.name}\n§7Mute this player`, null, (player) => {
             let form2 = new ModalFormData();
             form2.title(`§cMute ${plr.name}`)

@@ -125,7 +125,6 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
                             prismarineDb.economy.removeMoney(player, price, button.buyButtonSettings.scoreboard)
                             player.runCommand(`give @s ${button.buyButtonSettings.item} ${quantity}`)
                             player.runCommand(`playsound random.orb`)
-                            player.runCommand(`feather:open @s "${e.message}"`)
                         }
                         function nah(player) {
                             player.runCommand(`feather:open @s "${e.message}"`)
@@ -140,7 +139,6 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
                         if (money < price) return player.runCommand(`feather:open @s "${e.message}"`), player.runCommand(`playsound random.glass`);
                         prismarineDb.economy.removeMoney(player, price, button.buyButtonSettings.scoreboard)
                         player.runCommand(`playsound random.orb`)
-                        player.runCommand(`feather:open @s "${e.message}"`)
                         for (const action of button.actions) {
                             actionParser.runAction(e.sourceEntity, await formatter.format(action.action, e.sourceEntity))
                         }

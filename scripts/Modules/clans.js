@@ -26,6 +26,7 @@ class Clans {
                 this.settingsKV.set('MIGRATION1', true)
             }
             if (!this.settingsKV.get(`currencyScoreboard`)) this.settingsKV.set(`currencyScoreboard`, 'money')
+            if(this.settingsKV.get(`clanBaseEnabled`) == undefined) this.settingsKV.set(`clanBaseEnabled`, true)
             this.oldinviteDb = prismarineDb.table('Clans:Invites')
             this.inviteDB = prismarineDb.customStorage('Clans:Invites', SegmentedStoragePrismarine)
             if(!this.oldinviteDb.findDocuments().length == 0) {

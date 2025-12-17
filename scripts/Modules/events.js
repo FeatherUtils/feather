@@ -17,8 +17,8 @@ class Events {
                 }
                 this.kv.set('MIGRATION1', true)
             }
-            this.allowedTypes = ['KILL', 'DEATH', 'JOIN', 'CHAT', 'RANDOMNUMBER', 'BREAKBLOCK', 'PLACEBLOCK', 'PLAYERINTERACTWITHPLAYER', 'PLAYERHITPLAYER', 'WEATHERCHANGE', 'GAMEMODECHANGE']
-            this.allowedActionTypes = ['DEATH', 'KILL', 'JOIN', 'CHAT', 'BREAKBLOCK', 'PLACEBLOCK', 'PLAYERINTERACTWITHPLAYER', 'PLAYERHITPLAYER', 'WEATHERCHANGE', 'GAMEMODECHANGE']
+            this.allowedTypes = ['KILL', 'DEATH', 'JOIN', 'CHAT', 'RANDOMNUMBER', 'PLAYERKILLENTITY', 'ENTITYDEATH', 'BREAKBLOCK', 'PLACEBLOCK', 'PLAYERINTERACTWITHPLAYER', 'PLAYERHITENTITY', 'PLAYERINTERACTWITHBLOCK', 'PLAYERHITPLAYER', 'WEATHERCHANGE', 'GAMEMODECHANGE']
+            this.allowedActionTypes = ['DEATH', 'KILL', 'JOIN', 'CHAT', 'BREAKBLOCK', 'PLACEBLOCK', 'PLAYERKILLENTITY', 'ENTITYDEATH', 'PLAYERINTERACTWITHPLAYER', 'PLAYERHITPLAYER', 'PLAYERHITENTITY', 'PLAYERINTERACTWITHBLOCK', 'WEATHERCHANGE', 'GAMEMODECHANGE']
             this.allowedManualTriggers = ['RANDOMNUMBER']
             this.randomNumberKeyval = await this.db.keyval('randomnumbers')
             function random(min, max) {
@@ -46,6 +46,15 @@ class Events {
                     }
                 }
             })
+            world.afterEvents.entityHitEntity.subscribe((e) => {
+                if (e.damagingEntity.typeId !== 'minecraft:player') return;
+                for (const ev of this.db.findDocuments({ type: 'PLAYERHITENTITY' })) {
+                    if (ev.data.settings?.typeId && ev.data.settings.typeId != e.hitEntity.typeId) continue;
+                    for (const ac of ev.data.actions) {
+                        runAction(e.damagingEntity, ac.action.replaceAll('<typeID>', e.hitEntity.typeId))
+                    }
+                }
+            })
             world.afterEvents.entityDie.subscribe(e => {
                 if (e.damageSource.damagingEntity) {
                     if (e.damageSource.damagingEntity?.typeId === 'minecraft:player') {
@@ -66,10 +75,58 @@ class Events {
                     }
                 }
             })
+            world.afterEvents.entityDie.subscribe(e => {
+                if (e.damageSource.damagingEntity) {
+                    if (e.damageSource.damagingEntity?.typeId === 'minecraft:player') {
+                        for (const ev of this.db.findDocuments({ type: 'PLAYERKILLENTITY' })) {
+                            if (ev.data.settings && ev.data.settings.typeId && ev.data.settings.typeId !== e.deadEntity.typeId) continue;
+                            for (const ac of ev.data.actions) {
+                                runAction(e.damageSource.damagingEntity, ac.action.replaceAll('<typeID>', e.deadEntity.typeId))
+                            }
+                        }
+                    }
+                }
+                for (const ev of this.db.findDocuments({ type: 'ENTITYDEATH' })) {
+                    if (ev.data.settings && ev.data.settings.typeId && ev.data.settings.typeId !== e.deadEntity.typeId) continue;
+                    for (const ac of ev.data.actions) {
+                        actionParser.runAction(e.deadEntity.dimension, ac.action.replaceAll('<typeID>', e.deadEntity.typeId))
+                    }
+                }
+            })
+            world.afterEvents.playerInteractWithBlock.subscribe((e) => {
+                let interwithblockevents = this.db.findDocuments({ type: 'PLAYERINTERACTWITHBLOCK' });
+
+                for (const ev of interwithblockevents) {
+                    console.log('f')
+                    const settings = ev.data.settings || {};
+                    const block = e.block;
+
+                    if (!settings.typeId || settings.typeId === block.typeId) {
+                        console.log('f123')
+                        if (
+                            (settings.x === undefined && settings.y === undefined && settings.z === undefined) ||
+                            (settings.x === block.x && settings.y === block.y && settings.z === block.z)
+                        ) {
+                            for (const ac of ev.data.actions) {
+                                console.log('f2')
+                                runAction(
+                                    e.player,
+                                    ac.action
+                                        .replaceAll('<blockx>', block.x)
+                                        .replaceAll('<blocky>', block.y)
+                                        .replaceAll('<blockz>', block.z)
+                                        .replaceAll('<blockTypeID>', block.typeId)
+                                );
+                            }
+                        }
+                    }
+                }
+            });
+
             world.beforeEvents.playerGameModeChange.subscribe((e) => {
                 let gmevents = this.db.findDocuments({ type: 'GAMEMODECHANGE' })
-                for(const ev of gmevents) {
-                    for(const ac of ev.data.actions) {
+                for (const ev of gmevents) {
+                    for (const ac of ev.data.actions) {
                         runAction(e.player, ac.action.replaceAll('<fromgamemode>', e.fromGameMode).replaceAll('<togamemode>', e.toGameMode))
                     }
                 }

@@ -39,17 +39,23 @@ uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     form.button(`§eEconomy Editor`, `.vanilla/emerald`, (player) => {
         uiManager.open(player,config.uinames.economyEditor.root)
     })
+    form.button(`§uWarp Management`, 'textures/azalea_icons/main', (player) => {
+        uiManager.open(player,config.uinames.warpManagement)
+    })
     form.button(`§6Clans Settings`, '.vanilla/diamond_sword', (player) => {
         let form2 = new ModalFormData();
         let currencyScoreboard = clans.settingsKV.get('currencyScoreboard')
+        let clanBase = clans.settingsKV.get('clanBaseEnabled')
         form2.title('Clans Settings')
         form2.textField(`Currency Scoreboard`, 'money', {defaultValue: currencyScoreboard,tooltip:'This is for the clan bank. This is the scoreboard used for money usually'})
+        form2.toggle(`Clan Base`, {defaultValue: clanBase ?? ''})
         form2.show(player).then((res) => {
-            let[scoreboard] = res.formValues;
+            let[scoreboard,cb] = res.formValues;
             if(!scoreboard) return player.error('Please enter a scoreboard');
             if(!world.scoreboard.getObjective(scoreboard)) world.scoreboard.addObjective(scoreboard);
             if(!prismarineDb.economy.getCurrencies().find(_=>_.scoreboard === scoreboard)) prismarineDb.economy.addCurrency(scoreboard, '$', scoreboard);
             clans.settingsKV.set('currencyScoreboard', scoreboard)
+            clans.settingsKV.set('clanBaseEnabled', cb)
         })
     })
     form.button(`§5Homes Settings`, '.vanilla/ender_pearl', (player) => {

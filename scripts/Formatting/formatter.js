@@ -5,6 +5,26 @@ import { getTPS } from "./format/tps";
 import { getPlayers } from "./format/online";
 import events from "../Modules/events";
 import modules from "../Modules/modules";
+import keyvalues from "../Modules/keyvalues";
+
+function abbreviateNumber(number, decPlaces) {
+    const suffixes = ["k", "m", "b", "t"];
+    const decScale = Math.pow(10, decPlaces);
+
+    for (let i = suffixes.length - 1; i >= 0; i--) {
+        const size = Math.pow(10, (i + 1) * 3);
+        if (size <= number) {
+            number = Math.round((number * decScale) / size) / decScale;
+            if (number === 1000 && i < suffixes.length - 1) {
+                number = 1;
+                i++;
+            }
+            number += suffixes[i];
+            break;
+        }
+    }
+    return number;
+}
 
 class BlossomFormatting {
     #vars;
@@ -104,6 +124,17 @@ class BlossomFormatting {
             }
         }
 
+        if (newLine.includes("<keyvalue:")) {
+            const matches = [...newLine.matchAll(/<keyvalue:([^>]+)>/g)];
+
+            for (const match of matches) {
+                const fullMatch = match[0];
+                const key = match[1];
+                const value = await keyvalues.get(key) ?? fullMatch;
+                newLine = newLine.replace(fullMatch, value);
+            }
+        }
+
 
         this.#vars.msg = () => msg2;
 
@@ -114,6 +145,10 @@ class BlossomFormatting {
             newLine = newLine.replaceAll("{{vars}}", this.getVars());
         }
         const allObjectives = world.scoreboard.getObjectives();
+        for (const obj of allObjectives) {
+            let score = obj.hasParticipant(player) ? abbreviateNumber(obj.getScore(player.scoreboardIdentity), 2) : 0;
+            newLine = newLine.replaceAll(`{{ab_${obj.id}}}`, score);
+        }
         for (const obj of allObjectives) {
             let score = obj.hasParticipant(player) ? obj.getScore(player.scoreboardIdentity) : 0;
             newLine = newLine.replaceAll(`{{${obj.id}}}`, score);

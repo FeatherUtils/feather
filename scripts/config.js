@@ -148,13 +148,19 @@ export default {
             editItem: 'shop_editItem',
             viewCategory: 'shop_viewCategory', // d
             viewItem: 'shop_viewItem'
-        }
+        },
+        playerManagement: {
+            root: 'plrmgmnt',
+            search: 'plrmgmnt_search',
+            view: 'plrmgmnt_view'
+        },
+        warpManagement: 'warpmgmnt'
     },
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
-        release: 'DEV',
-        version: [0, 3],
+        release: 'Stable',
+        version: [0, 6],
         versionString() {
             return `${this.release} ${this.version.join('.')}`;
         },
@@ -173,7 +179,10 @@ export default {
         {perm:'extra_settings',display:'Extra Settings'},
         {perm:'ranks',display:'Edit Ranks'},
         {perm:'ui_builder',display:'UI Builder'},
-        {perm:'misc_settings',display:'Misc Settings'}
+        {perm:'misc_settings',display:'Misc Settings'},
+        {perm:'bans',display:'Bans'},
+        {perm:'mute',display:'Mute'},
+        {perm:'warn',display:'Warn'}
     ],
     credits: [
         {name:'Isabella (isabelladakitty)', description:'Main contributor/Lead dev/Founder'},

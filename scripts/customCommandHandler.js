@@ -1,5 +1,5 @@
 import { GameMode, system } from '@minecraft/server'
-import { CommandPermissionLevel, CustomCommandParamType, world, Player, CustomCommandStatus } from "@minecraft/server"
+import { CommandPermissionLevel, CustomCommandParamType, CustomCommandSource, world, Player, CustomCommandStatus } from "@minecraft/server"
 import binding from './Modules/binding'
 import { transferPlayer } from "@minecraft/server-admin"
 import warps from './Modules/warps'
@@ -9,9 +9,12 @@ import actionParser from './Modules/actionParser'
 import formatter from './Formatting/formatter'
 import modules from './Modules/modules'
 import emojis from './Formatting/emojis'
+import keyvalues from './Modules/keyvalues'
+import { NUT_UI_DISABLE_VERTICAL_SIZE_KEY } from './cherryUIConsts'
 
 if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
+        init.customCommandRegistry.registerEnum('feather:keyvalueoptions', ['set', 'get'])
         init.customCommandRegistry.registerEnum('feather:gamemodetypes', ['0', '1', '2', '3', 's', 'c', 'a', 'sp', 'survival', 'creative', 'adventure', 'spectator'])
         init.customCommandRegistry.registerCommand({
             name: 'feather:emojis',
@@ -28,6 +31,43 @@ if (system.beforeEvents.startup) {
                 }
             }
             player.sendMessage([text.map(_ => _.join('        ')).join('\n§r'), '', '§aTo use emojis, do :emoji_name: in chat. Example:   :skull:'].join('\n§r'))
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:setkeyvalue",
+            description: "Set a KeyValue",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    type: CustomCommandParamType.String,
+                    name: 'key'
+                },
+                {
+                    type: CustomCommandParamType.String,
+                    name: 'value'
+                }
+            ]
+        }, (source, key, value) => {
+            system.run(() => {
+                keyvalues.set(key, value)
+                if(source.sourceType === CustomCommandSource.Entity && source.sourceEntity.typeId == 'minecraft:player') source.sourceEntity.success("Successfuly set the key " + key + " to " + value)
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: 'feather:getkeyvalue',
+            description: 'Get a keyvalue',
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    type: CustomCommandParamType.String,
+                    name: 'key'
+                }
+            ]
+        }, (source, key) => {
+            system.run(async () => {
+                let val = await keyvalues.get(key)
+                if(source.sourceType === CustomCommandSource.Entity && source.sourceEntity.typeId == 'minecraft:player') source.sourceEntity.sendMessage(`${key}: ${val}`)
+            })
+            
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:gm",
@@ -227,6 +267,27 @@ if (system.beforeEvents.startup) {
             })
         })
         init.customCommandRegistry.registerCommand({
+            name: "feather:opengui",
+            description: "Open a Feather Built-In UI",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "players",
+                    type: CustomCommandParamType.PlayerSelector
+                },
+                {
+                    name: "scriptevent",
+                    "type": CustomCommandParamType.String
+                }
+            ],
+        }, (origin, players, scriptevent) => {
+            system.run(() => {
+                for (const player of players) {
+                    player.runCommand(`scriptevent feathergui:${scriptevent}`)
+                }
+            })
+        })
+        init.customCommandRegistry.registerCommand({
             name: "feather:transfer",
             description: "Transfer a player to a different server",
             permissionLevel: CommandPermissionLevel.GameDirectors,
@@ -295,6 +356,25 @@ if (system.beforeEvents.startup) {
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:addwarp",
+            description: "Create a warp",
+            permissionLevel: CommandPermissionLevel.GameDirectors,
+            mandatoryParameters: [
+                {
+                    name: "name",
+                    type: CustomCommandParamType.String
+                }
+            ],
+        }, (asd, name) => {
+            system.run(() => {
+                const player = world.getPlayers().find(_ => _.name === asd.sourceEntity.name)
+                if (!player) return;
+                let dim = player.dimension.id
+                warps.add(name, player.location, dim)
+                player.success('Created successfully')
+            })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:setwarp",
             description: "Create a warp",
             permissionLevel: CommandPermissionLevel.GameDirectors,
             mandatoryParameters: [
