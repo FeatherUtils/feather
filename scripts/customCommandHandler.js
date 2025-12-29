@@ -11,6 +11,7 @@ import modules from './Modules/modules'
 import emojis from './Formatting/emojis'
 import keyvalues from './Modules/keyvalues'
 import { NUT_UI_DISABLE_VERTICAL_SIZE_KEY } from './cherryUIConsts'
+import codes from './Modules/codes'
 
 if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
@@ -49,7 +50,7 @@ if (system.beforeEvents.startup) {
         }, (source, key, value) => {
             system.run(() => {
                 keyvalues.set(key, value)
-                if(source.sourceType === CustomCommandSource.Entity && source.sourceEntity.typeId == 'minecraft:player') source.sourceEntity.success("Successfuly set the key " + key + " to " + value)
+                if (source.sourceType === CustomCommandSource.Entity && source.sourceEntity.typeId == 'minecraft:player') source.sourceEntity.success("Successfuly set the key " + key + " to " + value)
             })
         })
         init.customCommandRegistry.registerCommand({
@@ -65,9 +66,9 @@ if (system.beforeEvents.startup) {
         }, (source, key) => {
             system.run(async () => {
                 let val = await keyvalues.get(key)
-                if(source.sourceType === CustomCommandSource.Entity && source.sourceEntity.typeId == 'minecraft:player') source.sourceEntity.sendMessage(`${key}: ${val}`)
+                if (source.sourceType === CustomCommandSource.Entity && source.sourceEntity.typeId == 'minecraft:player') source.sourceEntity.sendMessage(`${key}: ${val}`)
             })
-            
+
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:gm",
@@ -176,9 +177,9 @@ if (system.beforeEvents.startup) {
                     type: CustomCommandParamType.Integer
                 }
             ]
-        }, (origin,seconds) => {
+        }, (origin, seconds) => {
             modules.set('warptime', seconds),
-            origin.sourceEntity.success('Set warp time to ' + `${seconds}`)
+                origin.sourceEntity.success('Set warp time to ' + `${seconds}`)
         })
         init.customCommandRegistry.registerCommand({
             name: 'feather:homes',
@@ -243,7 +244,7 @@ if (system.beforeEvents.startup) {
             permissionLevel: CommandPermissionLevel.GameDirectors
         }, (origin) => {
             let player = origin.sourceEntity
-            uiManager.open(player,config.uinames.config.root)
+            uiManager.open(player, config.uinames.config.root)
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:open",
@@ -391,6 +392,33 @@ if (system.beforeEvents.startup) {
                 warps.add(name, player.location, dim)
                 player.success('Created successfully')
             })
+        })
+        init.customCommandRegistry.registerCommand({
+            name: "feather:redeem",
+            description: "Redeem a code",
+            permissionLevel: CommandPermissionLevel.Any,
+            optionalParameters: [
+                {
+                    name: "code",
+                    type: CustomCommandParamType.String
+                }
+            ]
+        }, (origin, code) => {
+            system.run(async () => {
+                if(!modules.get('redeem')) return origin.sourceEntity.error('/redeem is disabled')
+                if (code) {
+                    let id = codes.Database.findFirst({ code }).id
+                    if (!id) return origin.sourceEntity.error('Invalid code')
+                    let result = await codes.redeem(id, origin.sourceEntity)
+                    if (!result.success) {
+                        if (result.reason === 'ALREADY_REDEEMED') return origin.sourceEntity.error('This code has already been redeemed');
+                        return origin.sourceEntity.error('Unable to redeem code');
+                    }
+                } else {
+                    uiManager.open(origin.sourceEntity, config.uinames.codes.redeem)
+                }
+            })
+
         })
         init.customCommandRegistry.registerCommand({
             name: "feather:addft",

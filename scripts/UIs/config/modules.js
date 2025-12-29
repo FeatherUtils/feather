@@ -18,10 +18,11 @@ uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
     form.toggle('/nick', {defaultValue: modules.get('nick')})
     form.toggle('/vote', {defaultValue: modules.get('vote')})
     form.toggle('/bounty', {defaultValue: modules.get('bounty')})
+    form.toggle('/redeem', {defaultValue: modules.get('redeem')})
     form.dropdown(`${translate(config.lang.config.modules.lang)}`, langs.map(_=>_.name), {defaultValueIndex: langs.findIndex(_=>_.val==modules.get('language'))})
     form.show(player).then((res) => {
         if(res.canceled) return uiManager.open(player, config.uinames.config.root);
-        let[cr,dev,pay,homes,nick,vote,bounty,l] = res.formValues
+        let[cr,dev,pay,homes,nick,vote,bounty,redeem,l] = res.formValues
         let lang = langs[l]
         modules.set('devMode', dev)
         modules.set('cr', cr)
@@ -30,6 +31,7 @@ uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
         modules.set('nick', nick)
         modules.set('vote', vote)
         modules.set('bounty', bounty)
+        modules.set('redeem', redeem)
         modules.set('language',lang.val)
         system.run(() => {uiManager.open(player, config.uinames.config.root)})
     })

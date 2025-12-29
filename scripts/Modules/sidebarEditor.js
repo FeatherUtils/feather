@@ -13,7 +13,8 @@ class SidebarEditor {
     run() {
         system.runInterval(async () => {
             for (const plr of world.getPlayers()) {
-                let sd = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)
+                let sd3 = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)
+                let sd = this.db.findFirst({name:sd3})
                 if (!sd) {
                     let sd2 = this.getDefault();
                     if (!sd2) continue;

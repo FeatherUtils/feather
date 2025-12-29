@@ -140,6 +140,26 @@ export default {
             root: 'bounty',
             add: 'bounty_add'
         },
+        repeatedBroadcasts: {
+            root: 'repeated_broadcasts',
+            create: 'repeated_broadcasts_create',
+            edit: 'repeated_broadcasts_edit'
+        },
+        leaderboards: {
+            root: 'leaderboards_root',
+            create: 'leaderboards_create',
+            edit: 'leaderboards_edit',
+            spawn: 'leaderboards_spawn'
+        },
+        codes: {
+            root: 'codes | Codes',
+            admin: 'codes_admin | Codes/Admin',
+            create: 'codes_create | Codes/Create',
+            manage: 'codes_manage | Codes/Manage',
+            details: 'codes_details | Codes/Details',
+            addAction: 'codes_addaction | Codes/AddAction',
+            redeem: 'codes_redeem | Codes/Redeem'
+        },
         shop: {
             root: 'shop_root', // d
             addCategory: 'shop_addCategory', // d
@@ -182,7 +202,8 @@ export default {
         {perm:'misc_settings',display:'Misc Settings'},
         {perm:'bans',display:'Bans'},
         {perm:'mute',display:'Mute'},
-        {perm:'warn',display:'Warn'}
+        {perm:'warn',display:'Warn'},
+        {perm:'codes',display:'Codes (admin)'}
     ],
     credits: [
         {name:'Isabella (isabelladakitty)', description:'Main contributor/Lead dev/Founder'},

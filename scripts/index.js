@@ -32,6 +32,7 @@ import binding from './Modules/binding'
 import sidebarEditor from './Modules/sidebarEditor'
 import actionParser from './Modules/actionParser'
 import api from './UIs/config/api'
+import './Modules/antiAfk'
 
 
 Player.prototype.error = function (msg) {
