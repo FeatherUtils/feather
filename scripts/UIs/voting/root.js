@@ -2,11 +2,12 @@ import { ActionForm } from "../../Libraries/form_func";
 import voting from "../../Modules/voting";
 import uiManager from "../../Libraries/uiManager";
 import config from "../../config";
+import { prismarineDb } from "../../Libraries/prismarinedb";
 
 uiManager.addUI(config.uinames.voting.root, 'Voting root', (player) => {
     let form = new ActionForm();
     form.title('§f§0§0§f§rVoting')
-    if(player.hasTag('admin')) {
+    if(prismarineDb.permissions.hasPermission(player, 'voting_admin')) {
         form.body(`To allow non-admin players to vote enable /vote or make a place where they can access it with the command "scriptevent feathergui:voting_root"`)
         form.button('§dAdmin View\n§7Do admin stuff', 'textures/azalea_icons/Settings', (player) => {
             uiManager.open(player, config.uinames.voting.admin)
