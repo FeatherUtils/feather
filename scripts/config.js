@@ -228,7 +228,8 @@ export default {
         {perm:'quests',display:'Quests'},
         {perm:'lifestealConfig',display:'Lifesteal config'},
         {perm:'dynamicLighting',display:'Dynamic Lighting config'},
-        {perm:'RTPSettings',display:'RTP Settings'}
+        {perm:'RTPSettings',display:'RTP Settings'},
+        {perm:'bypassRTPCooldown', display:'Bypass RTP Cooldown'}
     ],
     credits: [
         {name:'Isabella (isabelladakitty)', description:'Main contributor/Lead dev/Founder'},
