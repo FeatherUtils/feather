@@ -2,13 +2,7 @@ import { prismarineDb } from "../Libraries/prismarinedb";
 import { system, world } from '@minecraft/server'
 import playerStorage from '../Libraries/playerStorage'
 import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
-
-async function timer(plr, sec, msg) {
-    for (let i = sec; i > 0; i--) {
-        plr.sendMessage(`${msg.replace('[s]', i)}`);
-        await system.waitTicks(20);
-    }
-}
+import { timer } from './Utilities/timer' 
 
 class Homes {
     constructor() {
@@ -83,9 +77,8 @@ class Homes {
     async tp(plr, id) {
         let doc = this.db.getByID(id)
         if (!doc) return plr.sendMessage('Could not find home');
-        await timer(plr, this.kv.get('teleportTime'), 'Teleporting in [s]..')
         let dim = world.getDimension(`${doc.data.loc.dim}`)
-        plr.teleport(doc.data.loc.pos, { dimension: dim })
+        await timer(plr, this.kv.get('teleportTime'), 'Teleporting in [s]..', () => {plr.teleport(doc.data.loc.pos, { dimension: dim })})
     }
 }
 

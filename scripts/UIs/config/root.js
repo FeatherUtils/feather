@@ -23,12 +23,23 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
         uiManager.open(player, config.uinames.config.misc)
     })
     for (const btn of api.get()) {
-        form.button(`${btn.text}\n§7${btn.subtext}`, btn.icon ?? null, (player) => {
-            for (const ac of btn.actions) {
-                console.log(ac)
-                actionParser.runAction(player, `${ac}`)
+        if (btn.permission) {
+            if (prismarineDb.permissions.hasPermission(player, btn.permission)) {
+                form.button(`${btn.text}\n§7${btn.subtext}`, btn.icon ?? null, (player) => {
+                    for (const ac of btn.actions) {
+                        console.log(ac)
+                        actionParser.runAction(player, `${ac}`)
+                    }
+                })
             }
-        })
+        } else {
+            form.button(`${btn.text}\n§7${btn.subtext}`, btn.icon ?? null, (player) => {
+                for (const ac of btn.actions) {
+                    console.log(ac)
+                    actionParser.runAction(player, `${ac}`)
+                }
+            })
+        }
     }
     form.button(`§gCredits\n§7People who contributed to the addon`, `.azalea/credits(little changes)`, (player) => {
         uiManager.open(player, config.uinames.config.credits)
@@ -60,9 +71,9 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
             uiManager.open(player, config.uinames.sidebarEditor.root)
         })
     }
-    if(prismarineDb.permissions.hasPermission(player, 'admininstrator')) {
+    if (prismarineDb.permissions.hasPermission(player, 'admininstrator')) {
         form.button(`§uPermissions\n§7Create roles and set permissions`, '.azalea/4', (player) => [
-            uiManager.open(player,config.uinames.permissions.root)
+            uiManager.open(player, config.uinames.permissions.root)
         ])
     }
     if (prismarineDb.permissions.hasPermission(player, 'events')) {
@@ -75,7 +86,7 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
         form.button(`§aVoting\n§7Allow your players to vote on things`, '.blossom/vote', (player) => {
             uiManager.open(player, config.uinames.voting.root)
         })
-        
+
     }
     form.show(player)
 })

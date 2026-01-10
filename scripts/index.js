@@ -1,5 +1,6 @@
-import { world, system, ScriptEventSource, Player } from '@minecraft/server'
+import { world, system, ScriptEventSource, Player, World } from '@minecraft/server'
 import communication from './communication'
+
 communication.register('feather:pushToConfig', ({ args }) => {
     console.log(api.get().toString())
     system.run(async () => {
@@ -8,10 +9,24 @@ communication.register('feather:pushToConfig', ({ args }) => {
         api.add(JSON.parse(args[0]))
     })
 })
-communication.register('feather:test', ({args}) => {
+communication.register('feather:lifestealInstalled', ({ args }) => {
+    system.run(async () => {
+        console.log('[Feather] Lifesteal is installed, version: ' + args[0])
+        api.lifestealInstalled = true;
+        api.lifestealVersion = args[0]
+        api.buttons.push({ text: '§bLifesteal', subtext: 'Open the Feather Lifesteal configuration', actions: ['scriptevent featherlifesteal:config'], icon: 'textures/items/heartofthesea_closed', permission: 'lifestealConfig' })
+        system.sendScriptEvent('featherlifesteal:verifyFeatherInstalled', `"${config.info.versionString()}"`)
+    })
+})
+communication.register('feather:test', ({ args }) => {
     system.run(() => {
         world.sendMessage(args.join(" "))
     })
+})
+
+system.run(async () => {
+    await system.waitTicks(10)
+    system.sendScriptEvent('feather:isInstalled', `"${config.info.versionString()}"`)
 })
 import events from './Modules/events'
 import './UIs/index'
@@ -33,6 +48,8 @@ import sidebarEditor from './Modules/sidebarEditor'
 import actionParser from './Modules/actionParser'
 import api from './UIs/config/api'
 import './Modules/antiAfk'
+import { ActionForm } from './Libraries/form_func'
+import { consts } from './cherryUIConsts'
 
 
 Player.prototype.error = function (msg) {
@@ -44,34 +61,44 @@ Player.prototype.success = function (msg) {
 Player.prototype.info = function (msg) {
     this.sendMessage(`§b§lINFO§8 >>§r§7 ${msg}`)
 }
+World.prototype.error = function (msg) {
+    this.sendMessage(`§cError §8>>§r§7 ${msg}`)
+}
+World.prototype.criticalError = function (msg) {
+    this.sendMessage(`§4CRITICAL ERROR §8>>§r§7 ${msg}`)
+}
+
+import './Modules/betterKb'
+import { ModalFormData } from '@minecraft/server-ui'
+import keyvalues from './Modules/keyvalues'
 
 system.run(() => {
     world.sendMessage(`§d${config.info.name} §e- §b${config.info.versionString()} §e- §bLoaded!`)
-    if(!world.scoreboard.getObjective('feather:secondsplayed')) world.scoreboard.addObjective('feather:secondsplayed')
-    if(!world.scoreboard.getObjective('feather:minutesplayed')) world.scoreboard.addObjective('feather:minutesplayed')
-    if(!world.scoreboard.getObjective('feather:hoursplayed')) world.scoreboard.addObjective('feather:hoursplayed')
+    if (!world.scoreboard.getObjective('feather:secondsplayed')) world.scoreboard.addObjective('feather:secondsplayed')
+    if (!world.scoreboard.getObjective('feather:minutesplayed')) world.scoreboard.addObjective('feather:minutesplayed')
+    if (!world.scoreboard.getObjective('feather:hoursplayed')) world.scoreboard.addObjective('feather:hoursplayed')
     if (!prismarineDb.permissions.getRole('admin')) prismarineDb.permissions.createRole('admin')
     prismarineDb.permissions.setAdmin('admin', true)
 })
 
 world.afterEvents.playerSpawn.subscribe(e => {
-    if(!e.initialSpawn) return;
+    if (!e.initialSpawn) return;
     const ban = moderation.Database.findFirst({ type: 'BAN', player: e.player.id })
     if (ban) {
         world.getDimension('minecraft:overworld').runCommand(`kick "${e.player.name}" You are banned for ${moment(ban.data.time).fromNow()}.\nReason:\n${ban}`)
     }
-    const warnings = moderation.Database.findDocuments({type:'WARNING',player:e.player.id})
+    const warnings = moderation.Database.findDocuments({ type: 'WARNING', player: e.player.id })
     let warningsformatted = [];
-    if(warnings.length > 0) {
+    if (warnings.length > 0) {
         warningsformatted.push('-=-=-=-WARNINGS-=-=-=-')
         warningsformatted.push('')
     }
     let i = 0
-    for(const warning of warnings) {
+    for (const warning of warnings) {
         i++
         warningsformatted.push(`Warning ${i}: ${warning.data.reason}`)
     }
-    if(warningsformatted.length > 0) {
+    if (warningsformatted.length > 0) {
         e.player.sendMessage(warningsformatted.join('\n'))
     }
 })
@@ -79,15 +106,33 @@ world.afterEvents.playerSpawn.subscribe(e => {
 let btns = [];
 
 system.runInterval(() => {
-    for(const player of world.getPlayers()) {
+    for (const player of world.getPlayers()) {
         system.run(() => {
             playerStorage.saveData(player)
         })
     }
 }, 2)
 
+system.runInterval(() => {
+    world.getPlayers().forEach((player) => {
+        if(player.isJumping) { player.addTag('jumping') } else { if(player.hasTag('jumping')) player.removeTag('jumping') }
+        if(player.isClimbing) { player.addTag('climbing') } else { if(player.hasTag('climbing')) player.removeTag('climbing') }
+        if(player.isEmoting) { player.addTag('emoting') } else { if(player.hasTag('emoting')) player.removeTag('emoting') }
+        if(player.isFalling) { player.addTag('falling') } else { if(player.hasTag('falling')) player.removeTag('falling') }
+        if(player.isFlying) { player.addTag('flying') } else { if(player.hasTag('flying')) player.removeTag('flying') }
+        if(player.isGliding) { player.addTag('gliding') } else { if(player.hasTag('gliding')) player.removeTag('gliding') }
+        if(player.isInWater) { player.addTag('inwater') } else { if(player.hasTag('inwater')) player.removeTag('inwater') }
+        if(player.isOnGround) { player.addTag('onground') } else { if(player.hasTag('onground')) player.removeTag('onground') }
+        if(player.isSleeping) { player.addTag('sleeping') } else { if(player.hasTag('sleeping')) player.removeTag('sleeping') }
+        if(player.isSneaking) { player.addTag('sneaking') } else { if(player.hasTag('sneaking')) player.removeTag('sneaking') }
+        if(player.isSprinting) { player.addTag('sprinting') } else { if(player.hasTag('sprinting')) player.removeTag('sprinting') }
+        if(player.isSwimming) { player.addTag('swimming') } else { if(player.hasTag('swimming')) player.removeTag('swimming') }
+    })
+}, 2)
+
 world.beforeEvents.itemUse.subscribe(e => {
     for (const bind of binding.db.findDocuments()) {
+        if (bind.data.typeID == 'feather:entity_action_editor') continue;
         if (bind.data.typeID == e.itemStack.typeId) {
             e.cancel = true
             actionParser.runAction(e.source, bind.data.cmd)
@@ -100,6 +145,79 @@ world.beforeEvents.itemUse.subscribe(e => {
 
     });
 });
+
+world.beforeEvents.playerInteractWithEntity.subscribe((e) => {
+    let entity = e.target
+    let player = e.player
+    if (e.target.typeId === 'minecraft:player') return;
+    const item = e.itemStack
+    if (!item || item.typeId !== 'feather:entity_action_editor') return;
+    e.cancel = true
+    system.run(() => {
+        let actions = keyvalues.get(`eactioneditor:${entity.id}`)
+        if (!actions) actions = [];
+
+        console.log('Attempted to open menu')
+        let form = new ActionForm();
+        form.title(consts.tag + 'Actions')
+        form.button('Add', null, (player) => {
+            let form2 = new ModalFormData();
+            form2.title('Code Editor')
+            form2.textField('Code', 'code')
+            form2.show(player).then((res) => {
+                let [a] = res.formValues
+                actions.push(a)
+                console.log(actions)
+                keyvalues.set(`eactioneditor:${entity.id}`, actions)
+            })
+        })
+        for (const action of actions) {
+            let i = actions.findIndex((_) => _ == action)
+            form.button(`${action}`, null, (player) => {
+                let form2 = new ActionForm();
+                form2.title(consts.tag)
+                form2.button('Edit', null, (player) => {
+                    let form3 = new ModalFormData();
+                    form3.title('Code Editor')
+                    form3.textField('Code', 'code', { defaultValue: action })
+                    form3.show(player).then((res) => {
+                        let [a] = res.formValues;
+                        actions[i] = a
+                        keyvalues.set(`eactioneditor:${entity.id}`, actions)
+                    })
+                })
+                form2.button('Delete', null, (player) => {
+                    actions.splice(i, 1)
+                    keyvalues.set(`eactioneditor:${entity.id}`, actions)
+                })
+                form2.show(player)
+            })
+        }
+        form.show(player)
+    })
+})
+world.beforeEvents.playerInteractWithEntity.subscribe((e) => {
+    const entity = e.target
+    const player = e.player
+
+    if (entity.typeId === 'minecraft:player') return
+
+    const item = e.itemStack
+
+    if (item?.typeId === 'feather:entity_action_editor') return
+
+    const actions = keyvalues.get(`eactioneditor:${entity.id}`)
+    if (!actions || actions.length === 0) return
+
+    e.cancel = true
+
+    system.run(() => {
+        for (const action of actions) {
+            actionParser.runAction(player, action)
+        }
+    })
+})
+
 
 system.runInterval(async () => {
     for (const plr of world.getPlayers()) {

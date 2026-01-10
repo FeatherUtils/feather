@@ -1,0 +1,20 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:item": {
+		"description": {
+			"identifier": "feather:entity_action_editor",
+			"menu_category": {
+				"category": "equipment"
+			}
+		},
+		"components": {
+			"minecraft:icon": "emerald",
+			"minecraft:display_name": {
+				"value": "§e§lEntity Action Editor"
+			},
+			"minecraft:glint": true,
+			"minecraft:can_destroy_in_creative": false,
+			"minecraft:allow_off_hand": false
+		}
+	}
+}

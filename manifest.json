@@ -7,7 +7,7 @@
       ]
     },
     "header": {
-      "name": "§b§lFeather Essentials §e- §cRedstone §b7",
+      "name": "§b§lFeather Essentials §e- §fQuartz §b8",
       "description": "Feather Essentials - Made with <3 by IsabellaDaKitty & ARandomFern",
       "min_engine_version": [
         1,
@@ -18,7 +18,7 @@
       "version": [
         1,
         0,
-        32
+        33
       ]
     },
     "modules": [
@@ -28,7 +28,7 @@
         "version": [
           1,
           0,
-          32
+          33
         ]
       },
       {
@@ -39,7 +39,7 @@
         "version": [
           1,
           0,
-          32
+          33
         ]
       }
     ],

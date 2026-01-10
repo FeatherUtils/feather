@@ -6,6 +6,7 @@ export default [
         "layout": 4,
         "theme": 0,
         "type": "UI",
+        "isBuiltIn": true,
         "buttons": [
             {
                 "text": "§6Request",
@@ -28,7 +29,7 @@ export default [
                 "icon": "azalea/RequestIncoming",
                 "actions": [
                     {
-                        "action": "tp <name2> @s",
+                        "action": "tp \"<name2>\" @s",
                         "id": 1750138252324
                     },
                     {
@@ -49,6 +50,7 @@ export default [
         "layout": 4,
         "theme": 0,
         "type": "UI",
+        "isBuiltIn": true,
         "buttons": [
             {
                 "text": "§r<name2>",
@@ -57,11 +59,11 @@ export default [
                 "icon": null,
                 "actions": [
                     {
-                        "action": "tag \"<name2>\" add \"reqfrom:<name>\"",
+                        "action": "tag \"<name2>\" add \"reqfrom:<realname>\"",
                         "id": 1750138385975
                     },
                     {
-                        "action": "tell \"<name2>\" <name> sent you a TP request!",
+                        "action": "tell \"<name2>\" <realname> sent you a TP request!",
                         "id": 1750138725576
                     }
                 ],
@@ -78,6 +80,7 @@ export default [
         "layout": 4,
         "theme": 0,
         "type": "UI",
+        "isBuiltIn": true,
         "buttons": [
             {
                 "text": "§e<warpname>",

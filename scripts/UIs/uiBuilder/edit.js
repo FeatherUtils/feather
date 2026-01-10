@@ -22,6 +22,12 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
     form.button(`${consts.header}§r§cBack\n§7Go back to UI Builder`, `textures/azalea_icons/2`, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
+    if(ui.data.isBuiltIn || ui.data.scriptevent == 'tpr' || ui.data.scriptevent == 'warps' || ui.data.scriptevent == 'tpr-req') {
+        form.button(consts.alt + '§rReset Built-In UI', null, (player) => {
+            uiBuilder.resetBuiltInUI(ui.data.scriptevent)
+            uiManager.open(player, config.uinames.uiBuilder.root)
+        })
+    }
     form.button(`${consts.header}§r§bIcon\n§7Edit UI Icon`, `${ui.data.icon ?? 'textures/azalea_icons/ClickyClick'}`, (player) => {
         function callback(player, icon) {
             let id2 = id

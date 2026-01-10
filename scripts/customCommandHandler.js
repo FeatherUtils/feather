@@ -12,6 +12,7 @@ import emojis from './Formatting/emojis'
 import keyvalues from './Modules/keyvalues'
 import { NUT_UI_DISABLE_VERTICAL_SIZE_KEY } from './cherryUIConsts'
 import codes from './Modules/codes'
+import { prismarineDb } from './Libraries/prismarinedb'
 
 if (system.beforeEvents.startup) {
     system.beforeEvents.startup.subscribe(async init => {
@@ -268,6 +269,21 @@ if (system.beforeEvents.startup) {
             })
         })
         init.customCommandRegistry.registerCommand({
+            name: "feather:rtp",
+            description: "Randomly teleport in the world",
+            permissionLevel: CommandPermissionLevel.Any,
+            mandatoryParameters: [
+            ],
+        }, (origin) => {
+            system.run(() => {
+                if(!origin.sourceEntity || origin.sourceEntity.typeId !== 'minecraft:player') return;
+                const player = origin.sourceEntity;
+                if(prismarineDb.permissions.hasPermission(player, 'modules') && !modules.get('rtp')) player.info('You can enable RTP in the modules using the Config UI (/config or the Config UI item)')
+                if(!modules.get('rtp')) return player.error('RTP is disabled by the server admins!')
+                player.runCommand(`scriptevent feather:rtp`)
+            })
+        })
+        init.customCommandRegistry.registerCommand({
             name: "feather:opengui",
             description: "Open a Feather Built-In UI",
             permissionLevel: CommandPermissionLevel.GameDirectors,
@@ -405,7 +421,7 @@ if (system.beforeEvents.startup) {
             ]
         }, (origin, code) => {
             system.run(async () => {
-                if(!modules.get('redeem')) return origin.sourceEntity.error('/redeem is disabled')
+                if (!modules.get('redeem')) return origin.sourceEntity.error('/redeem is disabled')
                 if (code) {
                     let id = codes.Database.findFirst({ code }).id
                     if (!id) return origin.sourceEntity.error('Invalid code')

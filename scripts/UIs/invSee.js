@@ -55,7 +55,7 @@ uiManager.addUI(config.uinames.inventorySee, 'INVSEE', (player, user) => {
                 slot,
                 item.nameTag ?? item.typeId,
                 [item.typeId],
-                item.typeId,
+                `${item.typeId}`,
                 item.amount,
                 false,
                 () => {

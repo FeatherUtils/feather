@@ -24,6 +24,13 @@ class uiBuilder {
             this.db.insertDocument(ui)
         }
     }
+    resetBuiltInUI(scriptevent) {
+        let ui = uis.find((_) => _.scriptevent == scriptevent)
+        if (!ui) return;
+        let ui2 = this.db.findFirst({ scriptevent })
+        if (ui2) this.db.deleteDocumentByID(ui2.id)
+        this.db.insertDocument(ui)
+    }
     import(datastring) {
         let data = JSON.parse(datastring)
         if (!data) throw new Error('UIBuilderError: String is not JSON');
@@ -137,20 +144,20 @@ class uiBuilder {
         this.db.overwriteDataByID(uiID, doc.data);
         return newIndex;
     }
-    buyButtonSettings(uiID,id,object) {
+    buyButtonSettings(uiID, id, object) {
         let ui = this.db.getByID(uiID)
-        if(!ui) return;
-        let btn = ui.data.buttons.find(_ => _.id===id)
-        if(!btn) return;
+        if (!ui) return;
+        let btn = ui.data.buttons.find(_ => _.id === id)
+        if (!btn) return;
         btn.buyButtonSettings = object
         this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
-    sellButtonSettings(uiID,id,object) {
+    sellButtonSettings(uiID, id, object) {
         let ui = this.db.getByID(uiID)
-        if(!ui) return;
-        let btn = ui.data.buttons.find(_ => _.id===id)
-        if(!btn) return;
+        if (!ui) return;
+        let btn = ui.data.buttons.find(_ => _.id === id)
+        if (!btn) return;
         btn.sellButtonSettings = object
         this.db.overwriteDataByID(uiID, ui.data)
         return true;
@@ -202,46 +209,46 @@ class uiBuilder {
     }
     addLabel(id2, text) {
         let doc = this.db.getByID(id2)
-        if(!doc) throw new Error('Invalid ID or UI without any properties');
+        if (!doc) throw new Error('Invalid ID or UI without any properties');
         let id = Date.now();
         doc.data.buttons.push({
             text,
             id,
             type: 'label'
         })
-        this.db.overwriteDataByID(id2,doc.data)
+        this.db.overwriteDataByID(id2, doc.data)
         return id;
     }
     addDivider(id2) {
         let doc = this.db.getByID(id2)
-        if(!doc) throw new Error('cant do that cuz no ui');
+        if (!doc) throw new Error('cant do that cuz no ui');
         let id = Date.now();
         doc.data.buttons.push({
             id,
-            type:'divider'
+            type: 'divider'
         })
-        this.db.overwriteDataByID(id2,doc.data)
+        this.db.overwriteDataByID(id2, doc.data)
         return id;
     }
-    editHeaderorLabel(id,id2,text) {
+    editHeaderorLabel(id, id2, text) {
         let doc = this.db.getByID(id)
-        if(!doc) throw new Error('No doc found');
-        let btn = doc.data.buttons.find(_=>_.id===id2);
-        if(!btn) throw new Error('No btn found');
-        if(btn.type == 'button') throw new Error('Item is a button, not header or label')
+        if (!doc) throw new Error('No doc found');
+        let btn = doc.data.buttons.find(_ => _.id === id2);
+        if (!btn) throw new Error('No btn found');
+        if (btn.type == 'button') throw new Error('Item is a button, not header or label')
         btn.text = text;
         return btn.id;
     }
     addHeader(id2, text) {
         let doc = this.db.getByID(id2)
-        if(!doc) throw new Error('Invalid ID or UI without any properties');
+        if (!doc) throw new Error('Invalid ID or UI without any properties');
         let id = Date.now();
         doc.data.buttons.push({
             text,
             id,
             type: 'header'
         })
-        this.db.overwriteDataByID(id2,doc.data)
+        this.db.overwriteDataByID(id2, doc.data)
         return id;
     }
     addButton(id2, text, subtext, requiredTag, icon, action) {

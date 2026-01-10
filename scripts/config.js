@@ -185,10 +185,10 @@ export default {
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
-        release: 'Redstone',
-        version: [7],
+        release: '§fQuartz',
+        version: [8],
         versionString() {
-            return `${this.release}`;
+            return `${this.release} §e${this.version.join('.')}`;
         },
         defaultChatRankFormat: `§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name> §r<bc><arrow> §r<cc><msg>`,
     },
@@ -224,7 +224,11 @@ export default {
         {perm:'leaderboards',display:'Leaderboards'},
         {perm:'afkkicksettings',display:'AFK Kick Settings'},
         {perm:'homesettings',display:"Home Settings"},
-        {perm:'antiSpamSettings',display:'Anti Spam Settings'}
+        {perm:'antiSpamSettings',display:'Anti Spam Settings'},
+        {perm:'quests',display:'Quests'},
+        {perm:'lifestealConfig',display:'Lifesteal config'},
+        {perm:'dynamicLighting',display:'Dynamic Lighting config'},
+        {perm:'RTPSettings',display:'RTP Settings'}
     ],
     credits: [
         {name:'Isabella (isabelladakitty)', description:'Main contributor/Lead dev/Founder'},
