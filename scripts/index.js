@@ -531,7 +531,6 @@ system.run(async () => {
         }
         return msg.sender.success('Set the item you are holding command to: ' + cmd)
     })
-
     commands.addCommand('removebind', 'Remove a bind from an item', 'Admin', ({ msg }) => {
         const player = msg.sender
         if (!player) return;

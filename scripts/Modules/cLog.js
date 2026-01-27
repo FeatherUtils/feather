@@ -6,16 +6,13 @@ import modules from './modules'
 class CLogProtection {
     constructor() {
         world.afterEvents.entityHurt.subscribe((e) => {
-            console.log('guhcat')
             this.hit(e)
         })
         world.afterEvents.playerSpawn.subscribe(async (e) => {
-            console.log('guhcat_2')
             if (!e.initialSpawn) return;
             await this.join(e)
         })
         world.beforeEvents.playerLeave.subscribe((e) => {
-            console.log('guhcat_3')
             this.leave(e)
         })
         system.beforeEvents.startup.subscribe(async (e) => {
@@ -24,7 +21,6 @@ class CLogProtection {
             this.clearClogEntries()
         })
         world.afterEvents.entityDie.subscribe((e) => {
-            console.log('guhcat_4')
             this.die(e)
         })
     }
@@ -51,7 +47,7 @@ class CLogProtection {
             let id = e.hitEntity.id
             e.hitEntity.info('You are now in combat!')
             system.run(async () => {
-                await system.waitTicks(30 * 20)
+                await system.waitTicks(modules.get('clogCooldown') ?? 30 * 20)
                 if (e.hitEntity && worldValues.includesValue('combat:' + id)) e.hitEntity.info('You are no longer in combat!')
                 if (worldValues.includesValue('combat:' + id) && e.hitEntity) worldValues.removeValue('combat:' + id)
 
@@ -62,7 +58,7 @@ class CLogProtection {
             let id = de.id
             de.info('You are now in combat!')
             system.run(async () => {
-                await system.waitTicks(30 * 20)
+                await system.waitTicks(modules.get('clogCooldown') ?? 30 * 20)
                 if (de && worldValues.includesValue('combat:' + id)) de.info('You are no longer in combat!')
                 if (worldValues.includesValue('combat:' + id) && de) worldValues.removeValue('combat:' + id)
             })

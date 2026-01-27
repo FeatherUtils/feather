@@ -127,12 +127,15 @@ uiManager.addUI(config.uinames.config.clog, 'CLog Protection', (player) => {
     form2.title(consts.modal + 'Combat Log Config')
     form2.toggle('Enabled', {defaultValue:modules.get('CLog')})
     form2.toggle('Keep Inventory', {defaultValue:modules.get('CLogKeepInventory')})
+    form2.textField('Cooldown', 'Example: 20', {defaultValue:`${modules.get('clogCooldown')}` ?? '30'})
     form2.toggle('Commands Disabled', {defaultValue:modules.get('CLogCommandsDisabled')})
     form2.toggle('Teleport Disabled', {defaultValue:modules.get('CLogTeleportDisabled')})
     form2.show(player).then((res) => {
-        let [enabled,keepinventory,commandsDisabled,disabletp] = res.formValues
+        let [enabled,keepinventory,clogCooldown,commandsDisabled,disabletp] = res.formValues
+        if(isNaN(clogCooldown)) return player.error('Cooldown is not a number')
         modules.set('CLog', enabled)
         modules.set('CLogKeepInventory', keepinventory)
+        modules.set('clogCooldown', clogCooldown)
         modules.set('CLogCommandsDisabled', commandsDisabled)
         modules.set('CLogTeleportDisabled', disabletp)
         player.runCommand('open @s config_world')
