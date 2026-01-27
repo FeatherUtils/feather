@@ -9,11 +9,17 @@ import { ActionFormData } from '@minecraft/server-ui'
 import { themes } from '../../cherryThemes';
 import api from './api';
 import actionParser from '../../Modules/actionParser';
+import uiBuilder from '../../Modules/uiBuilder'
 
 uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
     if (!prismarineDb.permissions.hasPermission(player, 'config')) return player.error(`${translate(config.lang.noperms.config.root)}`)
+    if(uiBuilder.db.findFirst({scriptevent: 'config_main'}) && !player.hasTag('oldconfig')) return player.runCommand('scriptevent feather:open config_main')
     let form = new ActionForm();
     form.title(`${NUT_UI_TAG}${consts.themed}${themes[51][0]}§r${translate(config.lang.config.root.title)}`)
+    form.button(`§aBack to New UI\n§7Change back to the new Config UI`, '.azalea/2', (player) => {
+        player.removeTag('oldconfig')
+        player.runCommand('open @s config_main')
+    })
     form.button(`${consts.disablevertical}${consts.left}§a§l§t§b§t§n§u§p§d§4§r${translate(config.lang.config.root.main_settings)}`, null, (player) => {
         if (!prismarineDb.permissions.hasPermission(player, 'config')) return player.error(translate(config.lang.noperms.default))
         uiManager.open(player, config.uinames.config.root)
@@ -71,7 +77,7 @@ uiManager.addUI(config.uinames.config.root, 'config root fr', (player) => {
             uiManager.open(player, config.uinames.sidebarEditor.root)
         })
     }
-    if (prismarineDb.permissions.hasPermission(player, 'admininstrator')) {
+    if (prismarineDb.permissions.hasPermission(player, 'administrator')) {
         form.button(`§uPermissions\n§7Create roles and set permissions`, '.azalea/4', (player) => [
             uiManager.open(player, config.uinames.permissions.root)
         ])

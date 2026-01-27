@@ -8,8 +8,8 @@ import { consts } from '../cherryUIConsts'
 uiManager.addUI(config.uinames.warpManagement, 'warp management', (player) => {
     let form = new ActionForm();
     form.title(consts.tag + 'Warp Management')
-    form.button('§cBack\n§7Back to config ui', '.azalea/2', (player) => {
-        uiManager.open(player, config.uinames.config.misc)
+    form.button(consts.header + '§cBack\n§7Back to config ui', '.azalea/2', (player) => {
+        player.runCommand('open @s config_teleportation')
     })
     for(const warp of warps.db.findDocuments()) {
         form.button(`§b${warp.data.name}`, '.vanilla/ender_pearl', (player) => {

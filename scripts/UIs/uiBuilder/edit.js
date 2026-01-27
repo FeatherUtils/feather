@@ -6,6 +6,7 @@ import uiBuilder from "../../Modules/uiBuilder";
 import { consts } from "../../cherryUIConsts";
 import config from "../../config";
 import { themes } from "../../cherryThemes";
+import modules from '../../Modules/modules'
 
 uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id) => {
     let form = new ActionForm();
@@ -22,11 +23,12 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
     form.button(`${consts.header}§r§cBack\n§7Go back to UI Builder`, `textures/azalea_icons/2`, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
-    if(ui.data.isBuiltIn || ui.data.scriptevent == 'tpr' || ui.data.scriptevent == 'warps' || ui.data.scriptevent == 'tpr-req') {
+    if (ui.data.isBuiltIn || ui.data.scriptevent == 'tpr' || ui.data.scriptevent == 'warps' || ui.data.scriptevent == 'tpr-req') {
         form.button(consts.alt + '§rReset Built-In UI', null, (player) => {
             uiBuilder.resetBuiltInUI(ui.data.scriptevent)
             uiManager.open(player, config.uinames.uiBuilder.root)
         })
+        form.divider()
     }
     form.button(`${consts.header}§r§bIcon\n§7Edit UI Icon`, `${ui.data.icon ?? 'textures/azalea_icons/ClickyClick'}`, (player) => {
         function callback(player, icon) {
@@ -58,6 +60,21 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
         form2.textField(`Code`, `Code`, { defaultValue: uiBuilder.getExportData(id) })
         form2.show(player)
     })
+    if (modules.get('CLog')) {
+        form.button(`${ui.data.allowedInCombat ? `§aAllow in Combat\n§7Allow players to open this menu while in combat` : `§cAllow in Combat\n§7Allow players to open this menu while in combat`}`, '.blossom/sword', (player) => {
+            if (ui.data.allowedInCombat == true) { ui.data.allowedInCombat = false } else { ui.data.allowedInCombat = true }
+            uiBuilder.db.overwriteDataByID(id, ui.data)
+            uiManager.open(player, config.uinames.uiBuilder.edit, id)
+        })
+    }
+    if (modules.get('devMode')) {
+        form.button(`§bExport as Built In\n§7Export the data of this UI as Built In`, icons.resolve(`azalea/export`), (player) => {
+            let form2 = new ModalFormData();
+            form2.title('Code Editor')
+            form2.textField(`Code`, `Code`, { defaultValue: uiBuilder.getExportData(id, true) })
+            form2.show(player)
+        })
+    }
     if (ui.data.layout === 4) {
         form.button(`§9Edit Theme\n§7Edit the theme of this UI`, icons.resolve('azalea/RainbowPaintBrush'), (player) => {
             let form = new ActionForm();
@@ -74,7 +91,8 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
             form.show(player)
         })
     }
-    form.button(`§bTrash\n§7Send this UI to the Trash`, `textures/azalea_icons/SidebarTrash`, (player) => {
+    form.button(`${ui.data.isBuiltIn ? consts.disabled : ''}§bTrash\n§7${ui.data.isBuiltIn ? `This UI is Built-in` : `Send this UI to the Trash`}`, `textures/azalea_icons/SidebarTrash`, (player) => {
+        if (ui.data.isBuiltIn) return;
         uiBuilder.delete(id)
         uiManager.open(player, config.uinames.uiBuilder.root)
     })

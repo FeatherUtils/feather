@@ -1,4 +1,4 @@
-import { world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import emojis from './emojis'
 import ranks from "../Modules/ranks";
 import { getTPS } from "./format/tps";
@@ -44,7 +44,7 @@ class BlossomFormatting {
     }
     getName(player) {
         let n = player.getDynamicProperty('nickname')
-        if(modules.get('nick') && n) {
+        if (n) {
             return n;
         }
         return player.name
@@ -69,7 +69,7 @@ class BlossomFormatting {
         let nc, cc, bc;
         if (!watchyoJET) {
             for (const r of rs) {
-                rns.push(await this.format(r.name,player,undefined,true));
+                rns.push(await this.format(r.name, player, undefined, true));
             }
             if (rns.length === 0) {
                 rns.push(`§bMember`);
@@ -86,7 +86,7 @@ class BlossomFormatting {
 
         this.#vars.arrow = () => '»'
 
-        
+
         this.#vars.realname = this.getRealName;
         this.#vars.player = this.getName;
         this.#vars.name = this.getName;
@@ -157,7 +157,7 @@ class BlossomFormatting {
         newLine = newLine.replaceAll(/{{(?!vars)(.*?)}}/g, 0);
         for (const variable in this.#vars) {
             if (text.includes(`<${variable}>`)) {
-                newLine = newLine.replaceAll(`<${variable}>`, this.#vars[variable](player));
+                newLine = newLine.replaceAll(`<${variable}>`, await this.#vars[variable](player));
             }
         }
 

@@ -19,7 +19,7 @@ uiManager.addUI(config.uinames.events.root, 'ev root', (player) => {
     let form = new ActionForm();
     form.title(`${consts.tag}Events`)
     form.button(`${consts.header}§cBack\n§7Go back to config ui`, `.azalea/2`, (player) => {
-        uiManager.open(player, config.uinames.config.root)
+        player.runCommand('open @s config_world')
     })
     form.button(`§aAdd\n§7Add a new event`, '.azalea/1', (player) => {
         uiManager.open(player, config.uinames.events.add)

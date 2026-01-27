@@ -2,6 +2,7 @@ import { system } from "@minecraft/server";
 import { prismarineDb } from "../Libraries/prismarinedb";
 import { SegmentedStoragePrismarine } from '../Libraries/Storage/segmented'
 import { array_move } from './array_move'
+import modules from './modules'
 import uis from '../UIs/madeinUIBuilder'
 
 class uiBuilder {
@@ -9,11 +10,33 @@ class uiBuilder {
         system.run(async () => {
             this.db = prismarineDb.customStorage('uiBuilder', SegmentedStoragePrismarine)
             this.kv = await this.db.keyval('values')
-            for (const ui of uis) {
-                if (this.db.findFirst({ scriptevent: ui.scriptevent })) return;
+            this.softresetbuiltinuis()
+            if (!modules.get('devMode')) this.resetConfigUIs()
+            if (!this.kv.get('AllowedInCombatMigration')) {
+                for (const ui of this.db.findDocuments({ type: 'UI' })) {
+                    if (ui.data.allowedInCombat == undefined) { ui.data.allowedInCombat = true } else continue;
+                    this.db.overwriteDataByID(ui.id, ui.data)
+                }
+            }
+            this.kv.set('AllowedInCombatMigration', true)
+        })
+    }
+    softresetbuiltinuis() {
+        for (const ui of uis) {
+            if (this.db.findFirst({ scriptevent: ui.scriptevent })) continue;
+            this.db.insertDocument(ui)
+        }
+    }
+    resetConfigUIs() {
+        for (const ui of uis) {
+            if (ui.isBuiltIn && ui.scriptevent.startsWith('config_')) {
+                let ui2 = this.db.findFirst({ scriptevent: ui.scriptevent })
+                if (ui2) {
+                    this.db.deleteDocumentByID(ui2.id)
+                }
                 this.db.insertDocument(ui)
             }
-        })
+        }
     }
     forceresetbuiltinuis() {
         for (const ui of uis) {
@@ -127,9 +150,11 @@ class uiBuilder {
         btn.meta = meta
         this.db.overwriteDataByID(uiID, ui.data)
     }
-    getExportData(uiID) {
-        let ui = this.db.getByID(uiID)
+    getExportData(uiID, builtIn = false) {
+        let ui2 = this.db.getByID(uiID)
+        let ui = ui2
         if (!ui) throw new Error('UIBuilderError: Could not find UI');
+        if (builtIn) ui.data.isBuiltIn = true
         return JSON.stringify(ui.data, null, 4)
     }
     moveActioninButton(uiID, bid, actionID, direction) {
@@ -200,6 +225,15 @@ class uiBuilder {
         this.db.overwriteDataByID(id, ui.data)
         return true;
     }
+    buttonCherrySettings(id, id2, settings) {
+        let ui = this.get(id)
+        if (!ui) throw new Error(`Invalid UI Id`);
+        let btn = ui.data.buttons.find(_ => _.id === id2)
+        if (!btn) throw new Error(`Invalid button id`);
+        btn.cherry = settings
+        this.db.overwriteDataByID(id, ui.data)
+        return true;
+    }
     uiIcon(id, icon) {
         let doc = this.get(id)
         if (!doc) throw new Error('Invalid ID');
@@ -251,16 +285,28 @@ class uiBuilder {
         this.db.overwriteDataByID(id2, doc.data)
         return id;
     }
+    editButtonPermission(id, id2, perm) {
+        let ui = this.get(id)
+        if (!ui) throw new Error('No UI')
+        let i = ui.data.buttons.findIndex((_) => _.id == id2)
+        if (i < 0) throw new Error('no button');
+        let btn = ui.data.buttons[i]
+        btn.permission = perm
+        this.db.overwriteDataByID(id, ui.data)
+        return true;
+    }
     addButton(id2, text, subtext, requiredTag, icon, action) {
         let doc = this.db.getByID(id2)
         if (!doc) throw new Error('Invalid ID or UI without any properties');
+        let actions = [];
         let id = Date.now()
+        if (action) actions.push({ action, id: Date.now() + 1 })
         doc.data.buttons.push({
             text,
             subtext,
             requiredTag,
             icon,
-            actions: [{ action, id: Date.now() + 1 }],
+            actions,
             id,
             type: 'button'
         })

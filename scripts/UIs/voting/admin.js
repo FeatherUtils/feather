@@ -13,7 +13,7 @@ uiManager.addUI(config.uinames.voting.admin, 'voting admin', (player) => {
         uiManager.open(player, config.uinames.voting.start)
     })
     for (const r of voting.db.findDocuments({ type: 'Referendum' })) {
-        form.button(`§d${r.data.title}\n§7[ Edit Referendum ]`, r.data.icon ? r.data.icon : null, (player) => {
+        form.button(`§d${r.data.title.substring(0,43)}\n§7[ Edit Referendum ]`, r.data.icon ? `.${r.data.icon}` : null, (player) => {
             uiManager.open(player, config.uinames.voting.edit, r.id)
         })
     }

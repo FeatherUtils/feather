@@ -91,16 +91,16 @@ class PlayerStorage {
         this.db = db2;
         this.keyval = keyval;
         this.rewardsKeyval = rewardsKeyval;
-        if(!world.getDynamicProperty("TRANSITION3")) {
+        if (!world.getDynamicProperty("TRANSITION3")) {
             this.transition();
             world.setDynamicProperty("TRANSITION3", true)
         }
     }
     transition() {
         let done = [];
-        for(const key of keyval2.keys()) {
+        for (const key of keyval2.keys()) {
             const data = keyval2.get(key)
-            if(done.includes(data.name)) continue;
+            if (done.includes(data.name)) continue;
             done.push(data.name)
             keyval.set(data.id, data)
         }
@@ -178,33 +178,35 @@ class PlayerStorage {
         return score;
     }
     saveData(player) {
-        let scores = [];
-        for (const objective of world.scoreboard.getObjectives()) {
-            let score = this.getScore(player, objective.id);
-            if (score == null) continue;
-            scores.push({ objective: objective.id, score });
-        }
-        let tags = player.getTags();
-        let dynamicProperties = {};
         try {
-            for (const property of player.getDynamicPropertyIds()) {
-                dynamicProperties[property] =
-                    player.getDynamicProperty(property);
+            let scores = [];
+            for (const objective of world.scoreboard.getObjectives()) {
+                let score = this.getScore(player, objective.id);
+                if (score == null) continue;
+                scores.push({ objective: objective.id, score });
             }
-        } catch {}
-        this.keyval.set(this.getID(player), {
-            tags,
-            dynamicProperties,
-            scores,
-            id: player.id,
-            name: player.name == "OG clapz9521" ? "Furry" : player.name,
-            nameTag: player.nameTag,
-            location: {
-                x: player.location.x,
-                y: player.location.y,
-                z: player.location.z,
-            },
-        });
+            let tags = player.getTags();
+            let dynamicProperties = {};
+            try {
+                for (const property of player.getDynamicPropertyIds()) {
+                    dynamicProperties[property] =
+                        player.getDynamicProperty(property);
+                }
+            } catch { }
+            this.keyval.set(this.getID(player), {
+                tags,
+                dynamicProperties,
+                scores,
+                id: player.id,
+                name: player.name == "OG clapz9521" ? "Furry" : player.name,
+                nameTag: player.nameTag,
+                location: {
+                    x: player.location.x,
+                    y: player.location.y,
+                    z: player.location.z,
+                },
+            });
+        } catch {} // for minecraft to shut up
     }
 
     addReward(playerID, currency, amount) {

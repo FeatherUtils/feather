@@ -8,7 +8,7 @@ uiManager.addUI(config.uinames.ranks.root, 'ranks root', (player)=>{
     let form = new ActionForm()
     form.title(`${NUT_UI_TAG}Ranks`)
     form.button(`${NUT_UI_HEADER_BUTTON}§cBack\n§7Go back to main menu`, `textures/azalea_icons/2`, (player) => {
-        uiManager.open(player, config.uinames.config.root)
+        player.runCommand('open @s config_chat')
     })
     form.button(`§aAdd`, 'textures/blossom_icons/addrank', (player)=>{
         uiManager.open(player, config.uinames.ranks.add)

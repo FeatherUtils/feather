@@ -1,6 +1,8 @@
 import { system } from '@minecraft/server'
+import modules from '../modules'
 
 async function timer(plr, sec, msg, onFinish) {
+  if(modules.get('CLogTeleportDisabled') && plr.hasTag('combat')) return plr.error('Teleporting is not allowed in combat')
   const startLoc = {
     x: Math.floor(plr.location.x),
     y: Math.floor(plr.location.y),

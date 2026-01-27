@@ -44,7 +44,16 @@ export default {
             main: 'config_main | Config/Main',
             extra: 'config_extra | Config/Extra',
             misc: 'config_misc | Config/Misc',
-            credits: 'config_credits'
+            credits: 'config_credits',
+            rtp: 'config_rtp',
+            homes: 'config_homes',
+            antiSpam: 'config_antiSpam',
+            clans: 'config_clans',
+            crf: 'config_crf',
+            afkKick: 'config_afkKick',
+            betterKB: 'config_betterkb',
+            clog: 'config_clog',
+            proximity: 'config_proximity'
         },
         homes: {
             view: 'homes_view | Homes/View',
@@ -84,7 +93,7 @@ export default {
             add: 'ev_add | EV/Add',
             edit: 'ev_edit | EV/Edit',
             editactions: 'ev_editactions | EV/EditActions'
-        }, 
+        },
         sidebarEditor: {
             create: 'se_create | SE/Create',
             root: 'se | SE',
@@ -101,7 +110,8 @@ export default {
         basic: {
             confirmation: 'basic_confirm | Basic/Confirmation',
             iconViewer: 'basic_iconviewer | Basic/IconViewer',
-            warps: 'basic_warps | Basic/Warps'
+            warps: 'basic_warps | Basic/Warps',
+            popupMenu: 'basic_popup | Basic/Popup'
         },
         uiBuilder: {
             root: 'uibuilder_root | UIBuilder/Root',
@@ -115,7 +125,8 @@ export default {
             },
             folders: {
                 view: "uibuilder_folders_view | UIBuilder/Folders/View"
-            }
+            },
+            builtInUIs: 'uibuilder_builtinuis'
         },
         inventorySee: 'invsee | InventorySee',
         platformSettings: {
@@ -185,8 +196,8 @@ export default {
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
-        release: '§fQuartz',
-        version: [8],
+        release: '§eGold',
+        version: [9],
         versionString() {
             return `${this.release} §e${this.version.join('.')}`;
         },
@@ -200,40 +211,44 @@ export default {
         }
     },
     permissions: [
-        {perm:'config',display:"Config UI"},
-        {perm:'modules',display:"Modules"},
-        {perm:'extra_settings',display:'Extra Settings'},
-        {perm:'ranks',display:'Edit Ranks'},
-        {perm:'ui_builder',display:'UI Builder'},
-        {perm:'misc_settings',display:'Misc Settings'},
-        {perm:'bans',display:'Bans'},
-        {perm:'mute',display:'Mute'},
-        {perm:'warn',display:'Warn'},
-        {perm:'plrmgmnt',display:'Player Management'},
-        {perm:'codes',display:'Codes (admin)'},
-        {perm:'bypassAntiSpam',display:'Bypass Anti Spam'},
-        {perm:'sidebar_editor',display:'Sidebar Editor'},
-        {perm:'events',display:'Events'},
-        {perm:'voting_admin',display:'Voting Admin'},
-        {perm:'crf',display:'Edit Chat Rank format'},
-        {perm:'platform_settings',display:'Platform Settings'},
-        {perm:'economy',display:'Economy'},
-        {perm:'warps',display:'Warp Management'},
-        {perm:'clan_settings',display:'Clan Settings'},
-        {perm:'repbroad',display:'Repeated Broadcasts'},
-        {perm:'leaderboards',display:'Leaderboards'},
-        {perm:'afkkicksettings',display:'AFK Kick Settings'},
-        {perm:'homesettings',display:"Home Settings"},
-        {perm:'antiSpamSettings',display:'Anti Spam Settings'},
-        {perm:'quests',display:'Quests'},
-        {perm:'lifestealConfig',display:'Lifesteal config'},
-        {perm:'dynamicLighting',display:'Dynamic Lighting config'},
-        {perm:'RTPSettings',display:'RTP Settings'},
-        {perm:'bypassRTPCooldown', display:'Bypass RTP Cooldown'}
+        { perm: 'config', display: "Config UI" },
+        { perm: 'modules', display: "Modules" },
+        { perm: 'extra_settings', display: 'Extra Settings' },
+        { perm: 'ranks', display: 'Edit Ranks' },
+        { perm: 'ui_builder', display: 'UI Builder' },
+        { perm: 'misc_settings', display: 'Misc Settings' },
+        { perm: 'bans', display: 'Bans' },
+        { perm: 'mute', display: 'Mute' },
+        { perm: 'warn', display: 'Warn' },
+        { perm: 'plrmgmnt', display: 'Player Management' },
+        { perm: 'codes', display: 'Codes (admin)' },
+        { perm: 'bypassAntiSpam', display: 'Bypass Anti Spam' },
+        { perm: 'sidebar_editor', display: 'Sidebar Editor' },
+        { perm: 'events', display: 'Events' },
+        { perm: 'voting_admin', display: 'Voting Admin' },
+        { perm: 'crf', display: 'Edit Chat Rank format' },
+        { perm: 'platform_settings', display: 'Platform Settings' },
+        { perm: 'economy', display: 'Economy' },
+        { perm: 'warps', display: 'Warp Management' },
+        { perm: 'clan_settings', display: 'Clan Settings' },
+        { perm: 'repbroad', display: 'Repeated Broadcasts' },
+        { perm: 'leaderboards', display: 'Leaderboards' },
+        { perm: 'afkkicksettings', display: 'AFK Kick Settings' },
+        { perm: 'homesettings', display: "Home Settings" },
+        { perm: 'antiSpamSettings', display: 'Anti Spam Settings' },
+        { perm: 'quests', display: 'Quests' },
+        { perm: 'lifestealConfig', display: 'Lifesteal config' },
+        { perm: 'dynamicLighting', display: 'Dynamic Lighting config' },
+        { perm: 'RTPSettings', display: 'RTP Settings' },
+        { perm: 'bypassRTPCooldown', display: 'Bypass RTP Cooldown' },
+        { perm: 'betterKBConfig', display: "Configure BetterKB" },
+        { perm: 'clearchat', display: "Clear Chat" },
+        { perm: 'clog', display: 'Combat Log Config' },
+        {perm:'proximity',display:'Proximity Chat Config'}
     ],
     credits: [
-        {name:'Isabella (isabelladakitty)', description:'Main contributor/Lead dev/Founder'},
-        {name:'Fern (arandomfern)', description:'Secondary contributor/Developer'},
-        {name:'TrashyDaFox (trashydafox)', description:'All JSON UI, Database, UI Manager + more'}
+        { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },
+        { name: 'Fern (arandomfern)', description: 'Secondary contributor/Developer' },
+        { name: 'TrashyDaFox (trashydafox)', description: 'All JSON UI, Database, UI Manager + more' }
     ]
 };
