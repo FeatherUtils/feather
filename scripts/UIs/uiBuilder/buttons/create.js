@@ -18,10 +18,10 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.create, 'create button', (playe
         form2.textField('Text§c*', `This button's text`)
         form2.textField('Subtext', `This button's subtext`)
         form2.textField(`Required Tag`, `Required tag of this button`)
-        form2.textField(`First Action§c*`, `This button's first actions`)
+        form2.textField(`First Action`, `This button's first actions`)
         form2.show(player).then((res) => {
             let [a, text, subtext, requiredTag, firstAction] = res.formValues
-            if (!text || !firstAction) return player.error('Please enter text and a first action'), uiManager.open(player, config.uinames.uiBuilder.buttons.editall, uiID);
+            if (!text) return player.error('Please enter text'), uiManager.open(player, config.uinames.uiBuilder.buttons.editall, uiID);
             uiBuilder.addButton(uiID, text, subtext, requiredTag, null, firstAction);
             uiManager.open(player, config.uinames.uiBuilder.buttons.editall, uiID);
         })

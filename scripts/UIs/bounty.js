@@ -31,6 +31,8 @@ uiManager.addUI(config.uinames.bounty.add, 'bounty add', (player) => {
 
         if (isNaN(am)) return player.error('Amount must be a number');
 
+        if (am < 1) return player.error('Amount must be over zero!')
+
         let target = allPlayers[p];
         if (!target) return player.error('Invalid player selected');
 

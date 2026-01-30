@@ -20,6 +20,7 @@ uiManager.addUI(config.uinames.pay, 'pay', (player) => {
         let plr = plrs[playerindex]
         let currency = currencies[currencyindex]
         if(isNaN(+amount)) return player.error('Amount is not a number');
+        if(amount < 1) return player.error('Amount must be above 0')
         if(+amount > prismarineDb.economy.getMoney(player,currency.scoreboard)) return player.error('Not enough ' + currency.displayName)
         prismarineDb.economy.removeMoney(player, +amount, currency.scoreboard)
         prismarineDb.economy.addMoney(plr,+amount,currency.scoreboard)

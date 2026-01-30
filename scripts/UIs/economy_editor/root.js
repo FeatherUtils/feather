@@ -10,7 +10,7 @@ uiManager.addUI(config.uinames.economyEditor.root, 'ec root', (player) => {
     form.title(`${consts.tag}§rEconomy Editor`)
     form.body(`Welcome to the Economy Editor, this is the entire backbone for the addon's economy`)
     form.button(`${consts.header}§cBack\n§7Back to Config UI`, '.azalea/2', (player) => {
-        uiManager.open(player)
+        player.runCommand('open @s config_world')
     })
     form.button(`§aCreate\n§7Create a currency`, `.azalea/1`, (player) => {
         uiManager.open(player,config.uinames.economyEditor.create)

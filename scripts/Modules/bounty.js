@@ -9,17 +9,19 @@ class Bounty {
         system.run(() => {
             this.db = prismarineDb.customStorage('+FTR:BOUNTY', SegmentedStoragePrismarine)
             world.afterEvents.entityDie.subscribe((e) => {
-                if(e.damageSource.damagingEntity.typeId !== 'minecraft:player') return;
-                if(e.deadEntity.typeId !== 'minecraft:player') return;
+                if(!e.damageSource) return; // make minecraft sybau
+                if(!e.deadEntity.isValid) return; // make minecraft sybau
+                if (e.damageSource.damagingEntity.typeId !== 'minecraft:player') return;
+                if (e.deadEntity.typeId !== 'minecraft:player') return;
                 let ok = false
                 for (const entry of this.calculateBounty(e.deadEntity.id)) {
                     ok = true
                     prismarineDb.economy.addMoney(e.damageSource.damagingEntity, entry.amount, entry.currency)
                 }
-                for (const f of this.db.findDocuments({type:"BOUNTY",targetID:e.deadEntity.id})) {
+                for (const f of this.db.findDocuments({ type: "BOUNTY", targetID: e.deadEntity.id })) {
                     this.db.deleteDocumentByID(f.id)
                 }
-                if(ok == true) this.notify(`${e.damageSource.damagingEntity.name} just killed ${e.deadEntity.name} and got all their bounty!`)
+                if (ok == true) this.notify(`${e.damageSource.damagingEntity.name} just killed ${e.deadEntity.name} and got all their bounty!`)
             })
         })
     }
@@ -40,24 +42,31 @@ class Bounty {
             currency,
             type: 'BOUNTY'
         })
-        plr.success('You can not withdraw a bounty 5 minutes after it is made, so if you change your mind withdraw it asap.')
+        plr.success('You can not withdraw a bounty 1 minute after it is made, so if you change your mind withdraw it asap.')
         this.notify(`A ${amount} ${crnc.displayName} bounty was placed on ${target.name} by ${plr.name}!`)
         return bnty;
     }
     withdrawBounty(id) {
-        let bnty = this.db.getByID(id)
+        let bnty = this.db.getByID(id);
         if (!bnty) return false;
-        let crnc = prismarineDb.economy.getCurrency(bnty.data.currency)
-        let plrs = world.getPlayers()
-        let plr = plrs.find(_ => _.id === bnty.data.plrID)
+
+        let crnc = prismarineDb.economy.getCurrency(bnty.data.currency);
+        let plrs = world.getPlayers();
+        let plr = plrs.find(_ => _.id === bnty.data.plrID);
         if (!plr) return;
-        let fivemins = 5 * 60 * 1000
-        let expiredTime = bnty.createdAt + fivemins
-        if (bnty.createdAt > expiredTime) return plr.error('You can not withdraw a bounty 5 minutes after it was made');
+        let currentTime = Date.now();
+        let oneMinute = 60 * 1000;
+        let expiryLimit = bnty.createdAt + oneMinute;
+        if (currentTime > expiryLimit) {
+            plr.error('You cannot withdraw a bounty 1 minute after it was made');
+            return false;
+        }
+
         prismarineDb.economy.addMoney(plr, bnty.data.amount, bnty.data.currency);
-        plr.success('Bounty successfully withdrew')
-        this.notify(`The ${bnty.data.amount} ${crnc.displayName} bounty on ${playerStorage.getPlayerByID(bnty.data.targetID).name} was withdrew!`)
-        this.db.deleteDocumentByID(bnty.id)
+        plr.success('Bounty successfully withdrew');
+
+        this.notify(`The ${bnty.data.amount} ${crnc.displayName} bounty on ${playerStorage.getPlayerByID(bnty.data.targetID).name} was withdrew!`);
+        this.db.deleteDocumentByID(bnty.id);
         return true;
     }
     calculateBounty(plrid) {

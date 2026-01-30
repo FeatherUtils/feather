@@ -12,24 +12,66 @@ import icons from '../../Modules/icons'
 import { ModalFormData } from '@minecraft/server-ui'
 import { themes } from '../../cherryThemes'
 
+uiManager.addUI(config.uinames.uiBuilder.builtInUIs, 'Built in UIS', (player) => {
+    let form = new ActionForm()
+    form.title(`${consts.tag}Built In UIS`)
+    form.button(`${consts.disablevertical}${consts.left}§rMy UIs`, null, (player) => {
+        uiManager.open(player, config.uinames.uiBuilder.root)
+    })
+    form.button(`${consts.right}${consts.alt}§rBuilt-In UIs`, null, (player) => {
+        uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+    })
+    form.button(`§bForce Reset built-in UIs`, null, (player) => {
+        uiManager.open(player, config.uinames.basic.confirmation, 'This will reset ALL built in uis. It will forcefully insert new ones and remove old ones. Only do this if you catastrophically messed up something with Built-In UIs.', (player) => {
+            uiBuilder.forceresetbuiltinuis()
+            uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+        }, (player) => {
+            uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+        })
+    })
+    form.button(`§eSoft Reset built-in UIs`, null, (player) => {
+        uiManager.open(player, config.uinames.basic.confirmation, 'This will check for new built in uis. It will insert new ones if there is not an old one in its place. If there is an old one, it will not replace it. If you want to replace that specific one, go to the menu for it and click "Reset Built-In UI"', (player) => {
+            uiBuilder.softresetbuiltinuis()
+            uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+        }, (player) => {
+            uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+        })
+    })
+    form.button(`§dReset Config UI`, null, (player) => {
+        uiManager.open(player, config.uinames.basic.confirmation, 'This will reset config uis. It will forcefully insert new ones and remove old ones. Only do this if you have not changed the Config UI or there is something wrong with it', (player) => {
+            uiBuilder.resetConfigUIs()
+            uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+        }, (player) => {
+            uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
+        })
+    })
+    let fd = uiBuilder.db.findDocuments()
+    let fdSorted = fd.sort((a, b) => b.updatedAt - a.updatedAt);
+    for (const doc of fdSorted) {
+        if (doc.data.type == '__keyval__') continue;
+        if (!doc.data.isBuiltIn) continue;
+        let text = `§b${doc.data.name}\n`
+        let subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()} | ${emojis.chat} ${doc.data.scriptevent}`
+        if (subtext.length > 43) subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}`
+        form.button(text + subtext, `${doc.data.icon ?? `textures/azalea_icons/ClickyClick`}`, async (player) => {
+            uiManager.open(player, config.uinames.uiBuilder.edit, doc.id)
+        })
+    }
+    form.show(player)
+})
+
 uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player) => {
     let form = new ActionForm()
     form.title(`${consts.tag}UI Builder`)
     form.button(`${consts.header}§cBack\n§7Go back to main menu`, `textures/azalea_icons/2`, (player) => {
         uiManager.open(player, config.uinames.config.root)
     })
-    form.button(`${consts.alt}§rMy UIs`, null, (player) => {
+    form.button(`${consts.disablevertical}${consts.left}${consts.alt}§rMy UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
-    form.button(`${consts.alt}§rReset built-in UIs`, null, (player) => {
-        uiBuilder.forceresetbuiltinuis()
-        uiManager.open(player, config.uinames.uiBuilder.root)
+    form.button(`${consts.right}§rBuilt-In UIs`, null, (player) => {
+        uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
     })
-    if (modules.get('devMode')) {
-        form.button(`${consts.alt}${themes[2][0]}§rFeather UIs`, `textures/folders/pink`, (player) => {
-            player.sendMessage('WIP')
-        })
-    }
     form.button(`${consts.disablevertical}${consts.left}§r§aCreate UI\n§7Make a UI`, `textures/azalea_icons/1`, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.create)
     })
@@ -50,11 +92,11 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
         form2.title(`Code Editor`)
         form2.textField(`Code`, `Code`)
         form2.show(player).then((res) => {
-            let[code] = res.formValues;
+            let [code] = res.formValues;
             try {
                 uiBuilder.import(code)
             } catch (e) {
-                player.error(`${e} | ${e.stack}`)   
+                player.error(`${e} | ${e.stack}`)
             }
             uiManager.open(player, config.uinames.uiBuilder.root);
         })
@@ -90,9 +132,11 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
             uiManager.open(player, config.uinames.uiBuilder.folders.view, folder)
         })
     }
-    for (const doc of uiBuilder.db.findDocuments()) {
+    let fd = uiBuilder.db.findDocuments()
+    let fdSorted = fd.sort((a, b) => b.updatedAt - a.updatedAt);
+    for (const doc of fdSorted) {
         if (doc.data.type == '__keyval__') continue;
-        if (doc.data.type == 'feather-built-in') continue;
+        if (doc.data.isBuiltIn) continue;
         let text = `§b${doc.data.name}\n`
         let subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()} | ${emojis.chat} ${doc.data.scriptevent}`
         if (subtext.length > 43) subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}`

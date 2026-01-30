@@ -17,7 +17,7 @@ uiManager.addUI(config.uinames.voting.root, 'Voting root', (player) => {
     }
     for(const r of voting.db.findDocuments({type:'Referendum'})) {
         let ref = r.data
-        form.button(`§d${ref.title}\n§r§7${ref.body}`, ref.icon ? ref.icon : null, (player)=>{
+        form.button(`§d${ref.title.substring(0,43)}\n§r§7${ref.body.substring(0,43)}`, ref.icon ? `.${ref.icon}` : null, (player)=>{
             uiManager.open(player, config.uinames.voting.view, r.id)
         })
     }

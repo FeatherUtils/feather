@@ -2,41 +2,39 @@ import { prismarineDb } from "../Libraries/prismarinedb";
 import { system, world } from '@minecraft/server'
 import playerStorage from "../Libraries/playerStorage";
 import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
-
-async function timer(plr, sec, msg) {
-  for (let i = sec; i > 0; i--) {
-    plr.sendMessage(`${msg.replace('[s]', i)}`);
-    await system.waitTicks(20);
-  }
-}
+import { timer } from "./Utilities/timer";
 
 class Clans {
     constructor() {
         system.run(async () => {
             this.oldDb = prismarineDb.table('Clans')
             this.db = prismarineDb.customStorage('Clans', SegmentedStoragePrismarine)
-            
-
             this.settingsKV = await this.db.keyval('settings')
-            if(!this.oldDb.findDocuments().length == 0) {
-                for(const doc of this.oldDb.findDocuments()) {
+            if (!this.oldDb.findDocuments().length == 0) {
+                for (const doc of this.oldDb.findDocuments()) {
                     this.db.insertDocument(doc.data)
                     this.oldDb.deleteDocumentByID(doc.id)
                 }
                 this.settingsKV.set('MIGRATION1', true)
             }
             if (!this.settingsKV.get(`currencyScoreboard`)) this.settingsKV.set(`currencyScoreboard`, 'money')
-            if(this.settingsKV.get(`clanBaseEnabled`) == undefined) this.settingsKV.set(`clanBaseEnabled`, true)
+            if (this.settingsKV.get(`clanBaseEnabled`) == undefined) this.settingsKV.set(`clanBaseEnabled`, true)
             this.oldinviteDb = prismarineDb.table('Clans:Invites')
             this.inviteDB = prismarineDb.customStorage('Clans:Invites', SegmentedStoragePrismarine)
-            if(!this.oldinviteDb.findDocuments().length == 0) {
-                for(const doc of this.oldinviteDb.findDocuments()) {
+            if (!this.oldinviteDb.findDocuments().length == 0) {
+                for (const doc of this.oldinviteDb.findDocuments()) {
                     this.inviteDB.insertDocument(doc.data)
                     this.oldinviteDb.deleteDocumentByID(doc.id)
                 }
                 this.settingsKV.set('INVITEMIGRATION1', true)
             }
         })
+    }
+    getClanName(player) {
+        for (const c of this.db.findDocuments()) {
+            if (c.data.type === '__keyval__') continue;
+            if (c.data.members.find(_ => _.id == player.id)) return c.data.name
+        }
     }
     addClan(owner, name, isPublic) {
         let ownerID = owner.id
@@ -77,11 +75,11 @@ class Clans {
     }
     async teleportToBase(player) {
         let clan = this.getFromPlayerID(player.id)
-        if(!clan) return false;
-        if(!clan.data.base) return false;
-        timer(player, 5, 'Teleporting to clan base in [s]..').then(() => {
+        if (!clan) return false;
+        if (!clan.data.base) return false;
+        timer(player, 5, 'Teleporting to clan base in [s]..', () => {
             let dimension = world.getDimension(`${clan.data.base.dimension}`)
-            player.teleport({x:clan.data.base.x,y:clan.data.base.y,z:clan.data.base.z}, {dimension})
+            player.teleport({ x: clan.data.base.x, y: clan.data.base.y, z: clan.data.base.z }, { dimension })
             player.success('Teleported to clan base!')
         })
     }
@@ -276,4 +274,6 @@ class Clans {
     }
 }
 
-export default new Clans;
+var clan = new Clans;
+
+export default clan;

@@ -10,7 +10,7 @@ uiManager.addUI(config.uinames.platformSettings.root, 'pfst root', (player) => {
     form.title(consts.tag + 'Platform Settings')
     form.body(`We strongly discourage using Platform Bans as a way to moderate your server. We suggest getting a moderation team and an anticheat to protect from hackers. We are not obliged to help you with this feature.`)
     form.button(`${consts.header}§cBack\n§7Go back to Config UI`, `.azalea/2`, (player) => {
-        uiManager.open(player, config.uinames.config.misc)
+        player.runCommand('open @s config_world')
     })
     form.button(`§aWhitelist\n§7Allow players to bypass the platform bans`, null, (player) => {
         uiManager.open(player, config.uinames.platformSettings.whitelist)

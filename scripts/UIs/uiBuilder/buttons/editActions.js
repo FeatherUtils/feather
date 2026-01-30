@@ -27,7 +27,7 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.editActions, 'edit actions', (p
         })
     })
     for (const a of b.actions) {
-        form.button(`${a.action}`, null, (player) => {
+        form.button(`§r${a.action}`, null, (player) => {
             let form2 = new ActionForm();
             form2.title(`${consts.tag}§rEDIT ACTION: ${a.action}`)
             form2.button(`${consts.header}§r§cBack\n§7Go back to edit actions`, icons.resolve('azalea/2'), (player) => {

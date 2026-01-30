@@ -12,6 +12,7 @@ export let NUT_UI_OCEAN = "§o§c§e§a§n§r";
 export let NUT_UI_HEADER_BUTTON = "§p§4§0§r";
 export let NUT_UI_ALT = "§a§l§t§b§t§n";
 export let NUT_UI_DISABLE_VERTICAL_SIZE_KEY = "§p§0§0§r";
+export let DISABLED = "§p§3§0"
 
 let alt = NUT_UI_ALT
 let header = NUT_UI_HEADER_BUTTON
@@ -21,5 +22,6 @@ let right = NUT_UI_LEFT_HALF
 let disablevertical = NUT_UI_DISABLE_VERTICAL_SIZE_KEY
 let themed = NUT_UI_THEMED
 let modal = '§c§h§e§r§r§y§r§f'
+let disabled = DISABLED
 
-export let consts = {alt,header,tag,left,right,disablevertical,themed,modal}
+export let consts = {alt,header,tag,left,right,disablevertical,themed,modal,disabled}

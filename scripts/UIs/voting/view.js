@@ -18,7 +18,7 @@ uiManager.addUI(config.uinames.voting.view, 'voting view', (player,id) => {
     let r = voting.get(id)
     if(!r) return;
     let form = new ActionForm();
-    form.title(`§f§0§0§f§r${r.data.title}`)
+    form.title(`§f§0§0§f§r${r.data.title.substring(0,45)}`)
     form.body(`${r.data.body}\n§r§cDownvotes: ${downvotes.length}\n§aUpvotes: ${upvotes.length}\n§bTotal: ${upvotes.length + downvotes.length}`)
     form.button(`§cBack\n§7Go to previous UI`, `textures/azalea_icons/2.png`, (player)=>{
         uiManager.open(player, config.uinames.voting.root)
