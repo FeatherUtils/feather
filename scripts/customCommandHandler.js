@@ -468,8 +468,8 @@ system.beforeEvents.startup.subscribe(async init => {
         system.run(() => {
             let item = new ItemStack(itemTypeId)
             item.amount = amount ?? 1
-            if(itemName) item.nameTag = itemName
-            if(data) item.data = data
+            if (itemName) item.nameTag = itemName
+            if (data) item.data = data
             for (const player of players) {
                 let inv = player.getComponent('inventory')
                 let inventory = inv.container
@@ -477,7 +477,7 @@ system.beforeEvents.startup.subscribe(async init => {
             }
             return {
                 status: CustomCommandStatus.Success,
-                message: `Gave ${players.map(_=>_.name).join(' ')} ${itemTypeId}`
+                message: `Gave ${players.map(_ => _.name).join(' ')} ${itemTypeId}`
             }
         })
     })
@@ -635,6 +635,14 @@ system.beforeEvents.startup.subscribe(async init => {
                 actionParser.runAction(player, cmd)
             }
         })
+    })
+    init.customCommandRegistry.registerCommand({
+        name: 'feather:playershop',
+        description: 'Open the Player Shop menu',
+        permissionLevel: CommandPermissionLevel.Any
+    }, (origin) => {
+        if (!modules.get('playershop')) return origin.sourceEntity.error('!playershop is disabled. :(')
+        uiManager.open(origin.sourceEntity, config.uinames.playerShop.root)
     })
     init.customCommandRegistry.registerCommand({
         name: "feather:inventorysee",

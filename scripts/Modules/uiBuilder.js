@@ -287,7 +287,7 @@ class uiBuilder {
     }
     editButtonPermission(id, id2, perm) {
         let ui = this.get(id)
-        if (!ui) throw new Error('No UI')
+        if (!ui) throw new Error('No UI');
         let i = ui.data.buttons.findIndex((_) => _.id == id2)
         if (i < 0) throw new Error('no button');
         let btn = ui.data.buttons[i]

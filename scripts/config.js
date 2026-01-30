@@ -55,6 +55,16 @@ export default {
             clog: 'config_clog',
             proximity: 'config_proximity'
         },
+        playerShop: {
+            root: 'playershop',
+            search: 'playershop_search',
+            view: 'playershop_view',
+            create: 'playershop_create',
+            edit: 'playershop_edit',
+            addItem: 'playershop_additem',
+            editItem: 'playershop_edititem',
+            viewItem: 'playershop_viewitem'
+        },
         homes: {
             view: 'homes_view | Homes/View',
             root: 'homes | Homes',
@@ -244,7 +254,8 @@ export default {
         { perm: 'betterKBConfig', display: "Configure BetterKB" },
         { perm: 'clearchat', display: "Clear Chat" },
         { perm: 'clog', display: 'Combat Log Config' },
-        {perm:'proximity',display:'Proximity Chat Config'}
+        { perm: 'proximity', display: 'Proximity Chat Config' },
+        { perm: 'playerShopAdmin', display: 'Player Shop Admin' }
     ],
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },

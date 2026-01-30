@@ -563,7 +563,8 @@ export default [
                     }
                 ],
                 "id": 1768665145310,
-                "type": "button"
+                "type": "button",
+                "permission": "warps"
             }
         ],
         "isBuiltIn": true

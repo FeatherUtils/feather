@@ -54,7 +54,6 @@ import { consts } from './cherryUIConsts'
 import emojis from './Formatting/emojis'
 import {cLog} from './Modules/cLog'
 
-
 Player.prototype.error = function (msg) {
     this.sendMessage(`§c§lERROR§8 >>§r§7 ${msg}`)
 }
@@ -76,6 +75,7 @@ import { ModalFormData } from '@minecraft/server-ui'
 import keyvalues from './Modules/keyvalues'
 
 import { commands, getPrefix } from './Modules/commands'
+import playerShop from './Modules/playerShop'
 
 system.run(() => {
     world.sendMessage(`§d${config.info.name} §e- §b${config.info.versionString()} §e- §bLoaded!`)
@@ -165,7 +165,6 @@ world.beforeEvents.itemUse.subscribe(e => {
                 actionParser.runAction(e.source, bind.data.cmd);
                 return;
             }
-            console.log(JSON.stringify(bind))
             continue;
         }
         if (bind.data.type === "typeid") {
@@ -174,7 +173,6 @@ world.beforeEvents.itemUse.subscribe(e => {
                 actionParser.runAction(e.source, bind.data.cmd);
                 return;
             }
-            console.log(JSON.stringify(bind))
         }
     }
 });
@@ -254,6 +252,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe((e) => {
 
 system.runInterval(async () => {
     for (const plr of world.getPlayers()) {
+        if(!modules.get('cr')) return;
         plr.nameTag = `${await formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
     }
 }, 20)
@@ -568,6 +567,9 @@ system.run(async () => {
         if (!modules.get('devMode')) return msg.sender.error('guh')
         binding.db.clear()
     })
+    commands.addCommand('award', 'PlayerShop Award Testing', 'Development', ({msg,args}) => {
+        playerShop.queueMoney(msg.sender.id,+args[0],args[1])
+    },false,'administrator',)
     commands.addCommand('view', 'View a player and run moderation actions on them', 'Moderation', ({ msg, args }) => {
         let players = playerStorage.searchPlayersByName(`${args[0]}`)
         let player = null;
@@ -652,6 +654,11 @@ system.run(async () => {
         player.setDynamicProperty('nickname', name.replaceAll('.', ''))
         player.success('Set nickname to ' + name.replaceAll('.', ''))
     }, false, null, ['nick'])
+    commands.addCommand('randomteleport', 'Randomly teleport in the world', 'Features', ({msg}) => {
+        if(!modules.get('rtp')) return msg.sender.error('RTP is disabled! :(')
+        msg.sender.runCommand('feather:rtp')
+    },false,null,['rtp','wild','randomtp'])
+    commands.addCommand('homes','Use the homes feature','Features',({msg}) => {msg.sender.runCommand('homes')},true,null,['home'])
 })
 
 world.beforeEvents.chatSend.subscribe(e => {

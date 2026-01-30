@@ -9,6 +9,8 @@ class Bounty {
         system.run(() => {
             this.db = prismarineDb.customStorage('+FTR:BOUNTY', SegmentedStoragePrismarine)
             world.afterEvents.entityDie.subscribe((e) => {
+                if(!e.damageSource) return; // make minecraft sybau
+                if(!e.deadEntity.isValid) return; // make minecraft sybau
                 if (e.damageSource.damagingEntity.typeId !== 'minecraft:player') return;
                 if (e.deadEntity.typeId !== 'minecraft:player') return;
                 let ok = false
