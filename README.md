@@ -11,7 +11,7 @@ https://choosealicense.com/licenses/gpl-3.0/
 
 ---
 
-![Config Menu](configui.png)
+![Config Menu](readme_assets/configui.png)
 
 ---
 
