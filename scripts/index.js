@@ -495,7 +495,7 @@ system.run(async () => {
         let item = container.getItem(player.selectedSlotIndex);
         binding.add(item.typeId, cmd)
         return player.success('Successfully binded ' + item.typeId + ' to ' + cmd)
-    }, false)
+    }, false,'bind')
     commands.addSubcommand('bind', 'name', 'Add an itemname specific bind', ({ msg, args }) => {
         const player = msg.sender
         const cmd = args.join(' ')
@@ -541,7 +541,7 @@ system.run(async () => {
         let item = container.getItem(player.selectedSlotIndex);
         binding.remove(item.typeId)
         player.success('Successfully removed bind from ' + item.typeId)
-    }, false)
+    }, false,'bind')
     commands.addSubcommand('removebind', 'name', 'Remove an itemname bind from an item', ({ msg }) => {
         const player = msg.sender
         if (!player) return;
@@ -568,8 +568,9 @@ system.run(async () => {
         binding.db.clear()
     })
     commands.addCommand('award', 'PlayerShop Award Testing', 'Development', ({msg,args}) => {
+        if(!modules.get('devMode')) return msg.sender.error('dont use this xD')
         playerShop.queueMoney(msg.sender.id,+args[0],args[1])
-    },false,'administrator',)
+    },false,'administrator')
     commands.addCommand('view', 'View a player and run moderation actions on them', 'Moderation', ({ msg, args }) => {
         let players = playerStorage.searchPlayersByName(`${args[0]}`)
         let player = null;

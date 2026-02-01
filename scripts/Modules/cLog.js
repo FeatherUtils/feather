@@ -17,7 +17,7 @@ class CLogProtection {
         })
         system.beforeEvents.startup.subscribe(async (e) => {
             await system.waitTicks(5)
-            if (!modules.get('devMode')) return;
+            return;
             this.clearClogEntries()
         })
         world.afterEvents.entityDie.subscribe((e) => {
@@ -47,10 +47,9 @@ class CLogProtection {
             let id = e.hitEntity.id
             e.hitEntity.info('You are now in combat!')
             system.run(async () => {
-                await system.waitTicks(modules.get('clogCooldown') ?? 30 * 20)
+                await system.waitTicks(+modules.get('clogCooldown') ?? 30 * 20)
                 if (e.hitEntity && worldValues.includesValue('combat:' + id)) e.hitEntity.info('You are no longer in combat!')
                 if (worldValues.includesValue('combat:' + id) && e.hitEntity) worldValues.removeValue('combat:' + id)
-
             })
         }
         if (!worldValues.includesValue('combat:' + de.id)) {

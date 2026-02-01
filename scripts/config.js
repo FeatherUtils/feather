@@ -255,7 +255,8 @@ export default {
         { perm: 'clearchat', display: "Clear Chat" },
         { perm: 'clog', display: 'Combat Log Config' },
         { perm: 'proximity', display: 'Proximity Chat Config' },
-        { perm: 'playerShopAdmin', display: 'Player Shop Admin' }
+        { perm: 'playerShopAdmin', display: 'Player Shop Admin' },
+        { perm: 'bind', display: 'Bind items to commands' }
     ],
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },

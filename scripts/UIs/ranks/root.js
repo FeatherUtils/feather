@@ -14,6 +14,7 @@ uiManager.addUI(config.uinames.ranks.root, 'ranks root', (player)=>{
         uiManager.open(player, config.uinames.ranks.add)
     })
     for (const r of ranks.getAll()) {
+        if(r.data.isDevRank) continue;
         form.button(`${r.data.name}\n§r§7${r.data.tag}`, `textures/blossom_icons/editrank`, (player) => {
             uiManager.open(player, config.uinames.ranks.edit, r.id)
         })

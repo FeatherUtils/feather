@@ -189,7 +189,7 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.edit, 'edit button', (player, u
                 if (disvert) newc.push('disableVertical')
                 if (left) newc.push('left')
                 if (right) newc.push('right')
-                if (disable) newc.push('disable')
+                if (disable) newc.push('disabled')
                 if (header) newc.push('header')
                 uiBuilder.buttonCherrySettings(uiID, id, newc)
                 uiManager.open(player, config.uinames.uiBuilder.buttons.edit, uiID, id)

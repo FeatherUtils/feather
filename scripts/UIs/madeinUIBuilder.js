@@ -74,32 +74,6 @@ export default [
         ]
     },
     {
-        "name": "Warps",
-        "body": "",
-        "scriptevent": "warps",
-        "layout": 4,
-        "theme": 0,
-        "type": "UI",
-        "isBuiltIn": true,
-        "buttons": [
-            {
-                "text": "§e<warpname>",
-                "subtext": "[ Teleport ]",
-                "requiredTag": "",
-                "icon": null,
-                "actions": [
-                    {
-                        "action": "feather:warp \"<warpname>\"",
-                        "id": 1750127490910
-                    }
-                ],
-                "id": 1750127490909,
-                "type": "button",
-                "meta": "warp"
-            }
-        ]
-    },
-    {
         "name": "Config UI - Extra",
         "body": "",
         "scriptevent": "config_extra",
@@ -433,6 +407,20 @@ export default [
                 "permission": "repbroad"
             },
             {
+                "text": "§aProximity Chat",
+                "subtext": "Edit proximity chat settings",
+                "requiredTag": "",
+                "icon": "azalea/8",
+                "actions": [
+                    {
+                        "action": "opengui @s config_proximity",
+                        "id": 1769809883792
+                    }
+                ],
+                "id": 1769809883791,
+                "type": "button"
+            },
+            {
                 "text": "§cBack",
                 "subtext": "Go back to Features",
                 "requiredTag": "",
@@ -451,6 +439,33 @@ export default [
             }
         ],
         "isBuiltIn": true
+    },
+    {
+        "name": "Warps",
+        "body": "",
+        "scriptevent": "warps",
+        "layout": 4,
+        "theme": 0,
+        "type": "UI",
+        "isBuiltIn": true,
+        "buttons": [
+            {
+                "text": "§e<warpname>",
+                "subtext": "[ Teleport ]",
+                "requiredTag": "",
+                "icon": null,
+                "actions": [
+                    {
+                        "action": "feather:warp \"<warpname>\"",
+                        "id": 1750127490910
+                    }
+                ],
+                "id": 1750127490909,
+                "type": "button",
+                "meta": "warp"
+            }
+        ],
+        "allowedInCombat": true
     },
     {
         "name": "Config UI - Extensions",

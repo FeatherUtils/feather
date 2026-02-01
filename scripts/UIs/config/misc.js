@@ -147,8 +147,8 @@ uiManager.addUI(config.uinames.config.proximity, 'pro', (player) => {
     let form = new ModalFormData();
     form.title(consts.modal + 'Proximity Chat Settings')
     form.label('Requires Chat Ranks to be on in modules.')
-    form.toggle('Enabled', {defaultValue:modules.get('proximityChat')})
-    form.textField('Range', 'How far away can players talk to eachother from', {defaultValue:modules.get('proximityChatRange').toString() ?? '20'})
+    form.toggle('Enabled', {defaultValue:modules.get('proximityChat') ?? false})
+    form.textField('Range', 'How far away can players talk to eachother from', {defaultValue:`${modules.get('proximityChatRange')}` ?? '20'})
     form.show(player).then((res) => {
         let [f,en,ra] = res.formValues
         if(isNaN(+ra) || 0 > ra) return player.error('Range is not a valid number')

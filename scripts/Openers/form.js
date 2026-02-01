@@ -70,6 +70,9 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
         if (button.permission && !prismarineDb.permissions.hasPermission(player, button.permission)) continue;
         let bpre = '§r'
         if (button.cherry && u.layout == 4) {
+            let theme;
+            if(u.theme == 0) theme = ''
+            if(u.theme != 0) theme = u.theme
             if (button.cherry.includes('alt')) bpre = consts.alt + `${u.theme}` + bpre
             if (button.cherry.includes('disableVertical')) bpre = bpre + consts.disablevertical
             if (button.cherry.includes('left')) bpre = bpre + consts.left
