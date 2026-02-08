@@ -12,6 +12,7 @@ import { themes } from "../../cherryThemes";
 import homes from "../../Modules/homes";
 import keyvalues from "../../Modules/keyvalues";
 import { rtp } from "../../Modules/rtp";
+import { cLog } from "../../Modules/cLog";
 
 uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     let form = new ActionForm();
@@ -127,12 +128,13 @@ uiManager.addUI(config.uinames.config.clog, 'CLog Protection', (player) => {
     form2.title(consts.modal + 'Combat Log Config')
     form2.toggle('Enabled', {defaultValue:modules.get('CLog')})
     form2.toggle('Keep Inventory', {defaultValue:modules.get('CLogKeepInventory')})
-    form2.textField('Cooldown', 'Example: 20', {defaultValue:`${modules.get('clogCooldown')}` ?? '30'})
+    form2.textField('Cooldown', 'Example: 20', {defaultValue:`${modules.get('clogCooldown') ?? '30'}`})
     form2.toggle('Commands Disabled', {defaultValue:modules.get('CLogCommandsDisabled')})
     form2.toggle('Teleport Disabled', {defaultValue:modules.get('CLogTeleportDisabled')})
     form2.show(player).then((res) => {
         let [enabled,keepinventory,clogCooldown,commandsDisabled,disabletp] = res.formValues
-        if(isNaN(clogCooldown)) return player.error('Cooldown is not a number')
+        if(isNaN(+clogCooldown)) return player.error('Cooldown is not a number')
+        if(!enabled) cLog.clearClogEntries()
         modules.set('CLog', enabled)
         modules.set('CLogKeepInventory', keepinventory)
         modules.set('clogCooldown', clogCooldown)
@@ -148,7 +150,7 @@ uiManager.addUI(config.uinames.config.proximity, 'pro', (player) => {
     form.title(consts.modal + 'Proximity Chat Settings')
     form.label('Requires Chat Ranks to be on in modules.')
     form.toggle('Enabled', {defaultValue:modules.get('proximityChat') ?? false})
-    form.textField('Range', 'How far away can players talk to eachother from', {defaultValue:`${modules.get('proximityChatRange')}` ?? '20'})
+    form.textField('Range', 'How far away can players talk to eachother from', {defaultValue:`${modules.get('proximityChatRange') ?? '20'}`})
     form.show(player).then((res) => {
         let [f,en,ra] = res.formValues
         if(isNaN(+ra) || 0 > ra) return player.error('Range is not a valid number')

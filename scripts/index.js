@@ -1,5 +1,9 @@
 import { world, system, ScriptEventSource, Player, World, ItemComponentTypes } from '@minecraft/server'
 import communication from './communication'
+import { dynamicToast } from './Libraries/chatNotifs'
+import { http, HttpRequest, Method, HttpHeader } from './Networking/index'
+
+
 
 
 communication.register('feather:pushToConfig', ({ args }) => {
@@ -32,7 +36,7 @@ system.run(async () => {
 import events from './Modules/events'
 import './UIs/index'
 import { prismarineDb } from './Libraries/prismarinedb'
-import './Networking/currentNetworkingLib'
+import './OldNetworking/currentNetworkingLib'
 import config from './config'
 import uiManager from './Libraries/uiManager'
 import './customCommandHandler'
@@ -52,7 +56,7 @@ import './Modules/antiAfk'
 import { ActionForm } from './Libraries/form_func'
 import { consts } from './cherryUIConsts'
 import emojis from './Formatting/emojis'
-import {cLog} from './Modules/cLog'
+import { cLog } from './Modules/cLog'
 
 Player.prototype.error = function (msg) {
     this.sendMessage(`§c§lERROR§8 >>§r§7 ${msg}`)
@@ -132,7 +136,7 @@ system.runInterval(() => {
         if (player.isSneaking) { player.addTag('sneaking') } else { if (player.hasTag('sneaking')) player.removeTag('sneaking') }
         if (player.isSprinting) { player.addTag('sprinting') } else { if (player.hasTag('sprinting')) player.removeTag('sprinting') }
         if (player.isSwimming) { player.addTag('swimming') } else { if (player.hasTag('swimming')) player.removeTag('swimming') }
-        if(cLog.inCombat(player)) {player.addTag('combat')} else { if(player.hasTag('combat')) player.removeTag('combat')}
+        if (cLog.inCombat(player)) { player.addTag('combat') } else { if (player.hasTag('combat')) player.removeTag('combat') }
     })
 }, 2)
 
@@ -252,7 +256,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe((e) => {
 
 system.runInterval(async () => {
     for (const plr of world.getPlayers()) {
-        if(!modules.get('cr')) return;
+        if (!modules.get('cr')) return;
         plr.nameTag = `${await formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
     }
 }, 20)
@@ -445,6 +449,10 @@ system.run(async () => {
         if (!modules.get('devMode')) return msg.sender.error('This command is also disabled lil bro')
         msg.sender.sendMessage(`${args[0]}`)
     })
+    commands.addSubcommand('say', 'toast', 'Test toast', ({ msg, args }) => {
+        if (!modules.get('devMode')) return msg.sender.error('This command is also disabled lil bro')
+        msg.sender.sendMessage(dynamicToast(args[0], args.splice(1).join(' '), '', 'textures/ui/pinkBorder'))
+    })
     commands.addCommand('gamemode', "Switch gamemodes", 'Admin', ({ msg, args }) => {
         if (!args[0]) return msg.sender.error('You need to enter an argument')
         if (args[0] === '0' || args[0] === 's' || args[0] == 'survival') return msg.sender.setGameMode("Survival"), msg.sender.success('Set gamemode to survival')
@@ -495,7 +503,7 @@ system.run(async () => {
         let item = container.getItem(player.selectedSlotIndex);
         binding.add(item.typeId, cmd)
         return player.success('Successfully binded ' + item.typeId + ' to ' + cmd)
-    }, false,'bind')
+    }, false, 'bind')
     commands.addSubcommand('bind', 'name', 'Add an itemname specific bind', ({ msg, args }) => {
         const player = msg.sender
         const cmd = args.join(' ')
@@ -541,7 +549,7 @@ system.run(async () => {
         let item = container.getItem(player.selectedSlotIndex);
         binding.remove(item.typeId)
         player.success('Successfully removed bind from ' + item.typeId)
-    }, false,'bind')
+    }, false, 'bind')
     commands.addSubcommand('removebind', 'name', 'Remove an itemname bind from an item', ({ msg }) => {
         const player = msg.sender
         if (!player) return;
@@ -567,10 +575,10 @@ system.run(async () => {
         if (!modules.get('devMode')) return msg.sender.error('guh')
         binding.db.clear()
     })
-    commands.addCommand('award', 'PlayerShop Award Testing', 'Development', ({msg,args}) => {
-        if(!modules.get('devMode')) return msg.sender.error('dont use this xD')
-        playerShop.queueMoney(msg.sender.id,+args[0],args[1])
-    },false,'administrator')
+    commands.addCommand('award', 'PlayerShop Award Testing', 'Development', ({ msg, args }) => {
+        if (!modules.get('devMode')) return msg.sender.error('dont use this xD')
+        playerShop.queueMoney(msg.sender.id, +args[0], args[1])
+    }, false, 'administrator')
     commands.addCommand('view', 'View a player and run moderation actions on them', 'Moderation', ({ msg, args }) => {
         let players = playerStorage.searchPlayersByName(`${args[0]}`)
         let player = null;
@@ -655,11 +663,11 @@ system.run(async () => {
         player.setDynamicProperty('nickname', name.replaceAll('.', ''))
         player.success('Set nickname to ' + name.replaceAll('.', ''))
     }, false, null, ['nick'])
-    commands.addCommand('randomteleport', 'Randomly teleport in the world', 'Features', ({msg}) => {
-        if(!modules.get('rtp')) return msg.sender.error('RTP is disabled! :(')
+    commands.addCommand('randomteleport', 'Randomly teleport in the world', 'Features', ({ msg }) => {
+        if (!modules.get('rtp')) return msg.sender.error('RTP is disabled! :(')
         msg.sender.runCommand('feather:rtp')
-    },false,null,['rtp','wild','randomtp'])
-    commands.addCommand('homes','Use the homes feature','Features',({msg}) => {msg.sender.runCommand('homes')},true,null,['home'])
+    }, false, null, ['rtp', 'wild', 'randomtp'])
+    commands.addCommand('homes', 'Use the homes feature', 'Features', ({ msg }) => { msg.sender.runCommand('homes') }, true, null, ['home'])
 })
 
 world.beforeEvents.chatSend.subscribe(e => {
@@ -674,4 +682,14 @@ world.beforeEvents.chatSend.subscribe(e => {
     }
     e.cancel = true;
     handleChat(e)
+})
+
+system.run(async () => {
+    await system.waitTicks(11)
+    let rqst = new HttpRequest('https://mcbetools.com/api/THEPISSDOESNOTCONSUMEITSELF')
+    rqst.setMethod("Get")
+    rqst.addHeaderClass(new HttpHeader('Content-Type', 'application/json'))
+    
+    let res = await http.request(rqst)
+    console.log(JSON.stringify(res))
 })

@@ -5,22 +5,21 @@ import modules from './modules'
 
 class CLogProtection {
     constructor() {
-        world.afterEvents.entityHurt.subscribe((e) => {
-            this.hit(e)
+        world.afterEvents.entityHurt.subscribe(async (e) => {
+            if (!modules.get('CLog')) return;
+            await this.hit(e)
         })
         world.afterEvents.playerSpawn.subscribe(async (e) => {
+            if (!modules.get('CLog')) return;
             if (!e.initialSpawn) return;
             await this.join(e)
         })
         world.beforeEvents.playerLeave.subscribe((e) => {
+            if (!modules.get('CLog')) return;
             this.leave(e)
         })
-        system.beforeEvents.startup.subscribe(async (e) => {
-            await system.waitTicks(5)
-            return;
-            this.clearClogEntries()
-        })
         world.afterEvents.entityDie.subscribe((e) => {
+            if (!modules.get('CLog')) return;
             this.die(e)
         })
     }
@@ -47,7 +46,7 @@ class CLogProtection {
             let id = e.hitEntity.id
             e.hitEntity.info('You are now in combat!')
             system.run(async () => {
-                await system.waitTicks(+modules.get('clogCooldown') ?? 30 * 20)
+                await system.waitTicks(+modules.get('clogCooldown') * 20 ?? 30 * 20)
                 if (e.hitEntity && worldValues.includesValue('combat:' + id)) e.hitEntity.info('You are no longer in combat!')
                 if (worldValues.includesValue('combat:' + id) && e.hitEntity) worldValues.removeValue('combat:' + id)
             })
@@ -57,7 +56,7 @@ class CLogProtection {
             let id = de.id
             de.info('You are now in combat!')
             system.run(async () => {
-                await system.waitTicks(modules.get('clogCooldown') ?? 30 * 20)
+                await system.waitTicks(+modules.get('clogCooldown') * 20 ?? 30 * 20)
                 if (de && worldValues.includesValue('combat:' + id)) de.info('You are no longer in combat!')
                 if (worldValues.includesValue('combat:' + id) && de) worldValues.removeValue('combat:' + id)
             })
@@ -84,8 +83,8 @@ class CLogProtection {
         }
     }
     leave(e) {
+        if (!this.inCombat(e.player)) return;
         if (!modules.get('CLogKeepInventory')) {
-            if (!this.inCombat(e.player)) return;
             let inv = e.player.getComponent('inventory')
             let inventory = inv.container
             let items = []
@@ -118,6 +117,7 @@ class CLogProtection {
                 if (b) dimension.spawnItem(b, loc)
             })
         } else {
+            if(!this.inCombat(e.player)) return;
             let name = e.player.name
             system.run(() => {
                 world.sendMessage(`§c${name} left the game while in combat!`)

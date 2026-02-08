@@ -49,16 +49,16 @@ class Ranks {
                 let plr = world.getPlayers().find(p => p.name === dv.name);
                 if (!plr) continue;
 
-                if (plr.hasTag('ovdevrank')) return;
-
                 const targetTag = 'featheressentials:' + dv.type;
                 const tags = plr.getTags();
 
                 for (const tg of tags) {
-                    if (tg.startsWith('featheressentials:') && tg !== targetTag) {
+                    if (tg.startsWith('featheressentials:')) {
                         plr.removeTag(tg);
                     }
                 }
+
+                if(plr.hasTag('ovdevrank')) continue;
 
                 if (!plr.hasTag(targetTag)) {
                     plr.addTag(targetTag);
