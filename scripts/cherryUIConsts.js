@@ -1,5 +1,3 @@
-// nutUIText = `${button.disabled ? "§e(DISABLED) " : ""}${button.nutUIAlt ? "§a§l§t§b§t§n" : ""}${button.nutUIHalf == 2 ? "§p§1§2" : button.nutUIHalf == 1 ? "§p§2§2" : button.nutUIHalf == 3 ? "" : button.nutUIHalf == 4 ? "" : button.nutUIHalf == 5 ? "" : ""}${button.nutUIHeaderButton ? "§p§4§0" : ""}${button.nutUINoSizeKey ? "§p§0§0" : ""}`;
-
 export let NUT_UI_TAG = "§f§0§0§f§r";
 export let NUT_UI_LEFT_HALF = "§p§1§2§r";
 export let NUT_UI_RIGHT_HALF = "§p§2§2§r";
@@ -13,6 +11,7 @@ export let NUT_UI_HEADER_BUTTON = "§p§4§0§r";
 export let NUT_UI_ALT = "§a§l§t§b§t§n";
 export let NUT_UI_DISABLE_VERTICAL_SIZE_KEY = "§p§0§0§r";
 export let DISABLED = "§p§3§0"
+export let NUT_UI_DISBALE_BTN = "§p§3§0"
 
 let alt = NUT_UI_ALT
 let header = NUT_UI_HEADER_BUTTON
