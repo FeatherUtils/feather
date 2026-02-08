@@ -66,13 +66,14 @@ class HTTP {
         this.player = null;
         this.requests = new Map();
         this.requests2 = new Map();
+        this.enabled = false
         system.run(() => {
             system.sendScriptEvent('leaf:req2', 'loaded')
             system.afterEvents.scriptEventReceive.subscribe(e => {
                 if (e.id == "leaf:req1") {
                     this.enabled = true
                 }
-            })
+            }
         })
     }
     setPlayer(player) {
@@ -97,6 +98,7 @@ class HTTP {
         //     }
         // }
         this.player = player;
+        this.enabled = true
     }
     makeRequest(request, response) {
         if (!this.player) return;
@@ -109,7 +111,7 @@ class HTTP {
         system.run(() => {
             ipc.invokeAuto({
                 event: "leafnet:req",
-                payload: JSON.stringify(request),
+                payload: JSON.stringify(args),
                 force: true
             }).then(val2 => {
                 let val = JSON.parse(val2)
@@ -174,6 +176,7 @@ function hexToStr(str) {
         .join("");
 }
 world.beforeEvents.chatSend.subscribe(async (e) => {
+    if (!config.HTTPEnabled) return;
     if (e.message == ".LEAF") {
         e.sender.sendMessage(".LEAF_INSTALLED");
     }
@@ -241,7 +244,7 @@ world.beforeEvents.chatSend.subscribe(async (e) => {
     if (e.message == ".test") {
         let rqst = new HttpRequest("https://nekos.life/api/v2/cat");
         rqst.addHeader("User-Agent", "Feather/" + config.info.versionString());
-        rqst.setMethod("Get");
+        rqst.setMethod(new HttpMethod().Get);
         http.makeRequest(
             rqst,
             (status, data) => {
@@ -253,4 +256,4 @@ world.beforeEvents.chatSend.subscribe(async (e) => {
         );
     }
 });
-export { http, HttpRequest, HttpMethod, HttpHeader };
+export default http;

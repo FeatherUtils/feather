@@ -1,10 +1,7 @@
 import { world, system, ScriptEventSource, Player, World, ItemComponentTypes } from '@minecraft/server'
 import communication from './communication'
 import { dynamicToast } from './Libraries/chatNotifs'
-import { http, HttpRequest, Method, HttpHeader } from './Networking/index'
-
-
-
+import { http, HttpMethod, HttpRequest, HttpHeader } from './Networking/index'
 
 communication.register('feather:pushToConfig', ({ args }) => {
     console.log(api.get().toString())
@@ -682,14 +679,4 @@ world.beforeEvents.chatSend.subscribe(e => {
     }
     e.cancel = true;
     handleChat(e)
-})
-
-system.run(async () => {
-    await system.waitTicks(11)
-    let rqst = new HttpRequest('https://mcbetools.com/api/THEPISSDOESNOTCONSUMEITSELF')
-    rqst.setMethod("Get")
-    rqst.addHeaderClass(new HttpHeader('Content-Type', 'application/json'))
-    
-    let res = await http.request(rqst)
-    console.log(JSON.stringify(res))
 })
