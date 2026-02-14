@@ -137,7 +137,7 @@ system.runInterval(() => {
         conditionalTag(player,'sneaking',player.isSneaking)
         conditionalTag(player,'sprinting',player.isSprinting)
         conditionalTag(player,'swimming',player.isSwimming)
-        conditionalTag(player,'combat',clog.inCombat(player))
+        conditionalTag(player,'combat',cLog.inCombat(player))
     })
 }, 2)
 
