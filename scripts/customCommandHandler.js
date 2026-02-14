@@ -1,7 +1,6 @@
 import { GameMode, system } from '@minecraft/server'
 import { CommandPermissionLevel, CustomCommandParamType, CustomCommandSource, world, Player, CustomCommandStatus, ItemStack } from "@minecraft/server"
 import binding from './Modules/binding'
-import { transferPlayer } from "@minecraft/server-admin"
 import warps from './Modules/warps'
 import uiManager from './Libraries/uiManager'
 import config from './config'
@@ -383,31 +382,6 @@ system.beforeEvents.startup.subscribe(async init => {
         system.run(() => {
             for (const player of players) {
                 player.runCommand(`scriptevent feathergui:${scriptevent}`)
-            }
-        })
-    })
-    init.customCommandRegistry.registerCommand({
-        name: "feather:transfer",
-        description: "Transfer a player to a different server",
-        permissionLevel: CommandPermissionLevel.GameDirectors,
-        mandatoryParameters: [
-            {
-                name: "players",
-                type: CustomCommandParamType.PlayerSelector
-            },
-            {
-                name: "ip",
-                "type": CustomCommandParamType.String
-            },
-            {
-                name: "port",
-                "type": CustomCommandParamType.Integer
-            }
-        ],
-    }, (origin, players, ip, port) => {
-        system.run(() => {
-            for (const player of players) {
-                transferPlayer(player, { hostname: ip, port: +port })
             }
         })
     })

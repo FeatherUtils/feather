@@ -119,21 +119,25 @@ system.runInterval(() => {
     }
 }, 2)
 
+function conditionalTag(player, tag, condition) {
+    if(condition) { player.addTag(tag) } else { if(player.hasTag(tag)) player.removeTag(tag) }
+}
+
 system.runInterval(() => {
     world.getPlayers().forEach((player) => {
-        if (player.isJumping) { player.addTag('jumping') } else { if (player.hasTag('jumping')) player.removeTag('jumping') }
-        if (player.isClimbing) { player.addTag('climbing') } else { if (player.hasTag('climbing')) player.removeTag('climbing') }
-        if (player.isEmoting) { player.addTag('emoting') } else { if (player.hasTag('emoting')) player.removeTag('emoting') }
-        if (player.isFalling) { player.addTag('falling') } else { if (player.hasTag('falling')) player.removeTag('falling') }
-        if (player.isFlying) { player.addTag('flying') } else { if (player.hasTag('flying')) player.removeTag('flying') }
-        if (player.isGliding) { player.addTag('gliding') } else { if (player.hasTag('gliding')) player.removeTag('gliding') }
-        if (player.isInWater) { player.addTag('inwater') } else { if (player.hasTag('inwater')) player.removeTag('inwater') }
-        if (player.isOnGround) { player.addTag('onground') } else { if (player.hasTag('onground')) player.removeTag('onground') }
-        if (player.isSleeping) { player.addTag('sleeping') } else { if (player.hasTag('sleeping')) player.removeTag('sleeping') }
-        if (player.isSneaking) { player.addTag('sneaking') } else { if (player.hasTag('sneaking')) player.removeTag('sneaking') }
-        if (player.isSprinting) { player.addTag('sprinting') } else { if (player.hasTag('sprinting')) player.removeTag('sprinting') }
-        if (player.isSwimming) { player.addTag('swimming') } else { if (player.hasTag('swimming')) player.removeTag('swimming') }
-        if (cLog.inCombat(player)) { player.addTag('combat') } else { if (player.hasTag('combat')) player.removeTag('combat') }
+        conditionalTag(player,'jumping',player.isJumping)
+        conditionalTag(player,'climbing',player.isClimbing)
+        conditionalTag(player,'emoting',player.isEmoting)
+        conditionalTag(player,'falling',player.isFalling)
+        conditionalTag(player,'flying',player.isFlying)
+        conditionalTag(player,'gliding',player.isGliding)
+        conditionalTag(player,'inwater',player.isInWater)
+        conditionalTag(player,'onground',player.isOnGround)
+        conditionalTag(player,'sleeping',player.isSleeping)
+        conditionalTag(player,'sneaking',player.isSneaking)
+        conditionalTag(player,'sprinting',player.isSprinting)
+        conditionalTag(player,'swimming',player.isSwimming)
+        conditionalTag(player,'combat',clog.inCombat(player))
     })
 }, 2)
 

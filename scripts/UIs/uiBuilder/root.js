@@ -6,19 +6,21 @@ import uiManager from '../../Libraries/uiManager'
 import config from '../../config'
 import uiBuilder from '../../Modules/uiBuilder'
 import emojis from '../../Formatting/emojis'
-import { world } from '@minecraft/server'
+import { world, system } from '@minecraft/server'
 import modules from '../../Modules/modules'
 import icons from '../../Modules/icons'
 import { ModalFormData } from '@minecraft/server-ui'
 import { themes } from '../../cherryThemes'
+import { http } from '../../Networking/index'
+import featherNetwork from '../../Networking/featherNetwork'
 
 uiManager.addUI(config.uinames.uiBuilder.builtInUIs, 'Built in UIS', (player) => {
     let form = new ActionForm()
-    form.title(`${consts.tag}Built In UIS`)
+    form.title(`${consts.tag}${consts.themed}${themes[52][0]}Built In UIS`)
     form.button(`${consts.disablevertical}${consts.left}§rMy UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
-    form.button(`${consts.right}${consts.alt}§rBuilt-In UIs`, null, (player) => {
+    form.button(`${consts.right}${consts.alt}${themes[52][0]}§rBuilt-In UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
     })
     form.button(`§bForce Reset built-in UIs`, null, (player) => {
@@ -62,16 +64,36 @@ uiManager.addUI(config.uinames.uiBuilder.builtInUIs, 'Built in UIS', (player) =>
 
 uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player) => {
     let form = new ActionForm()
-    form.title(`${consts.tag}UI Builder`)
+    form.title(`${consts.tag}${consts.themed}${themes[52][0]}UI Builder`)
     form.button(`${consts.header}§cBack\n§7Go back to main menu`, `textures/azalea_icons/2`, (player) => {
         uiManager.open(player, config.uinames.config.root)
     })
-    form.button(`${consts.disablevertical}${consts.left}${consts.alt}§rMy UIs`, null, (player) => {
+    form.button(`${consts.disablevertical}${consts.left}${consts.alt}${themes[52][0]}§rMy UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
     form.button(`${consts.right}§rBuilt-In UIs`, null, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.builtInUIs)
     })
+    if (http.enabled && !player.getDynamicProperty('MCBEToolsToken')) {
+        form.button(`${consts.alt}${consts.themed}${themes[52][0]}§rSign in with MCBETools\n§7Upload UIs to the Feather Network`, '.azalea/7', (player) => {
+            uiManager.open(player, config.uinames.MCBEToolsAuth, async () => {
+                await system.waitTicks(2)
+                uiManager.open(player, config.uinames.uiBuilder.root)
+            })
+        })
+    }
+    if (http.enabled && player.getDynamicProperty('MCBEToolsToken')) {
+        form.button(`${consts.alt}${consts.themed}${themes[52][0]}§rSign out of MCBETools\n§7Sign out of your MCBETools account`, '.azalea/7', async (player) => {
+            player.runCommand('scriptevent mcbetools:logout')
+            await system.waitTicks(3)
+            uiManager.open(player, config.uinames.uiBuilder.root)
+        })
+    }
+    if (featherNetwork.isConnected()) {
+        form.button(`§bFeather Network\n§7Browse and import UIs on Feather Network`, '.azalea/server', (player) => {
+            uiManager.open(player, config.uinames.FeatherNetwork)
+        })
+    }
     form.button(`${consts.disablevertical}${consts.left}§r§aCreate UI\n§7Make a UI`, `textures/azalea_icons/1`, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.create)
     })
@@ -144,5 +166,34 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player)
             uiManager.open(player, config.uinames.uiBuilder.edit, doc.id)
         })
     }
+    form.show(player)
+})
+
+uiManager.addUI(config.uinames.FeatherNetwork, 'd', async (player) => {
+    let form = new ActionForm();
+    form.title(`${consts.tag}${consts.themed}${themes[52][0]}Feather Network`)
+    if (!featherNetwork.isConnected()) {
+        form.body('Not connected to feather network')
+        return form.show(player);
+    }
+    let data = await featherNetwork.getUIs()
+    const uis = JSON.parse(data).uis
+
+    for (const ui of uis) {
+        form.button(
+            `§r${ui.displayName}\n§7@${ui.handle}`,
+            ui.data?.icon ?? '.azalea/ClickyClick',
+            (player) => {
+                uiManager.open(
+                    player,
+                    config.uinames.FeatherNetwork,
+                    ui.identification
+                )
+            }
+        )
+    }
+
+
+
     form.show(player)
 })

@@ -7,8 +7,10 @@ import { consts } from "../../cherryUIConsts";
 import config from "../../config";
 import { themes } from "../../cherryThemes";
 import modules from '../../Modules/modules'
+import featherNetwork from "../../Networking/featherNetwork";
+import { system } from '@minecraft/server'
 
-uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id) => {
+uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', async (player, id) => {
     let form = new ActionForm();
     let ui = uiBuilder.get(id)
     if (!ui) return uiManager.open(player, config.uinames.uiBuilder.root);
@@ -96,5 +98,32 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', (player, id
         uiBuilder.delete(id)
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
+    if (featherNetwork.isConnected()) {
+        form.divider()
+        if (!player.getDynamicProperty('MCBEToolsToken')) {
+            form.label(`You must be signed into MCBETools to publish on Feather Network`)
+        } else {
+            if (await featherNetwork.isPublished(id)) {
+                form.button('§cUnpublish', '.azalea/server', async (player) => {
+                    await featherNetwork.unpublish(id, player.getDynamicProperty('MCBEToolsToken'))
+                    await system.waitTicks(2)
+                    uiManager.open(player, config.uinames.uiBuilder.edit, id)
+                })
+            } else {
+                form.button('§aUpload', '.azalea/server', async (player) => {
+                    let form2 = new ModalFormData();
+                    form2.title('Upload')
+                    form2.textField('Display name', 'Example: cool ui')
+                    form2.show(player).then(async (res) => {
+                        let [displayname] = res.formValues
+                        await featherNetwork.upload(displayname, ui, player.getDynamicProperty('MCBEToolsToken'))
+                        await system.waitTicks(2)
+                        uiManager.open(player, config.uinames.uiBuilder.edit, id)
+                    })
+                })
+            }
+        }
+    }
     form.show(player)
+
 })

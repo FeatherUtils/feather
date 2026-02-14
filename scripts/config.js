@@ -88,6 +88,9 @@ export default {
                 root: 'warns'
             }
         },
+        MCBEToolsAuth: 'mcbetools_auth',
+        FeatherNetwork: 'feathernetwork',
+        FeatherNetworkView: 'feathernetworkview',
         clans: {
             create: 'clans_create',
             public: 'clans_public',
@@ -206,8 +209,8 @@ export default {
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
-        release: '§eGold',
-        version: [9],
+        release: '§uAmethyst',
+        version: [10],
         versionString() {
             return `${this.release} §e${this.version.join('.')}`;
         },
@@ -218,7 +221,8 @@ export default {
         openui: "feathergui:",
         devMode: async () => {
             return system.run(() => world.getDynamicProperty('devMode') ?? false)
-        }
+        },
+        mcbetools: 'https://mcbetools.com/api'
     },
     permissions: [
         { perm: 'config', display: "Config UI" },

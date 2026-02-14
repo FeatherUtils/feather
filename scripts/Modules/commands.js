@@ -17,6 +17,7 @@ class Commands {
     updatePrefix(newp) {
         if (typeof newp != 'string') throw new Error('new prefix needs to be a string')
         if (newp.startsWith('/')) throw new Error('Cant use / prefix due to it being chomped by default Minecraft commands and never sent to chat. / commands can only be added at server startup.')
+        if (newp.startsWith('.')) throw new Error('. is reserved');
         return modules.set('commandPrefix', newp)
     }
     addSubcommand(parent, uniqueId, description, func, closeChat) {

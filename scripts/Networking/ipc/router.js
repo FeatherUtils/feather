@@ -148,7 +148,7 @@ export class Router {
             const timeoutId = system.runTimeout(() => {
                 this.removeListener(responseListenerId);
                 reject(new Error(`Invoke '${options.event}' timed out.`));
-            }, 80);
+            }, 600);
             this.setListener(responseListenerId, (payload) => {
                 this.removeListener(responseListenerId);
                 system.clearRun(timeoutId);

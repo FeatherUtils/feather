@@ -7,7 +7,7 @@
       ]
     },
     "header": {
-      "name": "§b§lFeather Essentials §e- §gGold §b9.3",
+      "name": "§b§lFeather Essentials §e- §uAmethyst §b10",
       "description": "Feather Essentials - Made with <3 by IsabellaDaKitty & ARandomFern!",
       "min_engine_version": [
         1,
@@ -50,10 +50,6 @@
       },
       {
         "module_name": "@minecraft/server-ui",
-        "version": "beta"
-      },
-      {
-        "module_name": "@minecraft/server-admin",
         "version": "beta"
       }
     ],
