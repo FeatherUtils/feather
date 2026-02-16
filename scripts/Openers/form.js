@@ -57,16 +57,22 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
     if (u.body) {
         form.body(await formatter.format(u.body, player))
     }
-    for (const button of u.buttons) {
-        if (button.type == 'header') form.header(button.text);
-        if (button.type == 'label') form.label(button.text);
-        if (button.type == 'divider') form.divider()
-    }
     if (u.buttons.length < 1) {
         form.button(`§cClose UI`, icons.resolve('azalea/2'))
     }
     for (const button of u.buttons) {
-        if (button.type != 'button') continue;
+        if (button.type == 'header') {
+            form.header(button.text);
+            continue;
+        }
+        if (button.type == 'label') {
+            form.label(button.text);
+            continue;
+        }
+        if (button.type == 'divider') {
+            form.divider()
+            continue;
+        }
         if (button.permission && !prismarineDb.permissions.hasPermission(player, button.permission)) continue;
         let bpre = '§r'
         if (button.cherry && u.layout == 4) {

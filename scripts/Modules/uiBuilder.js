@@ -4,6 +4,8 @@ import { SegmentedStoragePrismarine } from '../Libraries/Storage/segmented'
 import { array_move } from './array_move'
 import modules from './modules'
 import uis from '../UIs/madeinUIBuilder'
+import areamodule from "./areas";
+import events from "./events";
 
 class uiBuilder {
     constructor() {
@@ -240,6 +242,14 @@ class uiBuilder {
         doc.data.icon = icon
         this.db.overwriteDataByID(id, doc.data)
         return true;
+    }
+    getAll() {
+        let creations = [
+            ...this.db.findDocuments({type:'UI'}),
+            ...areamodule.getAreas(),
+            ...events.getEvents()
+        ]
+        return creations;
     }
     addLabel(id2, text) {
         let doc = this.db.getByID(id2)

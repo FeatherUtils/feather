@@ -7,11 +7,15 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "esbuild src/index.js --bundle --format=esm --outfile=scripts/index.js --external:@minecraft/server --external:@minecraft/server-ui --external:@minecraft/server-admin",
+    "watch": "esbuild src/index.js --bundle --format=esm --outfile=scripts/index.js --watch --external:@minecraft/server --external:@minecraft/server-ui --external:@minecraft/server-admin"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2"
   },
   "dependencies": {
-    "@minecraft/server": "^2.2.0-beta.1.21.100-stable",
+    "@minecraft/server": "^2.5.0-beta.1.26.0-stable",
     "@minecraft/server-admin": "^1.0.0-beta.11940b24",
-    "@minecraft/server-ui": "^2.1.0-beta.1.21.100-stable"
+    "@minecraft/server-ui": "^2.1.0-beta.1.26.0-stable"
   }
 }

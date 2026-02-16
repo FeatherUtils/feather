@@ -1,7 +1,7 @@
 import uiManager from "../../../Libraries/uiManager";
 import moderation from "../../../Modules/moderation";
 import config from "../../../config";
-import { ActionForm } from "../../../Libraries/prismarinedb";
+import { ActionForm } from "../../../Libraries/form_func";
 import {consts} from "../../../cherryUIConsts";
 import moment from '../../../Libraries/moment'
 import icons from "../../../Modules/icons";
@@ -23,10 +23,10 @@ uiManager.addUI(config.uinames.moderation.warns.root, 'Warn UI', (player) => {
             form2.button(`§cBack`, null, (player) => {
                 uiManager.open(player,config.uinames.moderation.warns.root)
             })
-            form2.button(`§aUnban player`, null, (player) => {
+            form2.button(`§aUnwarn player`, null, (player) => {
                 moderation.delete(ban.id)
                 uiManager.open(player,config.uinames.moderation.warns.root)
-                player.sendMessage(`§a§lSUCCESS!§r §8>> §7Unbanned ${plr.name} from server :)`)
+                player.sendMessage(`§a§lSUCCESS!§r §8>> §7Unwarned ${plr.name} from server :)`)
             })
             form2.show(player)
         })

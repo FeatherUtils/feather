@@ -3,20 +3,40 @@ import uiManager from "../../Libraries/uiManager";
 import uiBuilder from "../../Modules/uiBuilder";
 import config from "../../config";
 import { system } from "@minecraft/server"
+import { ActionForm } from "../../Libraries/form_func";
+import { consts } from "../../cherryUIConsts";
+
+uiManager.addUI(config.uinames.uiBuilder.makeCreation, 'makeCreation', (player) => {
+    let form = new ActionForm();
+    form.title(consts.tag + 'Make Creation')
+    form.button(`${consts.header}§cBack\n§7Go back to Builder`, '.azalea/2', (player) =>{
+        uiManager.open(player,config.uinames.uiBuilder.root)
+    })
+    form.button(`§bUI\n§7Create a UI`, '.azalea/9', (player) => {
+        uiManager.open(player,config.uinames.uiBuilder.create)
+    })
+    form.button(`§6Area\n§7Create an Area`, '.azalea/server', (player) => {
+        uiManager.open(player,config.uinames.areas.create)
+    })
+    form.button(`§eEvent\n§7Create an event`, '.blossom/event2', (player) => {
+        uiManager.open(player,config.uinames.events.add,true)
+    })
+    form.show(player)
+})
 
 uiManager.addUI(config.uinames.uiBuilder.create, 'uiBuilder_create', async (player, id = null, folder = null) => {
     let doc = uiBuilder.get(id)
     let d = doc ? doc.data : null
-    let form = new ModalFormData();
+    let form2 = new ModalFormData();
     let layouts = ['Normal', 'Fullscreen', 'Grid', 'Player Model']
     layouts.push('CherryUI (Recommended)')
-    form.title('Create UI')
-    form.textField('Title', 'Enter title here...', { defaultValue: d ? d.name : null })
-    form.textField('Scriptevent', 'Enter scriptevent here..', { defaultValue: d ? d.scriptevent : null })
-    form.dropdown('Layout', layouts, { defaultValueIndex: d ? d.layout : 4 })
-    form.show(player).then(async (res) => {
+    form2.title('Create UI')
+    form2.textField('Title', 'Enter title here...', { defaultValue: d ? d.name : null })
+    form2.textField('Scriptevent', 'Enter scriptevent here..', { defaultValue: d ? d.scriptevent : null })
+    form2.dropdown('Layout', layouts, { defaultValueIndex: d ? d.layout : 4 })
+    form2.show(player).then(async (res) => {
         if (res.canceled) return uiManager.open(player, config.uinames.uiBuilder.root);
-        let [title, scriptevent, layout] = res.formValues
+        let [title, scriptevent, layout] = res.form2Values
         if (!title || !scriptevent) return player.error('Title or scriptevent not entered. This is required.'), uiManager.open(player, config.uinames.uiBuilder.root)
         if (d) {
             try {

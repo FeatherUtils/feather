@@ -114,10 +114,10 @@ export default [
                 "permission": "codes"
             },
             {
-                "text": "§9Better Knockback",
-                "subtext": "Configure Better Knockback",
+                "text": "§9Better Combat",
+                "subtext": "Configure Better Combat",
                 "requiredTag": "",
-                "icon": "azalea/8",
+                "icon": "vanilla/diamond_sword",
                 "actions": [
                     {
                         "action": "opengui @s config_betterkb",

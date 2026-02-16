@@ -32,7 +32,7 @@ uiManager.addUI(config.uinames.events.root, 'ev root', (player) => {
     }
     form.show(player)
 })
-uiManager.addUI(config.uinames.events.add, 'events add', (player) => {
+uiManager.addUI(config.uinames.events.add, 'events add', (player,builder=false) => {
     let form = new ModalFormData();
     let types = ['KILL', 'DEATH', 'JOIN', 'CHAT', 'RANDOMNUMBER', 'PLAYERKILLENTITY', 'ENTITYDEATH', 'BREAKBLOCK', 'PLAYERHITENTITY', 'PLAYERINTERACTWITHBLOCK', 'PLACEBLOCK', 'PLAYERINTERACTWITHPLAYER', 'PLAYERHITPLAYER', 'WEATHERCHANGE', 'GAMEMODECHANGE']
     form.title(`Add Event`)
@@ -43,7 +43,8 @@ uiManager.addUI(config.uinames.events.add, 'events add', (player) => {
         if (!iden) return player.error('Identifier required');
         let type = types[typei]
         events.add(iden, type)
-        uiManager.open(player, config.uinames.events.root)
+        if(!builder)uiManager.open(player, config.uinames.events.root)
+        if(builder) uiManager.open(player,config.uinames.uiBuilder.root)
     })
 })
 uiManager.addUI(config.uinames.events.edit, 'edit ev', async (player, id) => {

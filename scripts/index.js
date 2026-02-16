@@ -3,6 +3,8 @@ import communication from './communication'
 import { dynamicToast } from './Libraries/chatNotifs'
 import { http, HttpMethod, HttpRequest, HttpHeader } from './Networking/index'
 
+import configAPI from './Modules/configAPI'
+
 communication.register('feather:pushToConfig', ({ args }) => {
     console.log(api.get().toString())
     system.run(async () => {
@@ -120,39 +122,43 @@ system.runInterval(() => {
 }, 2)
 
 function conditionalTag(player, tag, condition) {
-    if(condition) { player.addTag(tag) } else { if(player.hasTag(tag)) player.removeTag(tag) }
+    if (condition) { player.addTag(tag) } else { if (player.hasTag(tag)) player.removeTag(tag) }
 }
 
 system.runInterval(() => {
     world.getPlayers().forEach((player) => {
-        conditionalTag(player,'jumping',player.isJumping)
-        conditionalTag(player,'climbing',player.isClimbing)
-        conditionalTag(player,'emoting',player.isEmoting)
-        conditionalTag(player,'falling',player.isFalling)
-        conditionalTag(player,'flying',player.isFlying)
-        conditionalTag(player,'gliding',player.isGliding)
-        conditionalTag(player,'inwater',player.isInWater)
-        conditionalTag(player,'onground',player.isOnGround)
-        conditionalTag(player,'sleeping',player.isSleeping)
-        conditionalTag(player,'sneaking',player.isSneaking)
-        conditionalTag(player,'sprinting',player.isSprinting)
-        conditionalTag(player,'swimming',player.isSwimming)
-        conditionalTag(player,'combat',cLog.inCombat(player))
+        conditionalTag(player, 'jumping', player.isJumping)
+        conditionalTag(player, 'climbing', player.isClimbing)
+        conditionalTag(player, 'emoting', player.isEmoting)
+        conditionalTag(player, 'falling', player.isFalling)
+        conditionalTag(player, 'flying', player.isFlying)
+        conditionalTag(player, 'gliding', player.isGliding)
+        conditionalTag(player, 'inwater', player.isInWater)
+        conditionalTag(player, 'onground', player.isOnGround)
+        conditionalTag(player, 'sleeping', player.isSleeping)
+        conditionalTag(player, 'sneaking', player.isSneaking)
+        conditionalTag(player, 'sprinting', player.isSprinting)
+        conditionalTag(player, 'swimming', player.isSwimming)
+        conditionalTag(player, 'combat', cLog.inCombat(player))
     })
 }, 2)
 
 world.beforeEvents.itemUse.subscribe(e => {
-    system.run(() => {
-        if (e.itemStack.typeId == `${config.config.ui}`) {
-            uiManager.open(e.source, config.uinames.config.root);
-            return
-        }
-        let b = e.itemStack.getDynamicProperty('bind')
-        if (b) {
+    if (e.itemStack.typeId == `${config.config.ui}`) {
+        uiManager.open(e.source, config.uinames.config.root);
+        return
+    }
+    if (e.itemStack.typeId == `feather:builder`) {
+        uiManager.open(e.source, config.uinames.uiBuilder.root)
+        return
+    }
+    let b = e.itemStack.getDynamicProperty('bind')
+    if (b) {
+        system.run(() => {
             actionParser.runAction(e.source, b)
             return;
-        }
-    });
+        })
+    }
 
     const binds = Array.from(binding.db.findDocuments());
     const typeOrder = { itemname: 0, typeid: 2 };
@@ -181,6 +187,11 @@ world.beforeEvents.itemUse.subscribe(e => {
         }
     }
 });
+
+if(!modules.get('crfMigration1')) {
+    modules.set('crf', config.info.defaultChatRankFormat)
+    modules.set('crfMigration1', true)
+}
 
 world.beforeEvents.playerInteractWithEntity.subscribe((e) => {
     let entity = e.target
@@ -254,11 +265,13 @@ world.beforeEvents.playerInteractWithEntity.subscribe((e) => {
     })
 })
 
+configAPI.registerProperty('NameTags', configAPI.Types.Boolean, true)
+configAPI.registerProperty('NameTagConfig', configAPI.Types.String, config.info.defaultNameTagFormat)
 
 system.runInterval(async () => {
     for (const plr of world.getPlayers()) {
-        if (!modules.get('cr')) return;
-        plr.nameTag = `${await formatter.format(`§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name>`, plr)}`
+        if(!configAPI.getProperty('NameTags')) continue;
+        plr.nameTag = `${await formatter.format(configAPI.getProperty('NameTagConfig'), plr)}`
     }
 }, 20)
 

@@ -29,7 +29,7 @@ class Clans {
                 this.settingsKV.set('INVITEMIGRATION1', true)
             }
         })
-    }
+    } 
     getClanName(player) {
         for (const c of this.db.findDocuments()) {
             if (c.data.type === '__keyval__') continue;

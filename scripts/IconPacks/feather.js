@@ -6,6 +6,10 @@ import icons from "../Modules/icons";
     ["pack_namespace", "feather"],
     ["pack_data", new Map([
   [
+    "FeatherBuilder",
+    "textures/feather_icons/FeatherBuilder"
+  ],
+  [
     "bank",
     "textures/feather_icons/bank"
   ],

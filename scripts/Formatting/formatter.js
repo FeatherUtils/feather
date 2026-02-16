@@ -138,8 +138,14 @@ class BlossomFormatting {
 
         this.#vars.msg = () => msg2;
 
-        if (text.includes("{{joined_ranks}}")) {
-            newLine = newLine.replaceAll("{{joined_ranks}}", rns.join(`§r${bc}] [§r`));
+        if (text.includes("{{joined_ranks")) {
+            const matches = [...newLine.matchAll(/{{joined_ranks\s+"([^"]+)"}}/g)];
+            for (const match of matches) {
+                const fullMatch = match[0];
+                const key = match[1];
+                const value = rns.join(`${key}`);
+                newLine = newLine.replace(fullMatch, value);
+            }
         }
         if (text.includes("{{vars}}")) {
             newLine = newLine.replaceAll("{{vars}}", this.getVars());

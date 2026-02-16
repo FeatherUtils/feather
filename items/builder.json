@@ -1,0 +1,20 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:item": {
+		"description": {
+			"identifier": "feather:builder",
+			"menu_category": {
+				"category": "equipment"
+			}
+		},
+		"components": {
+			"minecraft:icon": "builder",
+			"minecraft:display_name": {
+				"value": "§bBuilder"
+			},
+			"minecraft:glint": true,
+			"minecraft:can_destroy_in_creative": false,
+			"minecraft:allow_off_hand": false
+		}
+	}
+}

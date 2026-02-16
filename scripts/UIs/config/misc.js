@@ -219,13 +219,19 @@ uiManager.addUI(config.uinames.config.betterKB, 'betterKB', (player) => {
     let form2 = new ModalFormData();
     form2.title(consts.modal + 'BetterKB Config')
     form2.toggle('Enabled', {defaultValue: keyvalues.get('BetterKB')})
+    form2.toggle('Enable Knockback', {defaultValue:keyvalues.get('BetterKBKnockback')})
+    form2.toggle('Enable Projectile Ding', {defaultValue:keyvalues.get('BetterKBArrowDing')})
+    form2.toggle('Enable Fishing Rod Combat', {defaultValue:keyvalues.get('BetterKBFishingRodCombat')})
     form2.textField('XVel', 'xvel', {defaultValue: keyvalues.get('BetterKBXVel')})
     form2.textField('YVel', 'yvel', {defaultValue: keyvalues.get('BetterKBYVel')})
     form2.textField('ZVel', 'zvel', {defaultValue: keyvalues.get('BetterKBZVel')})
     form2.show(player).then((res) => {
-        let [en,xvel,yvel,zvel] = res.formValues;
+        let [en,kb,proding,fishrod,xvel,yvel,zvel] = res.formValues;
         if(isNaN(+xvel) || isNaN(+yvel) || isNaN(+zvel)) return player.error('Invalid inputs');
         keyvalues.set('BetterKB', en)
+        keyvalues.set('BetterKBKnockback', kb)
+        keyvalues.set('BetterKBArrowDing', proding)
+        keyvalues.set('BetterKBFishingRodCombat', fishrod)
         keyvalues.set('BetterKBXVel', xvel)
         keyvalues.set('BetterKBYVel', yvel)
         keyvalues.set('BetterKBZVel', zvel)

@@ -212,6 +212,9 @@ export class ActionForm {
             let deButton = 'textures/example/button';
             let diButton = 'textures/example/button_disabled';
             let hoButton = 'textures/example/button_hover';
+            if(!titleText.includes(NUT_UI_THEMED)) {
+                titleText = NUT_UI_THEMED + themes[52][0] + titleText
+            }
 
             if (titleText.includes(NUT_UI_THEMED)) {
                 for (const theme of themes) {

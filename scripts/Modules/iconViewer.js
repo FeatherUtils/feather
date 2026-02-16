@@ -5,6 +5,7 @@ import config from "../config";
 import icons from "./icons";
 import * as _ from "./underscore";
 import { consts } from "../cherryUIConsts";
+import { ModalFormData } from "@minecraft/server-ui";
 
 uiManager.addUI(
     config.uinames.basic.iconViewer,
@@ -16,7 +17,8 @@ uiManager.addUI(
         favoritedOnly = false,
         iconIDSearch = false,
         iconIDSearchError = false,
-        defaultIconID = null
+        defaultIconID = null,
+        searchQuery = null
     ) => {
         try {
             let enttable = prismarineDb.entityTable("icons", player);
@@ -70,6 +72,10 @@ uiManager.addUI(
             let keys = Array.from(icons.icons.keys());
             if (favoritedOnly === true) {
                 keys = keys.filter((_) => player.hasTag(`favorited-icon:${_}`));
+            }
+
+            if (searchQuery) {
+                keys = keys.filter((_) => _.toLowerCase().includes(searchQuery.toLowerCase()))
             }
 
             if (favoritedOnly === "RECENTLY_USED") {
@@ -257,7 +263,11 @@ uiManager.addUI(
                     config.uinames.basic.iconViewer,
                     prevPage,
                     callbackFn,
-                    favoritedOnly
+                    favoritedOnly,
+                    iconIDSearch,
+                    iconIDSearchError,
+                    defaultIconID,
+                    searchQuery
                 );
             });
             let nextButtonText = "§aNext (Page " + (page + 2 > totalPages ? 1 : page + 2) + ")";
@@ -274,7 +284,11 @@ uiManager.addUI(
                     config.uinames.basic.iconViewer,
                     nextPage,
                     callbackFn,
-                    favoritedOnly
+                    favoritedOnly,
+                    iconIDSearch,
+                    iconIDSearchError,
+                    defaultIconID,
+                    searchQuery
                 );
             });
 
@@ -294,7 +308,11 @@ uiManager.addUI(
                         config.uinames.basic.iconViewer,
                         "PAGE_SELECT",
                         callbackFn,
-                        favoritedOnly
+                        favoritedOnly,
+                        iconIDSearch,
+                        iconIDSearchError,
+                        defaultIconID,
+                        searchQuery
                     );
                 }
             );
@@ -362,16 +380,7 @@ uiManager.addUI(
                             if (tag.startsWith(`favorited-icon:`))
                                 player.removeTag(tag);
                         }
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            page,
-                            callbackFn,
-                            favoritedOnly,
-                            iconIDSearch,
-                            iconIDSearchError,
-                            defaultIconID
-                        );
+
                     }
                 }
             );
@@ -436,7 +445,7 @@ uiManager.addUI(
                 if (removeIconButtonIndex % 2 === 0) {
                     removeIconButtonText = `${consts.right}${removeIconButtonText}`;
                 } else {
-                    removeIconButtonText = `${consts.left}${removeIconButtonText}`;
+                    removeIconButtonText = `${consts.left}${consts.disablevertical}${removeIconButtonText}`;
                 }
                 form.button(
                     removeIconButtonText,
@@ -445,6 +454,47 @@ uiManager.addUI(
                         callbackFn(player, "");
                     }
                 );
+
+                let searchIconButtonText = "§6Search";
+                let searchIconButtonIndex = currentIcons.length + 9;
+                if (searchIconButtonIndex % 2 === 0) {
+                    searchIconButtonText = `${consts.right}${searchIconButtonText}`;
+                } else {
+                    searchIconButtonText = `${consts.left}${searchIconButtonText}`;
+                }
+                form.button(
+                    searchIconButtonText,
+                    icons.resolve('azalea/Look for UI'),
+                    () => {
+                        let mform = new ModalFormData();
+                        mform.title(consts.modal + 'Search')
+                        mform.textField(`Search Query`, `Example: apple`)
+                        mform.show(player).then((res) => {
+                            let [sq] = res.formValues
+                            if (!sq) return uiManager.open(
+                                player,
+                                config.uinames.basic.iconViewer,
+                                page,
+                                callbackFn,
+                                favoritedOnly,
+                                iconIDSearch,
+                                iconIDSearchError,
+                                defaultIconID
+                            );
+                            uiManager.open(
+                                player,
+                                config.uinames.basic.iconViewer,
+                                page,
+                                callbackFn,
+                                favoritedOnly,
+                                iconIDSearch,
+                                iconIDSearchError,
+                                defaultIconID,
+                                sq
+                            );
+                        })
+                    }
+                )
             }
 
             form.show(player);

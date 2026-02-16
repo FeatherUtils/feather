@@ -20,13 +20,23 @@ let devRanks = [
         tag: 'featheressentials:fk',
         devRankType: 'fk'
     },
+    {
+        name: '§l§o§mDragon',
+        cc: '§7',
+        nc: '§l§o§m',
+        bc: '§8',
+        isDevRank: true,
+        tag: 'featheressentials:dr',
+        devRankType: 'dr'
+    }
 ];
 
 let devs = [
     { type: 'fk', name: 'FruitK1tty' },
     { type: 'fk', name: 'JoinCraftFruits' },
     { type: 'fe', name: 'ARandomFern' },
-    { type: 'fk', name: 'DaFruitKitty' }
+    { type: 'fk', name: 'DaFruitKitty' },
+    { type: 'dr', name: 'The Dragon73519' }
 ];
 
 class Ranks {
@@ -58,7 +68,7 @@ class Ranks {
                     }
                 }
 
-                if(plr.hasTag('ovdevrank')) continue;
+                if (plr.hasTag('ovdevrank')) continue;
 
                 if (!plr.hasTag(targetTag)) {
                     plr.addTag(targetTag);

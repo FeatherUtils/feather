@@ -129,6 +129,7 @@ export default {
         uiBuilder: {
             root: 'uibuilder_root | UIBuilder/Root',
             create: 'uibuilder_create | UIBuilder/Create',
+            makeCreation: 'uibuilder_makecreation | UIBuilder/MakeCreation',
             edit: 'uibuilder_edit | UIBuilder/Edit',
             buttons: {
                 editall: 'uibuilder_buttons_editall | UIBuilder/Buttons/EditAll',
@@ -158,6 +159,11 @@ export default {
             root: 'voting_root',
             start: 'voting_start',
             view: 'voting_view'
+        },
+        areas: {
+            create: 'areas_create',
+            root: 'areas_root',
+            edit: 'areas_edit'
         },
         bounty: {
             leaderboard: 'bounty_leaderboard',
@@ -205,6 +211,7 @@ export default {
             editPermissions: 'permissions_editrole_permissions',
             create: 'permissions_createrole'
         },
+        nameTagsConfig: 'nametags_config'
     },
     info: {
         name: 'Feather Essentials',
@@ -214,7 +221,8 @@ export default {
         versionString() {
             return `${this.release} §e${this.version.join('.')}`;
         },
-        defaultChatRankFormat: `§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name> §r<bc><arrow> §r<cc><msg>`,
+        defaultChatRankFormat: `§r<bc>[§r{{joined_ranks "§r<bc>] [§r§r<bc>"}}§r<bc>]§r §r<nc><name> §r<bc><arrow> §r<cc><msg>`,
+        defaultNameTagFormat: `§r<bc>[§r{{joined_ranks "§r<bc>] [§r§r<bc>"}}§r<bc>]§r §r<nc><name>`
     },
     config: {
         ui: "feather:config",
@@ -229,7 +237,7 @@ export default {
         { perm: 'modules', display: "Modules" },
         { perm: 'extra_settings', display: 'Extra Settings' },
         { perm: 'ranks', display: 'Edit Ranks' },
-        { perm: 'ui_builder', display: 'UI Builder' },
+        { perm: 'ui_builder', display: 'Builder' },
         { perm: 'misc_settings', display: 'Misc Settings' },
         { perm: 'bans', display: 'Bans' },
         { perm: 'mute', display: 'Mute' },
@@ -260,7 +268,8 @@ export default {
         { perm: 'clog', display: 'Combat Log Config' },
         { perm: 'proximity', display: 'Proximity Chat Config' },
         { perm: 'playerShopAdmin', display: 'Player Shop Admin' },
-        { perm: 'bind', display: 'Bind items to commands' }
+        { perm: 'bind', display: 'Bind items to commands' },
+        { perm: 'bypassAreaFlags', display: 'Bypass area flags' }
     ],
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },

@@ -1,4 +1,4 @@
-import { ActionForm } from "../../Libraries/prismarinedb";
+import { ActionForm } from "../../Libraries/form_func";
 import ranks from "../../Modules/ranks";
 import uiManager from "../../Libraries/uiManager";
 import config from "../../config";

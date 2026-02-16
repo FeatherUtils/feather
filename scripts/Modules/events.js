@@ -276,6 +276,9 @@ class Events {
         this.db.overwriteDataByID(event.id, event.data)
         return true;
     }
+    getEvents() {
+        return this.db.findDocuments({})
+    }
 }
 
 export default new Events();

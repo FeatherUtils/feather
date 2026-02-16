@@ -36,7 +36,7 @@
 // }
 
 export let themes = [
-    ["", "Default", "textures/example/header"],
+    ["§d§e§f", "CherryUI", "textures/example/header"],
     ["§o§c§e§a§n", "Ocean", "textures/example/headerocean"],
     ["§b§t§0§8", "Batch 08", "textures/example/headerbatch08"],
     ["§u§w§u§1", "UwU", "textures/example/headeruwu1"],
