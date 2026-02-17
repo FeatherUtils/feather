@@ -589,7 +589,7 @@ export default [
         "body": "",
         "scriptevent": "config_misc",
         "layout": 4,
-        "theme": "§u§p§d§4",
+        "theme": "§u§p§d§1§0",
         "type": "UI",
         "buttons": [
             {
@@ -627,6 +627,10 @@ export default [
                     "alt",
                     "right"
                 ]
+            },
+            {
+                "id": 1771301945338,
+                "type": "divider"
             },
             {
                 "text": "§aChat",
@@ -707,7 +711,7 @@ export default [
         "body": "",
         "scriptevent": "config_main",
         "layout": 4,
-        "theme": "§u§p§d§4",
+        "theme": "§u§p§d§1§0",
         "type": "UI",
         "buttons": [
             {
@@ -747,10 +751,14 @@ export default [
                 ]
             },
             {
-                "text": "§dUI Builder",
-                "subtext": "Create custom, amazing UIs",
+                "id": 1771130343503,
+                "type": "divider"
+            },
+            {
+                "text": "§dBuilder",
+                "subtext": "Create new custom creations",
                 "requiredTag": "",
-                "icon": "azalea/9",
+                "icon": "feather/FeatherBuilder",
                 "actions": [
                     {
                         "action": "opengui @s uibuilder_root",
@@ -759,10 +767,11 @@ export default [
                 ],
                 "id": 1768584955821,
                 "type": "button",
-                "permission": "ui_builder"
+                "permission": "ui_builder",
+                "cherry": []
             },
             {
-                "text": "§gSidebar Editor",
+                "text": "§bSidebar Editor",
                 "subtext": "Create custom sidebars easily",
                 "requiredTag": "",
                 "icon": "azalea/Sidebar",

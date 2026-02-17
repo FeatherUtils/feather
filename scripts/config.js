@@ -53,7 +53,8 @@ export default {
             afkKick: 'config_afkKick',
             betterKB: 'config_betterkb',
             clog: 'config_clog',
-            proximity: 'config_proximity'
+            proximity: 'config_proximity',
+            experimental: 'config_experimental'
         },
         playerShop: {
             root: 'playershop',
@@ -136,6 +137,10 @@ export default {
                 create: 'uibuilder_buttons_create | UIBuilder/Buttons/Create',
                 edit: 'uibuilder_buttons_edit | UIBuilder/Buttons/Edit',
                 editActions: 'uibuilder_buttons_editActions | UIBuilder/Buttons/EditActions'
+            },
+            notifications: {
+                edit: 'builder_notifications_edit',
+                create: 'builder_notifications_create'
             },
             folders: {
                 view: "uibuilder_folders_view | UIBuilder/Folders/View"

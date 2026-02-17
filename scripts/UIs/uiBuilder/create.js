@@ -21,6 +21,9 @@ uiManager.addUI(config.uinames.uiBuilder.makeCreation, 'makeCreation', (player) 
     form.button(`§eEvent\n§7Create an event`, '.blossom/event2', (player) => {
         uiManager.open(player,config.uinames.events.add,true)
     })
+    form.button(`§aNotification\n§7Create a notification`, `.azalea/label`, (player) => {
+        uiManager.open(player,config.uinames.uiBuilder.notifications.create)
+    })
     form.show(player)
 })
 

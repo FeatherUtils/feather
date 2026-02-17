@@ -2,6 +2,7 @@ import { prismarineDb } from "../Libraries/prismarinedb";
 import { world,system, Player } from '@minecraft/server'
 import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
 import { dynamicToast } from "../Libraries/chatNotifs";
+import icons from "./icons";
 
 class Notifications {
     constructor() {
@@ -48,7 +49,7 @@ class Notifications {
     show(player,identifier) {
         let not = this.getByIdentifier(identifier)
         if(!not) return false;
-        let ic = not.data.icon == 'azalea/label' ? null : not.data.icon
+        let ic = not.data.icon == 'azalea/label' ? null : icons.resolve(not.data.icon)
         player.sendMessage(dynamicToast(not.data.title, not.data.body, ic, this.bgs[not.data.bg]))
     }
 }

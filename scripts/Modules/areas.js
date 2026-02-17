@@ -264,7 +264,7 @@ uiManager.addUI(config.uinames.areas.edit, 'ar', (player, id) => {
 
 uiManager.addUI(config.uinames.areas.create, 'Create area', (player) => {
     let form = new ModalFormData();
-    form.title(consts.tag + `Create area`)
+    form.title(consts.modal + `Create area`)
     form.textField('Name', 'Name of the area')
     form.textField('Priority', "Priority of the area")
     form.show(player).then((res) => {
