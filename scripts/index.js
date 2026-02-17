@@ -20,6 +20,7 @@ communication.register('feather:lifestealInstalled', ({ args }) => {
         api.lifestealVersion = args[0]
         api.buttons.push({ text: '§bLifesteal', subtext: 'Open the Feather Lifesteal configuration', actions: ['scriptevent featherlifesteal:config'], icon: 'textures/items/heartofthesea_closed', permission: 'lifestealConfig' })
         system.sendScriptEvent('featherlifesteal:verifyFeatherInstalled', `"${config.info.versionString()}"`)
+        communication.unregister('feather:lifestealInstalled')
     })
 })
 communication.register('feather:test', ({ args }) => {
@@ -110,7 +111,6 @@ world.afterEvents.playerSpawn.subscribe(e => {
         e.player.sendMessage(warningsformatted.join('\n'))
     }
 })
-
 let btns = [];
 
 system.runInterval(() => {

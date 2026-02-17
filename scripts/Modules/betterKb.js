@@ -24,8 +24,8 @@ system.run(async () => {
         if (data.damageSource.damagingProjectile) {
             if(keyvalues.get('BetterKBArrowDing')) target.playSound('random.orb', target.location)
             if (data.damageSource.damagingProjectile.typeId == 'minecraft:fishing_hook' && keyvalues.get('BetterKBFishingRodCombat')) {
-                player.applyKnockback({ x: direction.x * +x * 2, z: direction.z * +z * 2 }, +y);
-                player.runCommand('kill @e[type=minecraft:fishing_hook,r=2]')
+                player.applyKnockback({ x: direction.x * +x * 2, z: direction.z * +z * 2 }, +y * 1.2);
+                data.damageSource.damagingProjectile.remove()
                 return;
             }
         }

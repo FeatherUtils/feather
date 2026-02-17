@@ -162,7 +162,6 @@ export default {
         },
         areas: {
             create: 'areas_create',
-            root: 'areas_root',
             edit: 'areas_edit'
         },
         bounty: {
@@ -274,6 +273,9 @@ export default {
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },
         { name: 'Fern (arandomfern)', description: 'Secondary contributor/Developer' },
-        { name: 'TrashyDaFox (trashydafox)', description: 'All JSON UI, Database, UI Manager + more' }
+        { name: 'TrashyDaFox (trashydafox)', description: 'All JSON UI, Database, UI Manager + more' },
+        { name: 'LeGend077', description: "Chest UI components"},
+        { name: 'Herobrine643928', description: "Chest UI components"},
+        { name: 'Aex66', description: "Chest UI components"}
     ]
 };
