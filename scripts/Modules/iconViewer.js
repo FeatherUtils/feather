@@ -1,505 +1,274 @@
-import { ModalForm, ActionForm } from "../Libraries/form_func";
-import { prismarineDb } from "../Libraries/prismarinedb";
-import uiManager from "../Libraries/uiManager";
-import config from "../config";
-import icons from "./icons";
-import * as _ from "./underscore";
-import { consts } from "../cherryUIConsts";
-import { ModalFormData } from "@minecraft/server-ui";
+import { ChestFormData } from '../Libraries/ChestUI/chestUI'
+import icons from './icons'
+import config from '../config'
+import uiManager from '../Libraries/uiManager'
+import common from '../Libraries/ChestUI/common'
+import _ from './underscore'
+import { ModalFormData } from '@minecraft/server-ui'
 
-uiManager.addUI(
-    config.uinames.basic.iconViewer,
-    "Icon Viewer",
-    async (
-        player,
-        page = 0,
-        callbackFn,
-        favoritedOnly = false,
-        iconIDSearch = false,
-        iconIDSearchError = false,
-        defaultIconID = null,
-        searchQuery = null
-    ) => {
-        try {
-            let enttable = prismarineDb.entityTable("icons", player);
-            let pdbTable = await enttable.keyval("main");
-            let recentlyUsed = pdbTable.has("RecentlyUsed")
-                ? pdbTable.get("RecentlyUsed")
-                : [];
+let rows = 6
 
-            if (iconIDSearch) {
-                let modalForm = new ModalForm();
-                modalForm.textField(
-                    "Icon ID",
-                    "Example: leaf/image-001",
-                    defaultIconID
+uiManager.addUI(config.uinames.basic.iconViewer, 'icon viewer', (player, p, callback, manualIconID = false, manualIconIDDefault = null, manualIconIDError = false, searchQuery = null) => {
+    let iconSpace = (9 * rows) - 1 * 9
+    if (manualIconID) {
+        let form = new ModalFormData();
+        form.title('Manual Icon ID')
+        form.textField('IconID', 'Example: feather/FeatherBuilder', { defaultValue: manualIconIDDefault })
+        form.title(
+            manualIconIDError ? '§cIcon not found!' : "§bInput Icon ID"
+        );
+        form.show(player).then((response) => {
+            if (response.canceled)
+                return uiManager.open(
+                    player,
+                    config.uinames.basic.iconViewer,
+                    page,
+                    callback,
+                    false,
+                    null,
+                    false,
+                    searchQuery
                 );
-                modalForm.title(
-                    `${consts.tag}${iconIDSearchError ? "§cIcon not found" : "Input Icon ID"
-                    }`
-                );
-                modalForm.show(player, false, function (player, response) {
-                    if (response.canceled)
-                        return uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            page,
-                            callbackFn,
-                            favoritedOnly
-                        );
-                    let iconID = response.formValues[0];
-                    if (!iconID || !icons.resolve(iconID)) {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            page,
-                            callbackFn,
-                            favoritedOnly,
-                            iconIDSearch,
-                            true,
-                            iconID ? iconID : null
-                        );
-                    } else {
-                        recentlyUsed.unshift(iconID);
-                        recentlyUsed = recentlyUsed.slice(0, 45);
-                        pdbTable.set("RecentlyUsed", recentlyUsed);
-                        callbackFn(player, iconID);
-                    }
-                });
-                return;
-            }
-
-            let keys = Array.from(icons.icons.keys());
-            if (favoritedOnly === true) {
-                keys = keys.filter((_) => player.hasTag(`favorited-icon:${_}`));
-            }
-
-            if (searchQuery) {
-                keys = keys.filter((_) => _.toLowerCase().includes(searchQuery.toLowerCase()))
-            }
-
-            if (favoritedOnly === "RECENTLY_USED") {
-                keys = recentlyUsed.filter((_) =>
-                    Array.from(icons.icons.keys()).includes(_)
-                );
-            }
-
-            let iconsPerPage = 25;
-            let icons_ = _.chunk(keys, iconsPerPage);
-            let totalPages = icons_.length ? icons_.length : 1;
-
-            if (typeof page !== "number") {
-                if (page === "PAGE_SELECT") {
-                    let modalForm = new ModalForm();
-                    modalForm.title(`${consts.tag}Page Select`);
-                    modalForm.textField(
-                        `Page Number (Max: ${totalPages}, Min: 1)`,
-                        `Example: 5`,
-                        undefined
-                    );
-                    modalForm.show(player, false, (player, response) => {
-                        if (response.canceled) {
-                            uiManager.open(
-                                player,
-                                config.uinames.basic.iconViewer,
-                                0,
-                                callbackFn,
-                                favoritedOnly
-                            );
-                        }
-                        if (
-                            response.formValues &&
-                            response.formValues.length &&
-                            /^\d+$/.test(response.formValues[0]) &&
-                            parseInt(response.formValues[0]) > 0 &&
-                            parseInt(response.formValues[0]) <= totalPages
-                        ) {
-                            uiManager.open(
-                                player,
-                                config.uinames.basic.iconViewer,
-                                parseInt(response.formValues[0]) - 1,
-                                callbackFn,
-                                favoritedOnly
-                            );
-                        } else {
-                            uiManager.open(
-                                player,
-                                config.uinames.basic.iconViewer,
-                                page,
-                                callbackFn,
-                                favoritedOnly
-                            );
-                        }
-                    });
-                    return;
-                }
-            }
-
-            let currentIcons = icons_.length ? icons_[page] : [];
-            let form = new ActionForm();
-            form.title(
-                `${consts.tag}${favoritedOnly === true
-                    ? "Favorited Icons"
-                    : favoritedOnly === "RECENTLY_USED"
-                        ? "Recently Used"
-                        : "Icon Viewer"
-                } (Page ${page + 1}/${totalPages})`
-            );
-            for (let i = 0; i < currentIcons.length; i++) {
-                let iconID = currentIcons[i];
-                let iconData = icons.getIconData(iconID);
-                let buttonText =
-                    iconData && iconData.name ? iconData.name : iconID;
-                let iconPath = icons.resolve(iconID);
-
-                if (i % 2 === 0) {
-                    buttonText = `${consts.right}${buttonText}`;
-                } else {
-                    if (i === currentIcons.length && currentIcons.length % 2 != 0) {
-                        buttonText = `${consts.left}${buttonText}`;
-                    } else {
-                        buttonText = `${consts.disablevertical}${consts.left}${buttonText}`;
-                    }
-                }
-                /*
-                `${
-                                    i == ids_sliced.length && ids_sliced.length % 2 != 0
-                                        ? ``
-                                        : i % 2 != 0
-                                        ? `${NUT_UI_RIGHT_HALF}${NUT_UI_DISABLE_VERTICAL_SIZE_KEY}`
-                                        : `${NUT_UI_LEFT_HALF}`
-                                }§r${ids_online.includes(id) ? "§a" : "§v"}${
-                                    player.name
-                                }\n§r§7${
-                                    ids_online.includes(id) ? "Online Player" : "Offline Player"
-                                }`
-                */
-                form.button(buttonText, iconPath, () => {
-                    let actionsForm = new ActionForm();
-                    actionsForm.title(`${consts.tag}${iconID} actions`);
-
-                    actionsForm.button("§cGo Back", "textures/blocks/barrier", () => {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            page,
-                            callbackFn,
-                            favoritedOnly
-                        );
-                    });
-
-                    if (player.hasTag(`favorited-icon:${iconID}`)) {
-                        actionsForm.button(
-                            "§eUnfavorite",
-                            "textures/ui/sidebar_icons/star",
-                            () => {
-                                player.removeTag(`favorited-icon:${iconID}`);
-                                uiManager.open(
-                                    player,
-                                    config.uinames.basic.iconViewer,
-                                    page,
-                                    callbackFn,
-                                    favoritedOnly
-                                );
-                            }
-                        );
-                    } else {
-                        actionsForm.button(
-                            "§eAdd to favorites",
-                            "textures/ui/sidebar_icons/star",
-                            () => {
-                                player.addTag(`favorited-icon:${iconID}`);
-                                uiManager.open(
-                                    player,
-                                    config.uinames.basic.iconViewer,
-                                    page,
-                                    callbackFn,
-                                    favoritedOnly
-                                );
-                            }
-                        );
-                    }
-
-                    if (callbackFn) {
-                        actionsForm.button(
-                            "§dUse",
-                            "textures/ui/check.png",
-                            () => {
-                                recentlyUsed.unshift(iconID);
-                                recentlyUsed = recentlyUsed.slice(0, 45);
-                                pdbTable.set("RecentlyUsed", recentlyUsed);
-                                callbackFn(player, iconID);
-                            }
-                        );
-                    }
-                    actionsForm.show(player);
-                });
-            }
-
-            let baseNavButtonsCount = 3;
-            let totalNavButtons = baseNavButtonsCount;
-            if (player.getTags().filter((_) => _.startsWith(`favorited-icon:`)).length > 0) {
-                totalNavButtons++;
-            }
-            if (favoritedOnly === "RECENTLY_USED" || favoritedOnly === true) {
-                totalNavButtons++;
-            }
-            if (callbackFn) {
-                totalNavButtons += 4;
-            }
-
-            let backButtonText = "§cBack (Page " + (page === 0 ? totalPages : page) + ")";
-
-            let backButtonIndex = currentIcons.length;
-            if (backButtonIndex % 2 === 0) {
-                backButtonText = `${consts.right}${backButtonText}`;
-            } else {
-                backButtonText = `${consts.disablevertical}${consts.left}${backButtonText}`;
-            }
-            form.button(backButtonText, "textures/ui/arrow_left", () => {
-                let prevPage = page - 1 < 0 ? totalPages - 1 : page - 1;
+            let iconID = response.formValues[0];
+            if (!iconID || !icons.resolve(iconID)) {
                 uiManager.open(
                     player,
                     config.uinames.basic.iconViewer,
-                    prevPage,
-                    callbackFn,
-                    favoritedOnly,
-                    iconIDSearch,
-                    iconIDSearchError,
-                    defaultIconID,
+                    p,
+                    callback,
+                    manualIconID,
+                    manualIconIDDefault = iconID,
+                    manualIconIDError = true,
                     searchQuery
                 );
-            });
-            let nextButtonText = "§aNext (Page " + (page + 2 > totalPages ? 1 : page + 2) + ")";
-            let nextButtonIndex = currentIcons.length + 1;
-            if (nextButtonIndex % 2 === 0) {
-                nextButtonText = `${consts.right}${nextButtonText}`;
             } else {
-                nextButtonText = `${consts.disablevertical}${consts.left}${nextButtonText}`;
-            }
-            form.button(nextButtonText, "textures/ui/arrow_right", () => {
-                let nextPage = page + 1 >= totalPages ? 0 : page + 1;
-                uiManager.open(
-                    player,
-                    config.uinames.basic.iconViewer,
-                    nextPage,
-                    callbackFn,
-                    favoritedOnly,
-                    iconIDSearch,
-                    iconIDSearchError,
-                    defaultIconID,
-                    searchQuery
-                );
-            });
-
-            let goToPageButtonText = "§dGo to page";
-            let goToPageButtonIndex = currentIcons.length + 2;
-            if (goToPageButtonIndex % 2 === 0) {
-                goToPageButtonText = `${consts.right}${goToPageButtonText}`;
-            } else {
-                goToPageButtonText = `${consts.disablevertical}${consts.left}${goToPageButtonText}`;
-            }
-            form.button(
-                goToPageButtonText,
-                "textures/items/compass_item",
-                () => {
-                    uiManager.open(
-                        player,
-                        config.uinames.basic.iconViewer,
-                        "PAGE_SELECT",
-                        callbackFn,
-                        favoritedOnly,
-                        iconIDSearch,
-                        iconIDSearchError,
-                        defaultIconID,
-                        searchQuery
-                    );
-                }
-            );
-
-            let tags = player
-                .getTags()
-                .filter((_) => _.startsWith(`favorited-icon:`));
-
-            let favoritesButtonText = "§6Favorites (" + tags.length + ")";
-            let favoritesButtonIndex = currentIcons.length + 3;
-            if (favoritesButtonIndex % 2 === 0) {
-                favoritesButtonText = `${consts.right}${favoritesButtonText}`;
-            } else {
-                favoritesButtonText = `${consts.disablevertical}${consts.left}${favoritesButtonText}`;
-            }
-            form.button(
-                favoritesButtonText,
-                "textures/ui/sidebar_icons/star",
-                () => {
-                    uiManager.open(
-                        player,
-                        config.uinames.basic.iconViewer,
-                        0,
-                        callbackFn,
-                        !favoritedOnly
-                    );
-                }
-            );
-
-            let clearButtonText =
-                favoritedOnly === "RECENTLY_USED"
-                    ? "§eClear Recently Used"
-                    : "§cClear Favorites";
-            let clearButtonIndex = currentIcons.length + 4;
-            const isLastNavButton =
-                !callbackFn && clearButtonIndex === currentIcons.length + totalNavButtons - 1;
-
-            if (clearButtonIndex % 2 === 0) {
-                clearButtonText = `${consts.right}${clearButtonText}`;
-            } else {
-                if (isLastNavButton) {
-                    clearButtonText = `${consts.left}${clearButtonText}`;
-                } else {
-                    clearButtonText = `${consts.disablevertical}${consts.left}${clearButtonText}`;
-                }
-            }
-            form.button(
-                clearButtonText,
-                "textures/blocks/barrier",
-                () => {
-                    if (favoritedOnly === "RECENTLY_USED") {
-                        pdbTable.set("RecentlyUsed", []);
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            page,
-                            callbackFn,
-                            favoritedOnly,
-                            iconIDSearch,
-                            iconIDSearchError,
-                            defaultIconID
-                        );
-                    } else {
-                        for (const tag of player.getTags()) {
-                            if (tag.startsWith(`favorited-icon:`))
-                                player.removeTag(tag);
+                let iconSelection = new ChestFormData('27')
+                iconSelection.title('Confirm')
+                if (callback) {
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 2),
+                        `§aUse`,
+                        ['Use this icon'],
+                        'textures/azalea_icons/other/accept',
+                        1,
+                        false,
+                        () => {
+                            callback(player, iconID)
                         }
-
-                    }
-                }
-            );
-
-            if (callbackFn) {
-                let cancelButtonText = "§cCancel";
-                let cancelButtonIndex = currentIcons.length + 5;
-                if (cancelButtonIndex % 2 === 0) {
-                    cancelButtonText = `${consts.right}${cancelButtonText}`;
+                    )
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 5),
+                        `§b${iconID}`,
+                        ['Selected icon'],
+                        icons.resolve(iconID),
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 8),
+                        `§cBack`,
+                        ['Go back to IconViewer'],
+                        'textures/azalea_icons/2',
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.show(player)
                 } else {
-                    cancelButtonText = `${consts.disablevertical}${consts.left}${cancelButtonText}`;
+                    iconSelection.button(
+                        common.rowColToSlotId(1, 5),
+                        `§b${iconID}`,
+                        ['Selected icon'],
+                        icons.resolve(iconID),
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 5),
+                        `§cBack`,
+                        ['Go back to IconViewer'],
+                        'textures/azalea_icons/2',
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.show(player)
                 }
-                form.button(cancelButtonText, "textures/ui/cancel", () => {
-                    callbackFn(player, null);
-                });
-                let useIconIDButtonText = "§dUse Icon ID";
-                let useIconIDButtonIndex = currentIcons.length + 6;
-                if (useIconIDButtonIndex % 2 === 0) {
-                    useIconIDButtonText = `${consts.right}${useIconIDButtonText}`;
-                } else {
-                    useIconIDButtonText = `${consts.disablevertical}${consts.left}${useIconIDButtonText}`;
-                }
-                form.button(
-                    useIconIDButtonText,
-                    "textures/items/spyglass",
-                    () => {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            0,
-                            callbackFn,
-                            favoritedOnly,
-                            true
-                        );
-                    }
-                );
-                let recentlyUsedButtonText = "§eRecently Used";
-                let recentlyUsedButtonIndex = currentIcons.length + 7;
-                if (recentlyUsedButtonIndex % 2 === 0) {
-                    recentlyUsedButtonText = `${consts.right}${recentlyUsedButtonText}`;
-                } else {
-                    recentlyUsedButtonText = `${consts.disablevertical}${consts.left}${recentlyUsedButtonText}`;
-                }
-                form.button(
-                    recentlyUsedButtonText,
-                    "textures/items/clock_item",
-                    () => {
-                        uiManager.open(
-                            player,
-                            config.uinames.basic.iconViewer,
-                            0,
-                            callbackFn,
-                            favoritedOnly === "RECENTLY_USED" ||
-                                favoritedOnly === true
-                                ? false
-                                : "RECENTLY_USED"
-                        );
-                    }
-                );
-                let removeIconButtonText = "§cRemove Icon";
-                let removeIconButtonIndex = currentIcons.length + 8;
-                if (removeIconButtonIndex % 2 === 0) {
-                    removeIconButtonText = `${consts.right}${removeIconButtonText}`;
-                } else {
-                    removeIconButtonText = `${consts.left}${consts.disablevertical}${removeIconButtonText}`;
-                }
-                form.button(
-                    removeIconButtonText,
-                    "textures/ui/icon_trash",
-                    () => {
-                        callbackFn(player, "");
-                    }
-                );
-
-                let searchIconButtonText = "§6Search";
-                let searchIconButtonIndex = currentIcons.length + 9;
-                if (searchIconButtonIndex % 2 === 0) {
-                    searchIconButtonText = `${consts.right}${searchIconButtonText}`;
-                } else {
-                    searchIconButtonText = `${consts.left}${searchIconButtonText}`;
-                }
-                form.button(
-                    searchIconButtonText,
-                    icons.resolve('azalea/Look for UI'),
-                    () => {
-                        let mform = new ModalFormData();
-                        mform.title(consts.modal + 'Search')
-                        mform.textField(`Search Query`, `Example: apple`)
-                        mform.show(player).then((res) => {
-                            let [sq] = res.formValues
-                            if (!sq) return uiManager.open(
-                                player,
-                                config.uinames.basic.iconViewer,
-                                page,
-                                callbackFn,
-                                favoritedOnly,
-                                iconIDSearch,
-                                iconIDSearchError,
-                                defaultIconID
-                            );
-                            uiManager.open(
-                                player,
-                                config.uinames.basic.iconViewer,
-                                page,
-                                callbackFn,
-                                favoritedOnly,
-                                iconIDSearch,
-                                iconIDSearchError,
-                                defaultIconID,
-                                sq
-                            );
-                        })
-                    }
-                )
             }
-
-            form.show(player);
-        } catch (e) {
-            console.warn(e, e.stack);
-        }
+        })
+        return;
     }
-);
+    let form = new ChestFormData((9 * rows).toString());
+    let page = p ?? 0
+    let keys = Array.from(icons.icons.keys());
+    if (searchQuery) {
+        keys = keys.filter(_ => _.toLowerCase().includes(searchQuery.toLowerCase()))
+    }
+    let icons_ = _.chunk(keys, iconSpace);
+    let icons2 = icons_[page] ?? [];
+    form.title(`Icon Viewer (Page ${page ?? 1})`)
+    for (let i = 0; i < (9 * rows); i++) {
+        form.button(i, `§cX`, [], 'textures/blocks/tinted_glass', null, null, () => {
+            uiManager.open(player, config.uinames.basic.iconViewer, page, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+        })
+    }
+    for (let i = 0; i < iconSpace; i++) {
+        let iconData = icons.getIconData(icons2[i]);
+        let l = [];
+        if (iconData && iconData.name) {
+            l.push(`§8${icons2[i]}`);
+        }
+        form.button(
+            i,
+            iconData && iconData.name ? iconData.name : icons2[i],
+            l,
+            icons.resolve(icons2[i]),
+            null,
+            null,
+            () => {
+                let iconSelection = new ChestFormData('27')
+                iconSelection.title('Confirm')
+                if (callback) {
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 5),
+                        `§b${icons2[i]}`,
+                        ['Selected icon'],
+                        icons.resolve(icons2[i]),
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 2),
+                        `§aUse`,
+                        ['Use this icon'],
+                        'textures/azalea_icons/other/accept',
+                        1,
+                        false,
+                        () => {
+                            callback(player, icons2[i])
+                        }
+                    )
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 8),
+                        `§cBack`,
+                        ['Go back to IconViewer'],
+                        'textures/azalea_icons/2',
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.show(player)
+                } else {
+                    iconSelection.button(
+                        common.rowColToSlotId(1, 5),
+                        `§b${icons2[i]}`,
+                        ['Selected icon'],
+                        icons.resolve(icons2[i]),
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.button(
+                        common.rowColToSlotId(2, 5),
+                        `§cBack`,
+                        ['Go back to IconViewer'],
+                        'textures/azalea_icons/2',
+                        1,
+                        false,
+                        () => {
+                            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                        }
+                    )
+                    iconSelection.show(player)
+                }
+
+            }
+        )
+    }
+    form.button(
+        common.rowColToSlotId(6, 2),
+        '§cBack',
+        ['Go to previous page'],
+        'textures/blocks/glass_red',
+        1,
+        false,
+        () => {
+            if (p < 1) {
+                uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+            } else {
+                uiManager.open(player, config.uinames.basic.iconViewer, p - 1, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+            }
+        }
+    )
+    form.button(
+        common.rowColToSlotId(6, 8),
+        '§aNext',
+        ['Go to next page'],
+        'textures/blocks/glass_lime',
+        1,
+        false,
+        () => {
+            let nextPage = page + 1 >= icons_.length ? 0 : page + 1;
+            uiManager.open(player, config.uinames.basic.iconViewer, nextPage, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+
+        }
+    )
+    form.button(
+        common.rowColToSlotId(6, 5),
+        '§6Manual',
+        ['Manually input icon ID'],
+        icons.resolve('azalea/11'),
+        1,
+        false,
+        () => {
+            uiManager.open(player, config.uinames.basic.iconViewer, p, callback, true, manualIconIDDefault, manualIconIDError)
+        }
+    )
+    form.button(
+        common.rowColToSlotId(6, 4),
+        '§bSearch',
+        ['Search for icons'],
+        icons.resolve('azalea/Look for UI'),
+        1,
+        false,
+        () => {
+            let form2 = new ModalFormData();
+            form2.title('Search')
+            form2.textField('Search query', 'example: builder')
+            form2.show(player).then((res) => {
+                let [q] = res.formValues;
+                if (!q) return uiManager.open(player, config.uinames.basic.iconViewer, p, callback);
+                uiManager.open(player, config.uinames.basic.iconViewer, p, callback, manualIconID, manualIconIDDefault, manualIconIDError, q)
+            })
+        }
+    )
+    form.button(
+        common.rowColToSlotId(6, 6),
+        '§cCancel',
+        ['Cancel'],
+        icons.resolve('rpgiab/delete'),
+        1,
+        false,
+        () => {
+            if(callback) callback(player,null)
+        }
+    )
+    form.show(player)
+})
