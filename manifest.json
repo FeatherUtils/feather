@@ -7,7 +7,7 @@
       ]
     },
     "header": {
-      "name": "§b§lFeather Essentials §e- §uAmethyst §b10 §e§lBETA 1",
+      "name": "§b§lFeather Essentials §e- §uAmethyst §b10",
       "description": "Feather Essentials - Made with <3 by IsabellaDaKitty & ARandomFern!",
       "min_engine_version": [
         1,
@@ -18,7 +18,7 @@
       "version": [
         1,
         0,
-        41
+        42
       ]
     },
     "modules": [
@@ -28,7 +28,7 @@
         "version": [
           1,
           0,
-          41
+          42
         ]
       },
       {
@@ -39,7 +39,7 @@
         "version": [
           1,
           0,
-          41
+          42
         ]
       }
     ],

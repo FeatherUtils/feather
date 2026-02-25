@@ -203,16 +203,23 @@ uiManager.addUI(config.uinames.uiBuilder.root, 'ui buidlder :3!!!~ :3', (player,
         }
         let text = `§b${doc.data.name}\n`
         let subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}${doc.data.scriptevent ? ` | ${emojis.chat} ${doc.data.scriptevent}` : ''}`
-        if (subtext.length > 43) subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}`
         let icon = `textures/azalea_icons/ClickyClick`
         if (doc.data.type === 'AREA') icon = '.azalea/server'
         if (doc.data.type === 'UI' && doc.data.icon) icon = doc.data.icon
         if (events.allowedTypes.includes(doc.data.type)) icon = `${eventIcons[doc.data.type] ?? `.blossom/event2`}`
         if (events.allowedTypes.includes(doc.data.type)) text = `§b${doc.data.identifier}\n`
+        if (doc.data.type === 'NOTIFICATION') text = `§b${doc.data.identifier}\n`
+        if (doc.data.type === 'NOTIFICATION' && doc.data.icon) icon = icons.resolve(doc.data.icon)
+        if (doc.data.type === 'ChestUI') subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}${doc.data.uniqueId ? ` | ${emojis.chat} ${doc.data.uniqueId}` : ''}`
+        if (doc.data.type === 'ChestUI') text = `§b${doc.data.title}\n`
+        if (doc.data.type === 'ChestUI') icon = `.vanilla_blocks/chest_front`
+        if (subtext.length > 43) subtext = `§r§b${emojis.clock} Updated ${moment(doc.updatedAt).fromNow()}`
         form.button(text + subtext, icon, async (player) => {
             if (doc.data.type === 'UI') uiManager.open(player, config.uinames.uiBuilder.edit, doc.id)
             if (doc.data.type === 'AREA') uiManager.open(player, config.uinames.areas.edit, doc.id)
+            if (doc.data.type === 'NOTIFICATION') uiManager.open(player, config.uinames.uiBuilder.notifications.edit, doc.id)
             if (events.allowedTypes.includes(doc.data.type)) uiManager.open(player, config.uinames.events.edit, doc.id)
+            if(doc.data.type === 'ChestUI') uiManager.open(player,config.uinames.uiBuilder.chest.edit,doc.id)
         })
     }
     if (pag.hasNextPage) {

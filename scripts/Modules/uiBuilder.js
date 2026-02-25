@@ -6,6 +6,8 @@ import modules from './modules'
 import uis from '../UIs/madeinUIBuilder'
 import areamodule from "./areas";
 import events from "./events";
+import toast from "./toast";
+import chestBuilder from "./chestBuilder";
 
 class uiBuilder {
     constructor() {
@@ -247,7 +249,9 @@ class uiBuilder {
         let creations = [
             ...this.db.findDocuments({type:'UI'}),
             ...areamodule.getAreas(),
-            ...events.getEvents()
+            ...events.getEvents(),
+            ...toast.getAll(),
+            ...chestBuilder.getAll()
         ]
         return creations;
     }

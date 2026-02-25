@@ -4,13 +4,23 @@ import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
 import { dynamicToast } from "../Libraries/chatNotifs";
 import icons from "./icons";
 
+// a - FruitKitty, 2026
+
 class Notifications {
     constructor() {
         this.Database = prismarineDb.customStorage('BUILDER:NOTIFICATIONS', SegmentedStoragePrismarine)
         this.bgs = {
             'grey': 'textures/ui/greyBorder',
-            'pink': 'textures/ui/pinkBorder'
-        }
+            'pink': 'textures/ui/pinkBorder',
+            'blue': 'textures/ui/blueBorder',
+            'green': 'textures/ui/greenBorder'
+        },
+        this.bgids = [
+            'grey',
+            'pink',
+            'blue',
+            'green'
+        ]
     }
     add(identifier,title,body) {
         this.Database.insertDocument({
@@ -18,7 +28,8 @@ class Notifications {
             title,
             body,
             icon: 'azalea/label',
-            bg: 'grey'
+            bg: 'grey',
+            type: 'NOTIFICATION'
         })
     }
     edit(id,identifier,title,body,icon,bg) {
@@ -41,6 +52,9 @@ class Notifications {
     get(id) {
         return this.Database.getByID(id)
     }
+    getAll() {
+        return this.Database.findDocuments({type:'NOTIFICATION'})
+    }
     /**
      * 
      * @param {Player} player
@@ -49,7 +63,7 @@ class Notifications {
     show(player,identifier) {
         let not = this.getByIdentifier(identifier)
         if(!not) return false;
-        let ic = not.data.icon == 'azalea/label' ? null : icons.resolve(not.data.icon)
+        let ic = not.data.icon == 'azalea/label' ? '' : icons.resolve(not.data.icon)
         player.sendMessage(dynamicToast(not.data.title, not.data.body, ic, this.bgs[not.data.bg]))
     }
 }

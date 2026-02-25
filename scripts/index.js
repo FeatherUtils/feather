@@ -58,7 +58,7 @@ import { consts } from './cherryUIConsts'
 import emojis from './Formatting/emojis'
 import { cLog } from './Modules/cLog'
 
-modules.set('ExperimentalNotificationInfoMessages', true)
+if(modules.get('ExperimentalNotificationInfoMessages') === undefined) modules.set('ExperimentalNotificationInfoMessages', true)
 
 Player.prototype.error = function (msg) {
   if (modules.get('ExperimentalNotificationInfoMessages')) {

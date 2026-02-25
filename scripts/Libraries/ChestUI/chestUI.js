@@ -3,8 +3,32 @@ import { ActionFormData } from '@minecraft/server-ui';
 import { custom_content, custom_content_keys, inventory_enabled, number_of_custom_items, CHEST_UI_SIZES } from './constants.js';
 import { typeIdToDataId, typeIdToID } from './typeIds.js';
 import communication from '../../communication.js';
+import * as mc from '@minecraft/server'
 
 let sizes = CHEST_UI_SIZES
+
+let num_of_items = 0;
+
+let charsToReove = "_spawn_egg".length;
+
+mc.system.run(() => {
+    mc.ItemTypes.getAll().forEach((e) => {
+        if (e.id.startsWith("minecraft:")) return;
+        let isItem = mc.BlockTypes.get(e.id) ? false : true;
+        if (
+            e.id.endsWith("_spawn_egg") &&
+            mc.EntityTypes.get(e.id.slice(0, -charsToReove))
+        )
+            return;
+
+        if (isItem) {
+            num_of_items += 1;
+        }
+    });
+});
+function number_of_1_16_100_items() {
+    return num_of_items;
+}
 
 class ChestFormData {
     #titleText;

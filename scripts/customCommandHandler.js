@@ -12,6 +12,7 @@ import keyvalues from './Modules/keyvalues'
 import { NUT_UI_DISABLE_VERTICAL_SIZE_KEY } from './cherryUIConsts'
 import codes from './Modules/codes'
 import { prismarineDb } from './Libraries/prismarinedb'
+import toast from './Modules/toast'
 system.beforeEvents.startup.subscribe(async init => {
     init.customCommandRegistry.registerEnum('feather:keyvalueoptions', ['set', 'get'])
     init.customCommandRegistry.registerEnum('feather:gamemodetypes', ['0', '1', '2', '3', 's', 'c', 'a', 'sp', 'survival', 'creative', 'adventure', 'spectator'])
@@ -26,6 +27,27 @@ system.beforeEvents.startup.subscribe(async init => {
             plr.setDynamicProperty('nickname', plr.name)
             plr.success('Successfully reset nickname')
         })
+    })
+    init.customCommandRegistry.registerCommand({
+        name: 'feather:shownotification',
+        description: 'Show a notification',
+        permissionLevel: CommandPermissionLevel.GameDirectors,
+        mandatoryParameters: [
+            {
+                name: 'player',
+                type: CustomCommandParamType.PlayerSelector
+            },
+            {
+                name: 'identifier',
+                type: CustomCommandParamType.String
+            }
+        ] 
+    }, (origin, players,identifier) => {
+        for(const player of players) {
+            if(toast.getByIdentifier(identifier)) {
+                toast.show(player,identifier)
+            }
+        }
     })
     init.customCommandRegistry.registerCommand({
         name: 'feather:emojis',
@@ -381,7 +403,7 @@ system.beforeEvents.startup.subscribe(async init => {
     }, (origin, players, scriptevent) => {
         system.run(() => {
             for (const player of players) {
-                player.runCommand(`scriptevent feathergui:${scriptevent}`)
+                player.runCommand(`scriptevent "feathergui:${scriptevent}"`)
             }
         })
     })
@@ -440,8 +462,7 @@ system.beforeEvents.startup.subscribe(async init => {
         ]
     }, (source, players, itemTypeId, amount, itemName, data) => {
         system.run(() => {
-            let item = new ItemStack(itemTypeId)
-            item.amount = amount ?? 1
+            let item = new ItemStack(itemTypeId, amount ?? 1)
             if (itemName) item.nameTag = itemName
             if (data) item.data = data
             for (const player of players) {

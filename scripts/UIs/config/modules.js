@@ -12,7 +12,7 @@ uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
     let form = new ModalFormData()
     let langs = [{name:'English',val:'en'},{name:'Español',val:'es'},{name:'Português Brasileiro',val:'br'}]
     form.title(consts.modal)
-    form.toggle(`${translate(config.lang.config.modules.toggles.ranks)}`, {defaultValue: modules.get('cr')})
+    form.toggle(`\n${translate(config.lang.config.modules.toggles.ranks)}`, {defaultValue: modules.get('cr')})
     form.toggle(`DevMode (Mostly unfinished or broken buttons)`, {defaultValue: modules.get('devMode') ?? false})
     form.toggle(`/pay`, {defaultValue: modules.get('pay')})
     form.toggle(`/homes`, {defaultValue: modules.get('homes')})

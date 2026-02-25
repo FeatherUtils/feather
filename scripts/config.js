@@ -138,6 +138,17 @@ export default {
                 edit: 'uibuilder_buttons_edit | UIBuilder/Buttons/Edit',
                 editActions: 'uibuilder_buttons_editActions | UIBuilder/Buttons/EditActions'
             },
+            chest: {
+                create: 'builder_chest_create',
+                edit: 'builder_chest_edit',
+                buttons: {
+                    editall: 'builder_chest_buttons_editall',
+                    edit: 'builder_chest_buttons_edit',
+                    actions: 'builder_chest_buttons_actions',
+                    create: 'builder_chest_buttons_create',
+                    lore: 'builder_chest_buttons_lore'
+                }
+            },
             notifications: {
                 edit: 'builder_notifications_edit',
                 create: 'builder_notifications_create'
@@ -273,14 +284,16 @@ export default {
         { perm: 'proximity', display: 'Proximity Chat Config' },
         { perm: 'playerShopAdmin', display: 'Player Shop Admin' },
         { perm: 'bind', display: 'Bind items to commands' },
-        { perm: 'bypassAreaFlags', display: 'Bypass area flags' }
+        { perm: 'bypassAreaFlags', display: 'Bypass area flags' },
+        { perm: 'experimental', display: 'Experimental settings' }
     ],
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },
         { name: 'Fern (arandomfern)', description: 'Secondary contributor/Developer' },
-        { name: 'TrashyDaFox (trashydafox)', description: 'All JSON UI, Database, UI Manager + more' },
-        { name: 'LeGend077', description: "Chest UI components"},
-        { name: 'Herobrine643928', description: "Chest UI components"},
-        { name: 'Aex66', description: "Chest UI components"}
+        { name: 'TrashyDaFox (trashydafox)', description: 'CherryUI maintainer, Database, UI Manager + more' },
+        { name: 'LeGend077', description: "Chest UI components" },
+        { name: 'Herobrine643928', description: "Chest UI components" },
+        { name: 'Aex66', description: "Chest UI components" },
+        { name: 'FeRaSs1454', description: "Dark mode ui"}
     ]
 };

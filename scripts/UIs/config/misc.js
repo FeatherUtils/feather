@@ -108,6 +108,18 @@ uiManager.addUI(config.uinames.config.clans, 'f', (player) => {
         if (!prismarineDb.economy.getCurrencies().find(_ => _.scoreboard === scoreboard)) prismarineDb.economy.addCurrency(scoreboard, '$', scoreboard);
         clans.settingsKV.set('currencyScoreboard', scoreboard)
         clans.settingsKV.set('clanBaseEnabled', cb)
+        player.runCommand('open @s config_world')
+    })
+})
+uiManager.addUI(config.uinames.config.experimental, 'cfg experimental', (player) => {
+    let form = new ModalFormData();
+    form.title(consts.modal)
+    form.toggle('ExperimentalNotificationInfoMessages', {defaultValue:modules.get('ExperimentalNotificationInfoMessages')})
+    form.show(player).then((res) => {
+        let [exnim] = res.formValues;
+        modules.set('ExperimentalNotificationInfoMessages', exnim)
+        player.success('Set experimental values!')
+        player.runCommand('open @s config_extra')
     })
 })
 uiManager.addUI(config.uinames.config.crf, 'chat rank format', (player) => {

@@ -24,6 +24,9 @@ uiManager.addUI(config.uinames.uiBuilder.makeCreation, 'makeCreation', (player) 
     form.button(`§aNotification\n§7Create a notification`, `.azalea/label`, (player) => {
         uiManager.open(player,config.uinames.uiBuilder.notifications.create)
     })
+    form.button(`§2Chest UI\n§7Create a chest ui`, '.vanilla_blocks/chest_front', (player) => {
+        uiManager.open(player,config.uinames.uiBuilder.chest.create)
+    })
     form.show(player)
 })
 

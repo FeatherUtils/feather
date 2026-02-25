@@ -22,11 +22,11 @@ uiManager.addUI(config.uinames.uiBuilder.edit, 'UI Builder Edit UI', async (play
     if (ui.data.layout == 3) {
         form.body(`Warning: Body doesn't work in Player Model UIs`)
     }
-    form.button(`${consts.header}§r§cBack\n§7Go back to UI Builder`, `textures/azalea_icons/2`, (player) => {
+    form.button(`${consts.header}§r§cBack\n§7Go back to Builder`, `textures/azalea_icons/2`, (player) => {
         uiManager.open(player, config.uinames.uiBuilder.root)
     })
     if (ui.data.isBuiltIn || ui.data.scriptevent == 'tpr' || ui.data.scriptevent == 'warps' || ui.data.scriptevent == 'tpr-req') {
-        form.button(consts.alt + '§rReset Built-In UI', null, (player) => {
+        form.button(consts.alt + '§rReset Built-In Creation', null, (player) => {
             uiBuilder.resetBuiltInUI(ui.data.scriptevent)
             uiManager.open(player, config.uinames.uiBuilder.root)
         })

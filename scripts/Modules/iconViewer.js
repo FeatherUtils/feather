@@ -211,7 +211,7 @@ uiManager.addUI(config.uinames.basic.iconViewer, 'icon viewer', (player, p, call
         false,
         () => {
             if (p < 1) {
-                uiManager.open(player, config.uinames.basic.iconViewer, p, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
+                uiManager.open(player, config.uinames.basic.iconViewer, icons_.length - 1, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
             } else {
                 uiManager.open(player, config.uinames.basic.iconViewer, p - 1, callback, false, manualIconIDDefault, manualIconIDError, searchQuery)
             }
@@ -255,7 +255,7 @@ uiManager.addUI(config.uinames.basic.iconViewer, 'icon viewer', (player, p, call
             form2.show(player).then((res) => {
                 let [q] = res.formValues;
                 if (!q) return uiManager.open(player, config.uinames.basic.iconViewer, p, callback);
-                uiManager.open(player, config.uinames.basic.iconViewer, p, callback, manualIconID, manualIconIDDefault, manualIconIDError, q)
+                uiManager.open(player, config.uinames.basic.iconViewer, 0, callback, manualIconID, manualIconIDDefault, manualIconIDError, q)
             })
         }
     )
@@ -268,6 +268,25 @@ uiManager.addUI(config.uinames.basic.iconViewer, 'icon viewer', (player, p, call
         false,
         () => {
             if(callback) callback(player,null)
+        }
+    )
+    form.button(
+        common.rowColToSlotId(6,7),
+        '§2Select page',
+        ['Select a page via text input'],
+        icons.resolve('rpgiab/number'),
+        1,
+        false,
+        () => {
+            let mForm = new ModalFormData();
+            mForm.title('Select page')
+            mForm.textField('Page', `Max: ${icons_.length - 1} Min: 0`)
+            mForm.show(player).then((res) => {
+                let [page] = res.formValues;
+                if(!parseInt(page)) return uiManager.open(player,config.uinames.basic.iconViewer,p,callback,manualIconID,manualIconIDDefault,manualIconIDError,searchQuery)
+                if(parseInt(page) <= icons_.length - 1) return uiManager.open(player,config.uinames.basic.iconViewer,page,callback,manualIconID,manualIconIDDefault,manualIconIDError,searchQuery)
+                uiManager.open(player,config.uinames.basic.iconViewer,p,callback,manualIconID,manualIconIDDefault,manualIconIDError,searchQuery)
+            })
         }
     )
     form.show(player)
