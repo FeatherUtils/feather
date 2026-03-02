@@ -6,6 +6,7 @@ import { getPlayers } from "./format/online";
 import events from "../Modules/events";
 import modules from "../Modules/modules";
 import keyvalues from "../Modules/keyvalues";
+import { prismarineDb } from "../Libraries/prismarinedb";
 
 function abbreviateNumber(number, decPlaces) {
     const suffixes = ["k", "m", "b", "t"];
@@ -86,6 +87,10 @@ class BlossomFormatting {
 
         this.#vars.arrow = () => '»'
 
+        function getDefaultCurrencyScoreboard() {
+            return prismarineDb.economy.getCurrencies().find(_=>_.default==true).scoreboard
+        }
+
 
         this.#vars.realname = this.getRealName;
         this.#vars.player = this.getName;
@@ -93,6 +98,7 @@ class BlossomFormatting {
         this.#vars.username = this.getName;
         this.#vars.tps = getTPS;
         this.#vars.online = getPlayers;
+        this.#vars.getDefaultCurrencyScoreboard = getDefaultCurrencyScoreboard;
         if (newLine.includes(':')) {
             let emojisUsed = newLine.match(/:([a-z0-9_-]+):/g) || [];
             for (const emoji of emojisUsed) {

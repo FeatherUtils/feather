@@ -18,7 +18,7 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.create, 'create button', (playe
         form2.textField('Text§c*', `This button's text`)
         form2.textField('Subtext', `This button's subtext`)
         form2.textField(`Required Tag`, `Required tag of this button`)
-        form2.textField(`First Action`, `This button's first actions`)
+        form2.textField(`First Action`, `This button's first action`)
         form2.show(player).then((res) => {
             let [a, text, subtext, requiredTag, firstAction] = res.formValues
             if (!text) return player.error('Please enter text'), uiManager.open(player, config.uinames.uiBuilder.buttons.editall, uiID);

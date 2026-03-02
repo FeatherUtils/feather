@@ -42,7 +42,7 @@ uiManager.addUI(config.uinames.uiBuilder.create, 'uiBuilder_create', async (play
     form2.dropdown('Layout', layouts, { defaultValueIndex: d ? d.layout : 4 })
     form2.show(player).then(async (res) => {
         if (res.canceled) return uiManager.open(player, config.uinames.uiBuilder.root);
-        let [title, scriptevent, layout] = res.form2Values
+        let [title, scriptevent, layout] = res.formValues
         if (!title || !scriptevent) return player.error('Title or scriptevent not entered. This is required.'), uiManager.open(player, config.uinames.uiBuilder.root)
         if (d) {
             try {
@@ -57,10 +57,11 @@ uiManager.addUI(config.uinames.uiBuilder.create, 'uiBuilder_create', async (play
                 let id2 = uiBuilder.create(title, '', scriptevent, layout)
                 if (folder) {
                     await uiBuilder.addToFolder(id2, folder)
-                    system.run(() => {
+                    return system.run(() => {
                         uiManager.open(player, config.uinames.uiBuilder.folders.view, folder)
                     })
                 }
+                uiManager.open(player,config.uinames.uiBuilder.root)
             } catch (e) {
                 player.error(e)
                 uiManager.open(player, config.uinames.uiBuilder.root)

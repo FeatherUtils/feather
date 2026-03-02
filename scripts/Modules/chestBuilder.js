@@ -43,15 +43,24 @@ class ChestBuilder {
         this.db.overwriteDataByID(id, ui.data)
         return true;
     }
-    addButton(uiID, text, line1, firstAction, coordinates, requiredTag) {
+    addButton(uiID, text, line1, firstAction = null, coordinates, requiredTag) {
         let ui = this.get(uiID)
         if (!ui) throw new Error('Invalid ID')
         const id = Date.now()
         let actions = [];
+        let lore = [];
         if (firstAction) actions.push({ action: firstAction, id: Date.now() - 1 })
-        ui.data.buttons.push({ text, lore: [line1], actions, id, coordinates, requiredTag })
+        if (line1) lore.push({ lore: line1, id: Date.now() - 2 })
+        ui.data.buttons.push({ text, lore, actions, id, coordinates, requiredTag })
         this.db.overwriteDataByID(id, ui.data)
         return id;
+    }
+    getButton(uiID, bID) {
+        let ui = this.get(uiID)
+        if (!ui) throw new Error('Invalid ID')
+        let button = ui.data.buttons.find(_ => _.id === bID)
+        if (!button) throw new Error('Invalid button id')
+        return button;
     }
     editButton(uiID, bID, text, requiredTag) {
         let ui = this.get(uiID)
@@ -60,7 +69,16 @@ class ChestBuilder {
         if (!button) throw new Error('Invalid button id')
         button.text = text
         button.requiredTag = requiredTag
-        this.db.overwriteDataByID(id, ui.data)
+        this.db.overwriteDataByID(uiID, ui.data)
+        return true;
+    }
+    deleteButton(uiID, bID) {
+        let ui = this.get(uiID)
+        if (!ui) throw new Error('Invalid ID')
+        let button = ui.data.buttons.findIndex(_ => _.id === bID)
+        if (button < 0) throw new Error('Invalid button id')
+        ui.data.buttons.splice(button, 1)
+        this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
     moveButton(uiID, bID, coordinates) {
@@ -69,7 +87,7 @@ class ChestBuilder {
         let button = ui.data.buttons.find(_ => _.id === bID)
         if (!button) throw new Error('Invalid button id')
         button.coordinates = coordinates
-        this.db.overwriteDataByID(id, ui.data)
+        this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
     buttonIcon(uiID, bID, icon) {
@@ -80,38 +98,38 @@ class ChestBuilder {
         let ic = icons.resolve(icon)
         if (!ic) throw new Error('Invalid icon id')
         button.icon = icon
-        this.db.overwriteDataByID(id, ui.data)
+        this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
-    addLore(lore) {
+    addLore(uiID, bID, lore) {
         let ui = this.get(uiID)
         if (!ui) throw new Error('Invalid ID')
         let button = ui.data.buttons.find(_ => _.id === bID)
         if (!button) throw new Error('Invalid button id')
-        button.lore.push(lore)
-        this.db.overwriteDataByID(id, ui.data)
+        button.lore.push({ lore, id: Date.now() })
+        this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
-    editLore(lore, newLore) {
+    editLore(uiID, bID, id, newLore) {
         let ui = this.get(uiID)
         if (!ui) throw new Error('Invalid ID')
         let button = ui.data.buttons.find(_ => _.id === bID)
         if (!button) throw new Error('Invalid button id')
-        let l = button.lore.find(_ => _ === lore)
+        let l = button.lore.find(_ => _.id === id)
         if (!l) throw new Error('Invalid lore')
-        l = newLore
-        this.db.overwriteDataByID(id, ui.data)
+        l.lore = newLore
+        this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
-    delLore(lore) {
+    delLore(uiID, bID, lore) {
         let ui = this.get(uiID)
         if (!ui) throw new Error('Invalid ID')
         let button = ui.data.buttons.find(_ => _.id === bID)
         if (!button) throw new Error('Invalid button id')
-        let l = button.lore.findIndex(_ => _ === lore)
+        let l = button.lore.findIndex(_ => _.id === lore)
         if (l < 0) throw new Error('Invalid lore')
         button.lore.splice(l, 1)
-        this.db.overwriteDataByID(id, ui.data)
+        this.db.overwriteDataByID(uiID, ui.data)
         return true;
     }
     moveLoreinButton(uiID, bid, lore, direction) {
@@ -119,12 +137,39 @@ class ChestBuilder {
         if (!doc) return;
         const btn = doc.data.buttons.find(_ => _.id === bid)
         if (!btn) return;
-        const index = btn.lore.findIndex(_ => _ === lore)
+        const index = btn.lore.findIndex(_ => _.id === lore)
         if (index === -1) return;
         let newIndex = direction == "up" ? index - 1 < 0 ? 0 : index - 1 : index + 1 >= btn.lore.length ? btn.lore.length - 1 : index + 1
         array_move(btn.lore, index, newIndex);
         this.db.overwriteDataByID(uiID, doc.data);
         return newIndex;
+    }
+    buttonMeta(uiID, bid, meta) {
+        let ui = this.db.getByID(uiID)
+        if (!ui) throw new Error('UIBuilderError: Could not find UI');
+        let btn = ui.data.buttons.find(_ => _.id === bid)
+        if (!btn) throw new Error('UIBuilderError: Could not find button');
+        btn.meta = meta
+        this.db.overwriteDataByID(uiID, ui.data)
+        return true;
+    }
+    sellButtonSettings(uiID, bid, settings) {
+        let ui = this.db.getByID(uiID)
+        if (!ui) throw new Error('UIBuilderError: Could not find UI');
+        let btn = ui.data.buttons.find(_ => _.id === bid)
+        if (!btn) throw new Error('UIBuilderError: Could not find button');
+        btn.sellButtonSettings = settings
+        this.db.overwriteDataByID(uiID, ui.data)
+        return true;
+    }
+    buyButtonSettings(uiID, bid, settings) {
+        let ui = this.db.getByID(uiID)
+        if (!ui) throw new Error('UIBuilderError: Could not find UI');
+        let btn = ui.data.buttons.find(_ => _.id === bid)
+        if (!btn) throw new Error('UIBuilderError: Could not find button');
+        btn.buyButtonSettings = settings
+        this.db.overwriteDataByID(uiID, ui.data)
+        return true;
     }
     addAction(uiID, bid, action) {
         let ui = this.db.getByID(uiID)

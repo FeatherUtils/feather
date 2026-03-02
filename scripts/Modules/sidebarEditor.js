@@ -5,16 +5,22 @@ import { array_move } from "./array_move";
 
 class SidebarEditor {
     constructor() {
-        system.run(() => {
+        system.run(async () => {
             this.db = prismarineDb.table('SidebarEditor')
             this.run();
+            await this.db.waitLoad();
+            if (!world.getDynamicProperty('AddedFirstSidebar11')) {
+                let id = this.db.insertDocument({ "name": "My First Sidebar", "isDefault": true, "lines": [{ "text": ":emerald: §aMy Server", "id": 1772478099976 }, { "text": "§8-=-=-=-=-=-", "id": 1772478108271 }, { "text": "§g:steve: IGN: <name>", "id": 1772478121072 }, { "text": ":diamond: §bMoney: {{ab_money}}", "id": 1772478465370 }, { "text": "§6:clock: TPS: <tps>", "id": 1772478580870 }, { "text": ":timer: §dTime: {{feather:hoursplayed}}h {{feather:minutesplayed}}m {{feather:secondsplayed}}s", "id": 1772481551072 }] })
+                this.setDefault(id)
+                world.setDynamicProperty('AddedFirstSidebar11', true)
+            }
         })
     }
     run() {
         system.runInterval(async () => {
             for (const plr of world.getPlayers()) {
                 let sd3 = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)
-                let sd = this.db.findFirst({name:sd3})
+                let sd = this.db.findFirst({ name: sd3 })
                 if (!sd) {
                     let sd2 = this.getDefault();
                     if (!sd2) continue;
@@ -43,6 +49,15 @@ class SidebarEditor {
     }
     getDefault() {
         return this.db.findFirst({ isDefault: true })
+    }
+    setDefault(id) {
+        let d = this.getDefault()
+        if (d) d.data.isDefault = false
+        if (d) this.db.overwriteDataByID(d.id, d.data)
+        let nd = this.db.getByID(id)
+        if (!nd) return false;
+        nd.data.isDefault = true
+        return this.db.overwriteDataByID(nd.id, nd.data)
     }
     del(id) {
         this.db.deleteDocumentByID(id)

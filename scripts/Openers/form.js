@@ -14,6 +14,8 @@ import api from '../UIs/config/api'
 import { themes } from "../cherryThemes";
 import { commands } from "../Modules/commands";
 import modules from '../Modules/modules'
+import chestBuilder from "../Modules/chestBuilder";
+import { openChest } from "./chest";
 
 function hasItem(player, typeId) {
     let amount = 0
@@ -29,21 +31,19 @@ function hasItem(player, typeId) {
     return amount;
 }
 
-system.afterEvents.scriptEventReceive.subscribe(async e => {
-    if (e.id != 'feather:open') return;
+async function open(e) {
     let message = commands.parseArgs(e.message)
     let ui = uiBuilder.db.findFirst({ scriptevent: message[0] })
-    if (!ui) return e.sourceEntity.error('UI not found');
     let form = new ActionForm();
     let u = ui.data
     let pre = ''
     let player = e.sourceEntity
-    if(message[1]) {
+    if (message[1]) {
         let pl = world.getPlayers().find((_) => _.name == message[1])
-        if(pl) player = pl
+        if (pl) player = pl
     }
-    if(!u.allowedInCombat && modules.get('CLog')) {
-        if(e.sourceEntity.hasTag('combat') && !u.scriptevent.startsWith('config_')) return e.sourceEntity.error('You are not allowed to use this ui in combat')
+    if (!u.allowedInCombat && modules.get('CLog')) {
+        if (e.sourceEntity.hasTag('combat') && !u.scriptevent.startsWith('config_')) return e.sourceEntity.error('You are not allowed to use this ui in combat')
     }
     if (u.layout == 0) pre = ''
     if (u.layout == 1) pre = '§f§u§l§l§s§c§r§e§e§n§r'
@@ -77,8 +77,8 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
         let bpre = '§r'
         if (button.cherry && u.layout == 4) {
             let theme;
-            if(u.theme == 0) theme = ''
-            if(u.theme != 0) theme = u.theme
+            if (u.theme == 0) theme = ''
+            if (u.theme != 0) theme = u.theme
             if (button.cherry.includes('alt')) bpre = consts.alt + `${theme}` + bpre
             if (button.cherry.includes('disableVertical')) bpre = bpre + consts.disablevertical
             if (button.cherry.includes('left')) bpre = bpre + consts.left
@@ -93,7 +93,7 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
             if (!e.sourceEntity.hasTag(rqt.replace('!', '')) && !rqt.startsWith('!')) bpre = bpre + consts.disabled, disabledRQT = true;
             if (e.sourceEntity.hasTag(rqt.replace('!', '')) && rqt.startsWith('!')) bpre = bpre + consts.disabled, disabledRQT = true;
         }
-        
+
         if (button.meta === 'sellbutton') {
             let rqtf2 = rqt
             if (rqtf2 && !disabledRQT) {
@@ -240,4 +240,16 @@ system.afterEvents.scriptEventReceive.subscribe(async e => {
         })
     }
     form.show(e.sourceEntity);
+}
+
+system.afterEvents.scriptEventReceive.subscribe(async e => {
+    if (e.id != 'feather:open') return;
+    let message = commands.parseArgs(e.message)
+    let ui = uiBuilder.db.findFirst({ scriptevent: message[0] })
+    if (ui) {
+        open(e)
+    } else {
+        let chest = chestBuilder.db.findFirst({uniqueId:message[0]})
+        if(chest) openChest(e)
+    }
 })

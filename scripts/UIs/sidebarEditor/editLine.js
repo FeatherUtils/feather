@@ -5,14 +5,14 @@ import config from "../../config";
 import { consts } from "../../cherryUIConsts";
 import { ModalFormData } from "@minecraft/server-ui";
 
-uiManager.addUI(config.uinames.sidebarEditor.editline, 'edit line se', (player, sdid, id) => {
+uiManager.addUI(config.uinames.sidebarEditor.editline, 'edit line se', async (player, sdid, id) => {
     let sd = sidebarEditor.get(sdid)
     if (!sd) return;
     let ln = sidebarEditor.getLine(sdid, id)
     if (!ln) return;
     let form = new ActionForm();
     form.title(`${consts.tag}§rView Line`)
-    form.body(`Text: ${sidebarEditor.parseLine(sdid, id, player)}§r\nID: ${id}\n§rSidebar ID: ${sdid}`)
+    form.body(`Text: ${await sidebarEditor.parseLine(sdid, id, player)}§r\nID: ${id}\n§rSidebar ID: ${sdid}`)
     form.button(`${consts.header}§cBack\n§7Go back to View Lines`, '.azalea/2', (player) => {
         uiManager.open(player, config.uinames.sidebarEditor.viewlines, sdid)
     })

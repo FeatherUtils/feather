@@ -881,5 +881,119 @@ export default [
             }
         ],
         "isBuiltIn": true
+    },
+    {
+        "name": "Server Menu",
+        "body": "",
+        "scriptevent": "feather/menu",
+        "layout": 4,
+        "theme": 0,
+        "type": "UI",
+        "buttons": [
+            {
+                "text": "§6Homes",
+                "subtext": "Teleport to and manage your homes",
+                "requiredTag": "",
+                "icon": "azalea/6",
+                "actions": [
+                    {
+                        "action": "scriptevent feathergui:homes",
+                        "id": 1750111457381
+                    }
+                ],
+                "id": 1750111457380,
+                "type": "button"
+            },
+            {
+                "text": "§bWarps",
+                "subtext": "Teleport to server warps",
+                "requiredTag": "",
+                "icon": "vanilla/ender_pearl",
+                "actions": [
+                    {
+                        "action": "feather:open @s warps",
+                        "id": 1750137860882
+                    }
+                ],
+                "id": 1750137860881,
+                "type": "button"
+            },
+            {
+                "text": "§dClans",
+                "subtext": "Fight with your friends",
+                "requiredTag": "",
+                "icon": "vanilla/diamond_sword",
+                "actions": [
+                    {
+                        "action": "scriptevent feathergui:clans_root",
+                        "id": 1753861030507
+                    }
+                ],
+                "id": 1753861030506,
+                "type": "button",
+                "permission": "",
+                "cherry": []
+            },
+            {
+                "text": "Teleport Requests",
+                "subtext": "Teleport to your friends",
+                "requiredTag": "",
+                "icon": "azalea/request",
+                "actions": [
+                    {
+                        "action": "feather:open @s tpr",
+                        "id": 1750138920978
+                    }
+                ],
+                "id": 1750138920977,
+                "type": "button"
+            },
+            {
+                "text": "Bounty",
+                "subtext": "Put bounties on other players",
+                "requiredTag": "",
+                "icon": "rpgiab/coins",
+                "actions": [
+                    {
+                        "action": "scriptevent feathergui:bounty",
+                        "id": 1759574618305
+                    }
+                ],
+                "id": 1759574618304,
+                "type": "button"
+            },
+            {
+                "text": "§6RTP",
+                "subtext": "Randomly teleport in the world",
+                "requiredTag": "",
+                "icon": "rpgiab/dice",
+                "actions": [
+                    {
+                        "action": "scriptevent feather:rtp",
+                        "id": 1768072416808
+                    }
+                ],
+                "id": 1768072416807,
+                "type": "button",
+                "meta": null
+            },
+            {
+                "text": "§6Player Shop",
+                "subtext": "Browse and view player-created shops",
+                "requiredTag": "",
+                "icon": "azalea/playershop2",
+                "actions": [
+                    {
+                        "action": "opengui @s playershop",
+                        "id": 1769630754624
+                    }
+                ],
+                "id": 1769630754623,
+                "type": "button"
+            }
+        ],
+        "icon": "textures/azalea_icons/WarpEditor",
+        "allowedInCombat": true,
+        "isBuiltIn": true
     }
 ];

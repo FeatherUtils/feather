@@ -58,7 +58,7 @@ import { consts } from './cherryUIConsts'
 import emojis from './Formatting/emojis'
 import { cLog } from './Modules/cLog'
 
-if(modules.get('ExperimentalNotificationInfoMessages') === undefined) modules.set('ExperimentalNotificationInfoMessages', true)
+if (modules.get('ExperimentalNotificationInfoMessages') === undefined) modules.set('ExperimentalNotificationInfoMessages', true)
 
 Player.prototype.error = function (msg) {
   if (modules.get('ExperimentalNotificationInfoMessages')) {
@@ -166,6 +166,12 @@ world.beforeEvents.itemUse.subscribe(e => {
   }
   if (e.itemStack.typeId == `feather:builder`) {
     uiManager.open(e.source, config.uinames.uiBuilder.root)
+    return
+  }
+  if (e.itemStack.typeId == `feather:menu`) {
+    system.run(() => {
+      e.source.runCommand(`feather:open @s "feather/menu"`)
+    })
     return
   }
   let b = e.itemStack.getDynamicProperty('bind')

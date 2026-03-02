@@ -146,7 +146,8 @@ export default {
                     edit: 'builder_chest_buttons_edit',
                     actions: 'builder_chest_buttons_actions',
                     create: 'builder_chest_buttons_create',
-                    lore: 'builder_chest_buttons_lore'
+                    lore: 'builder_chest_buttons_lore',
+                    meta: 'builder_chest_buttons_meta'
                 }
             },
             notifications: {
