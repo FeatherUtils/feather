@@ -106,6 +106,13 @@ class PlayerShop {
         this.Database.overwriteDataByID(shopId, shop.data)
         return true;
     }
+    delItem(shopId, itemId) {
+        let shop = this.Database.getByID(shopId)
+        if (!shop) throw new Error('no shop found')
+        let item2 = shop.data.items.findIndex((_) => _.id == itemId)
+        shop.data.items.splice(item2, 1)
+        this.Database.overwriteDataByID(shopId, shop.data)
+    }
     removeItem(shopId, itemId, player) {
         let shop = this.Database.getByID(shopId)
         if (!shop) throw new Error('no shop found')
@@ -115,13 +122,13 @@ class PlayerShop {
         let itemStack = itemDb.getItem(item.stash, item.slot);
         if (!itemStack) return player.error('An error occured with ItemDB. Sowwy. Item was not removed.');
         inventory.addItem(itemStack)
-        let item2 = shop.data.items.findIndex((_) => _.id == item.id)
+        let item2 = shop.data.items.findIndex((_) => _.id == itemId)
         itemDb.deleteItem(item.stash)
         shop.data.items.splice(item2, 1)
         this.Database.overwriteDataByID(shopId, shop.data)
     }
-    searchShops(query,maxDocs) {
-        let documents = this.Database.findDocuments({type:'PLAYER_SHOP'})
+    searchShops(query, maxDocs) {
+        let documents = this.Database.findDocuments({ type: 'PLAYER_SHOP' })
         let shops = []
         for (const doc of documents) {
             if (doc.data.name.toLowerCase().includes(query.toLowerCase())) {

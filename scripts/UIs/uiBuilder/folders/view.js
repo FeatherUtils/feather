@@ -15,6 +15,7 @@ uiManager.addUI(config.uinames.uiBuilder.folders.view, 'ui builder view folder',
     let form = new ActionForm();
     let folderDocuments = uiBuilder.db.getFolderDocuments(foldername);
     form.title(`${consts.tag}§rFolder`)
+    form.label(`Currently, only UIs are supported by Folders. We'll add others soon!`)
     form.button(`${consts.header}§r§cBack\n§7Back to UI builder`, icons.resolve('azalea/2'), (player)=>{
         uiManager.open(player,config.uinames.uiBuilder.root)
     })

@@ -1,7 +1,7 @@
 import uiManager from "../../../Libraries/uiManager";
 import moderation from "../../../Modules/moderation";
 import config from "../../../config";
-import { ActionForm } from "../../../Libraries/prismarinedb";
+import { ActionForm } from "../../../Libraries/form_func";
 import { ModalFormData } from "@minecraft/server-ui";
 import {consts} from "../../../cherryUIConsts";
 import playerStorage from "../../../Libraries/playerStorage";

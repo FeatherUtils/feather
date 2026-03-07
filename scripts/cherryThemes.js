@@ -36,7 +36,7 @@
 // }
 
 export let themes = [
-    ["", "Default", "textures/example/header"],
+    ["§d§e§f", "CherryUI", "textures/example/header"],
     ["§o§c§e§a§n", "Ocean", "textures/example/headerocean"],
     ["§b§t§0§8", "Batch 08", "textures/example/headerbatch08"],
     ["§u§w§u§1", "UwU", "textures/example/headeruwu1"],
@@ -91,5 +91,6 @@ export let themes = [
     ["§r§t§o", "Random Theme 24", "textures/example/headerrandom24"],
     ["§r§t§p", "Random Theme 25", "textures/example/headerrandom25"],
     ["§f§t§1", "Feather Essentials v0.3", "textures/featherCherryThemes/headerfeather"],
-    ["§u§p§d§4", "Feather Essentials v0.4", "textures/featherCherryThemes/headerupdate4"]
+    ["§u§p§d§4", "Feather Essentials v0.4", "textures/featherCherryThemes/headerupdate4"],
+    ["§u§p§d§1§0", "Feather Essentials Amethyst 10", "textures/featherCherryThemes/headerfame"]
 ];

@@ -53,7 +53,8 @@ export default {
             afkKick: 'config_afkKick',
             betterKB: 'config_betterkb',
             clog: 'config_clog',
-            proximity: 'config_proximity'
+            proximity: 'config_proximity',
+            experimental: 'config_experimental'
         },
         playerShop: {
             root: 'playershop',
@@ -88,6 +89,9 @@ export default {
                 root: 'warns'
             }
         },
+        MCBEToolsAuth: 'mcbetools_auth',
+        FeatherNetwork: 'feathernetwork',
+        FeatherNetworkView: 'feathernetworkview',
         clans: {
             create: 'clans_create',
             public: 'clans_public',
@@ -126,12 +130,29 @@ export default {
         uiBuilder: {
             root: 'uibuilder_root | UIBuilder/Root',
             create: 'uibuilder_create | UIBuilder/Create',
+            makeCreation: 'uibuilder_makecreation | UIBuilder/MakeCreation',
             edit: 'uibuilder_edit | UIBuilder/Edit',
             buttons: {
                 editall: 'uibuilder_buttons_editall | UIBuilder/Buttons/EditAll',
                 create: 'uibuilder_buttons_create | UIBuilder/Buttons/Create',
                 edit: 'uibuilder_buttons_edit | UIBuilder/Buttons/Edit',
                 editActions: 'uibuilder_buttons_editActions | UIBuilder/Buttons/EditActions'
+            },
+            chest: {
+                create: 'builder_chest_create',
+                edit: 'builder_chest_edit',
+                buttons: {
+                    editall: 'builder_chest_buttons_editall',
+                    edit: 'builder_chest_buttons_edit',
+                    actions: 'builder_chest_buttons_actions',
+                    create: 'builder_chest_buttons_create',
+                    lore: 'builder_chest_buttons_lore',
+                    meta: 'builder_chest_buttons_meta'
+                }
+            },
+            notifications: {
+                edit: 'builder_notifications_edit',
+                create: 'builder_notifications_create'
             },
             folders: {
                 view: "uibuilder_folders_view | UIBuilder/Folders/View"
@@ -155,6 +176,10 @@ export default {
             root: 'voting_root',
             start: 'voting_start',
             view: 'voting_view'
+        },
+        areas: {
+            create: 'areas_create',
+            edit: 'areas_edit'
         },
         bounty: {
             leaderboard: 'bounty_leaderboard',
@@ -202,30 +227,33 @@ export default {
             editPermissions: 'permissions_editrole_permissions',
             create: 'permissions_createrole'
         },
+        nameTagsConfig: 'nametags_config'
     },
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
-        release: '§eGold',
-        version: [9],
+        release: '§uAmethyst',
+        version: [10],
         versionString() {
             return `${this.release} §e${this.version.join('.')}`;
         },
-        defaultChatRankFormat: `§r<bc>[§r{{joined_ranks}}§r<bc>]§r §r<nc><name> §r<bc><arrow> §r<cc><msg>`,
+        defaultChatRankFormat: `§r<bc>[§r{{joined_ranks "§r<bc>] [§r§r<bc>"}}§r<bc>]§r §r<nc><name> §r<bc><arrow> §r<cc><msg>`,
+        defaultNameTagFormat: `§r<bc>[§r{{joined_ranks "§r<bc>] [§r§r<bc>"}}§r<bc>]§r §r<nc><name>`
     },
     config: {
         ui: "feather:config",
         openui: "feathergui:",
         devMode: async () => {
             return system.run(() => world.getDynamicProperty('devMode') ?? false)
-        }
+        },
+        mcbetools: 'https://mcbetools.com/api'
     },
     permissions: [
         { perm: 'config', display: "Config UI" },
         { perm: 'modules', display: "Modules" },
         { perm: 'extra_settings', display: 'Extra Settings' },
         { perm: 'ranks', display: 'Edit Ranks' },
-        { perm: 'ui_builder', display: 'UI Builder' },
+        { perm: 'ui_builder', display: 'Builder' },
         { perm: 'misc_settings', display: 'Misc Settings' },
         { perm: 'bans', display: 'Bans' },
         { perm: 'mute', display: 'Mute' },
@@ -255,11 +283,18 @@ export default {
         { perm: 'clearchat', display: "Clear Chat" },
         { perm: 'clog', display: 'Combat Log Config' },
         { perm: 'proximity', display: 'Proximity Chat Config' },
-        { perm: 'playerShopAdmin', display: 'Player Shop Admin' }
+        { perm: 'playerShopAdmin', display: 'Player Shop Admin' },
+        { perm: 'bind', display: 'Bind items to commands' },
+        { perm: 'bypassAreaFlags', display: 'Bypass area flags' },
+        { perm: 'experimental', display: 'Experimental settings' }
     ],
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },
         { name: 'Fern (arandomfern)', description: 'Secondary contributor/Developer' },
-        { name: 'TrashyDaFox (trashydafox)', description: 'All JSON UI, Database, UI Manager + more' }
+        { name: 'TrashyDaFox (trashydafox)', description: 'CherryUI maintainer, Database, UI Manager + more' },
+        { name: 'LeGend077', description: "Chest UI components" },
+        { name: 'Herobrine643928', description: "Chest UI components" },
+        { name: 'Aex66', description: "Chest UI components" },
+        { name: 'FeRaSs1454', description: "Dark mode ui"}
     ]
 };

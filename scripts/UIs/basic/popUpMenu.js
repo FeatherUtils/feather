@@ -3,10 +3,11 @@ import config from "../../config";
 import { ActionForm } from "../../Libraries/form_func";
 import uiManager from "../../Libraries/uiManager";
 import icons from "../../Modules/icons";
+import { consts } from "../../cherryUIConsts";
 
 uiManager.addUI(config.uinames.basic.popupMenu, "Popup Menu UI", (player, text, action)=>{
     let form = new ActionForm();
-    form.title("§f§0§0§fConfirmation");
+    form.title(consts.tag + "Confirmation");
     form.body(text);
     form.button("§bOK", icons.resolve(`azalea/ClickyClick`), player=>{
         if(typeof action === "function") {

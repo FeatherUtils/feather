@@ -54,8 +54,8 @@ uiManager.addUI(config.uinames.inventorySee, 'INVSEE', (player, user) => {
             form.button(
                 slot,
                 item.nameTag ?? item.typeId,
-                [item.typeId],
-                `${item.typeId}`,
+                item.nameTag ? [item.typeId] : null,
+                item.typeId,
                 item.amount,
                 false,
                 () => {

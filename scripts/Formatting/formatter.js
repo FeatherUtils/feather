@@ -6,6 +6,7 @@ import { getPlayers } from "./format/online";
 import events from "../Modules/events";
 import modules from "../Modules/modules";
 import keyvalues from "../Modules/keyvalues";
+import { prismarineDb } from "../Libraries/prismarinedb";
 
 function abbreviateNumber(number, decPlaces) {
     const suffixes = ["k", "m", "b", "t"];
@@ -86,6 +87,10 @@ class BlossomFormatting {
 
         this.#vars.arrow = () => '»'
 
+        function getDefaultCurrencyScoreboard() {
+            return prismarineDb.economy.getCurrencies().find(_=>_.default==true).scoreboard
+        }
+
 
         this.#vars.realname = this.getRealName;
         this.#vars.player = this.getName;
@@ -93,6 +98,7 @@ class BlossomFormatting {
         this.#vars.username = this.getName;
         this.#vars.tps = getTPS;
         this.#vars.online = getPlayers;
+        this.#vars.getDefaultCurrencyScoreboard = getDefaultCurrencyScoreboard;
         if (newLine.includes(':')) {
             let emojisUsed = newLine.match(/:([a-z0-9_-]+):/g) || [];
             for (const emoji of emojisUsed) {
@@ -138,8 +144,14 @@ class BlossomFormatting {
 
         this.#vars.msg = () => msg2;
 
-        if (text.includes("{{joined_ranks}}")) {
-            newLine = newLine.replaceAll("{{joined_ranks}}", rns.join(`§r${bc}] [§r`));
+        if (text.includes("{{joined_ranks")) {
+            const matches = [...newLine.matchAll(/{{joined_ranks\s+"([^"]+)"}}/g)];
+            for (const match of matches) {
+                const fullMatch = match[0];
+                const key = match[1];
+                const value = rns.join(`${key}`);
+                newLine = newLine.replace(fullMatch, value);
+            }
         }
         if (text.includes("{{vars}}")) {
             newLine = newLine.replaceAll("{{vars}}", this.getVars());

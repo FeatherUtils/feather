@@ -17,6 +17,7 @@ uiManager.addUI(config.uinames.ranks.add, 'add rank', (player)=>{
     form.show(player, false, (player,res)=>{
         let[display,tag,bcc,ccc,ncc] = res.formValues;
         if(!display || !tag) return player.error('Missing fields'), uiManager.open(player, config.uinames.ranks.root)
+        if(tag.startsWith('featheressentials:')) return player.error('The "featheressentials:" tag prefix is reserved for Developer Ranks.'), uiManager.open(player,config.uinames.ranks.root)
         let bc = colors.getColorCodes()[bcc]
         let cc = colors.getColorCodes()[ccc]
         let nc = colors.getColorCodes()[ncc]

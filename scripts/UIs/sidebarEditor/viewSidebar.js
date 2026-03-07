@@ -4,6 +4,7 @@ import uiManager from "../../Libraries/uiManager";
 import config from "../../config";
 import { consts } from "../../cherryUIConsts";
 import { ModalFormData } from "@minecraft/server-ui";
+import modules from "../../Modules/modules";
 
 uiManager.addUI(config.uinames.sidebarEditor.view, 'view sidebar', (player, id) => {
     let sd = sidebarEditor.get(id)
@@ -29,6 +30,21 @@ uiManager.addUI(config.uinames.sidebarEditor.view, 'view sidebar', (player, id) 
     form.button(`§bEdit Lines\n§7Edit lines in this sidebar`, `textures/azalea_icons/Sidebar`, (player) => {
         uiManager.open(player, config.uinames.sidebarEditor.viewlines, id)
     })
+    form.button(`§aMake Default\n§7Make this sidebar the default`, `textures/azalea_icons/10`, (player) => {
+        sidebarEditor.setDefault(id)
+        uiManager.open(player, config.uinames.sidebarEditor.view, id)
+    })
+    if (modules.get('devMode')) {
+        form.button(`§dExport\n§7Export this sidebar`, '.azalea/ExtIcon', (player) => {
+            let d = JSON.stringify(sd.data)
+            let form2 = new ModalFormData();
+            form2.title('Code Editor')
+            form2.textField('a','a',{defaultValue:d})
+            form2.show(player).then((res) => {
+                uiManager.open(player,config.uinames.sidebarEditor.view,id)
+            })
+        })
+    }
     form.button(`§cDelete\n§7Permenantly delete this sidebar`, `textures/azalea_icons/SidebarTrash`, (player) => {
         function ye(player) {
             sidebarEditor.del(id)

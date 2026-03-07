@@ -1,4 +1,4 @@
-import { ActionForm, colors } from "../../Libraries/prismarinedb";
+import { ActionForm } from "../../Libraries/form_func";
 import { ModalForm } from "../../Libraries/form_func";
 import { NUT_UI_TAG, NUT_UI_HEADER_BUTTON } from "../../cherryUIConsts";
 import ranks from "../../Modules/ranks";

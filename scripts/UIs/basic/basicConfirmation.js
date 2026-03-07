@@ -4,10 +4,11 @@ import { ActionForm } from "../../Libraries/form_func";
 import uiManager from "../../Libraries/uiManager";
 import icons from "../../Modules/icons";
 import './popUpMenu'
+import { consts } from "../../cherryUIConsts";
 
 uiManager.addUI(config.uinames.basic.confirmation, "Basic Confirmation UI", (player, actionLabel, actionYes, actionNo)=>{
     let form = new ActionForm();
-    form.title("§f§0§0§fConfirmation");
+    form.title(consts.tag + "Confirmation");
     form.body(actionLabel);
     form.button("§aYes", icons.resolve(`azalea/4-a`), player=>{
         if(typeof actionYes === "function") {

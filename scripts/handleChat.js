@@ -20,6 +20,7 @@ export default function (msg) {
                 if (ev.data.settings?.cancel == true) return;
             }
         }
+        if(msg.message.startsWith('.')) return;
         if (msg.message.startsWith(getPrefix())) {
             commands.runCommand(msg)
             return;

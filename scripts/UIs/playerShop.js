@@ -196,7 +196,7 @@ uiManager.addUI(config.uinames.playerShop.viewItem, 'viewitemplayershop', (playe
         })
         form.button(`§4Remove Item\n§7Remove this item from the shop`, '.azalea/SidebarTrash', (player) => {
             playerShop.removeItem(id, itemid, player)
-            uiManager.open(player, config.uinames.playerShop.viewItem, id, itemid)
+            uiManager.open(player, config.uinames.playerShop.view, id)
         })
     }
     form.button(`§aBuy\n§7Buy this item (${item.price} ${prismarineDb.economy.getCurrency(shop.data.currency).displayName})`, '.vanilla/emerald', (player) => {
@@ -253,7 +253,10 @@ uiManager.addUI(config.uinames.playerShop.view, 'viewplayershop', (player, id) =
         form.divider()
     }
     for (const item of shop.data.items) {
-        let itemStack = itemDb.getItem(item.stash, item.slot)
+        let itemStack;
+        try { itemStack = itemDb.getItem(item.stash, item.slot) } catch { playerShop.delItem(id,item.id)}
+        // itemStack = itemDb.getItem(item.stash,item.slot)
+        if(!itemStack) continue;
         let guh = `§7${itemStack.typeId} | ${item.description}`.slice(0, 43)
         form.button(`${item.name}\n${guh}`, item.icon ?? null, (player) => {
             uiManager.open(player, config.uinames.playerShop.viewItem, id, item.id)

@@ -74,32 +74,6 @@ export default [
         ]
     },
     {
-        "name": "Warps",
-        "body": "",
-        "scriptevent": "warps",
-        "layout": 4,
-        "theme": 0,
-        "type": "UI",
-        "isBuiltIn": true,
-        "buttons": [
-            {
-                "text": "§e<warpname>",
-                "subtext": "[ Teleport ]",
-                "requiredTag": "",
-                "icon": null,
-                "actions": [
-                    {
-                        "action": "feather:warp \"<warpname>\"",
-                        "id": 1750127490910
-                    }
-                ],
-                "id": 1750127490909,
-                "type": "button",
-                "meta": "warp"
-            }
-        ]
-    },
-    {
         "name": "Config UI - Extra",
         "body": "",
         "scriptevent": "config_extra",
@@ -140,10 +114,10 @@ export default [
                 "permission": "codes"
             },
             {
-                "text": "§9Better Knockback",
-                "subtext": "Configure Better Knockback",
+                "text": "§9Better Combat",
+                "subtext": "Configure Better Combat",
                 "requiredTag": "",
-                "icon": "azalea/8",
+                "icon": "vanilla/diamond_sword",
                 "actions": [
                     {
                         "action": "opengui @s config_betterkb",
@@ -433,6 +407,20 @@ export default [
                 "permission": "repbroad"
             },
             {
+                "text": "§aProximity Chat",
+                "subtext": "Edit proximity chat settings",
+                "requiredTag": "",
+                "icon": "azalea/8",
+                "actions": [
+                    {
+                        "action": "opengui @s config_proximity",
+                        "id": 1769809883792
+                    }
+                ],
+                "id": 1769809883791,
+                "type": "button"
+            },
+            {
                 "text": "§cBack",
                 "subtext": "Go back to Features",
                 "requiredTag": "",
@@ -451,6 +439,33 @@ export default [
             }
         ],
         "isBuiltIn": true
+    },
+    {
+        "name": "Warps",
+        "body": "",
+        "scriptevent": "warps",
+        "layout": 4,
+        "theme": 0,
+        "type": "UI",
+        "isBuiltIn": true,
+        "buttons": [
+            {
+                "text": "§e<warpname>",
+                "subtext": "[ Teleport ]",
+                "requiredTag": "",
+                "icon": null,
+                "actions": [
+                    {
+                        "action": "feather:warp \"<warpname>\"",
+                        "id": 1750127490910
+                    }
+                ],
+                "id": 1750127490909,
+                "type": "button",
+                "meta": "warp"
+            }
+        ],
+        "allowedInCombat": true
     },
     {
         "name": "Config UI - Extensions",
@@ -574,7 +589,7 @@ export default [
         "body": "",
         "scriptevent": "config_misc",
         "layout": 4,
-        "theme": "§u§p§d§4",
+        "theme": "§u§p§d§1§0",
         "type": "UI",
         "buttons": [
             {
@@ -612,6 +627,10 @@ export default [
                     "alt",
                     "right"
                 ]
+            },
+            {
+                "id": 1771301945338,
+                "type": "divider"
             },
             {
                 "text": "§aChat",
@@ -692,7 +711,7 @@ export default [
         "body": "",
         "scriptevent": "config_main",
         "layout": 4,
-        "theme": "§u§p§d§4",
+        "theme": "§u§p§d§1§0",
         "type": "UI",
         "buttons": [
             {
@@ -732,10 +751,14 @@ export default [
                 ]
             },
             {
-                "text": "§dUI Builder",
-                "subtext": "Create custom, amazing UIs",
+                "id": 1771130343503,
+                "type": "divider"
+            },
+            {
+                "text": "§dBuilder",
+                "subtext": "Create new custom creations",
                 "requiredTag": "",
-                "icon": "azalea/9",
+                "icon": "feather/FeatherBuilder",
                 "actions": [
                     {
                         "action": "opengui @s uibuilder_root",
@@ -744,10 +767,11 @@ export default [
                 ],
                 "id": 1768584955821,
                 "type": "button",
-                "permission": "ui_builder"
+                "permission": "ui_builder",
+                "cherry": []
             },
             {
-                "text": "§gSidebar Editor",
+                "text": "§bSidebar Editor",
                 "subtext": "Create custom sidebars easily",
                 "requiredTag": "",
                 "icon": "azalea/Sidebar",
@@ -856,6 +880,120 @@ export default [
                 "permission": ""
             }
         ],
+        "isBuiltIn": true
+    },
+    {
+        "name": "Server Menu",
+        "body": "",
+        "scriptevent": "feather/menu",
+        "layout": 4,
+        "theme": 0,
+        "type": "UI",
+        "buttons": [
+            {
+                "text": "§6Homes",
+                "subtext": "Teleport to and manage your homes",
+                "requiredTag": "",
+                "icon": "azalea/6",
+                "actions": [
+                    {
+                        "action": "scriptevent feathergui:homes",
+                        "id": 1750111457381
+                    }
+                ],
+                "id": 1750111457380,
+                "type": "button"
+            },
+            {
+                "text": "§bWarps",
+                "subtext": "Teleport to server warps",
+                "requiredTag": "",
+                "icon": "vanilla/ender_pearl",
+                "actions": [
+                    {
+                        "action": "feather:open @s warps",
+                        "id": 1750137860882
+                    }
+                ],
+                "id": 1750137860881,
+                "type": "button"
+            },
+            {
+                "text": "§dClans",
+                "subtext": "Fight with your friends",
+                "requiredTag": "",
+                "icon": "vanilla/diamond_sword",
+                "actions": [
+                    {
+                        "action": "scriptevent feathergui:clans_root",
+                        "id": 1753861030507
+                    }
+                ],
+                "id": 1753861030506,
+                "type": "button",
+                "permission": "",
+                "cherry": []
+            },
+            {
+                "text": "Teleport Requests",
+                "subtext": "Teleport to your friends",
+                "requiredTag": "",
+                "icon": "azalea/request",
+                "actions": [
+                    {
+                        "action": "feather:open @s tpr",
+                        "id": 1750138920978
+                    }
+                ],
+                "id": 1750138920977,
+                "type": "button"
+            },
+            {
+                "text": "Bounty",
+                "subtext": "Put bounties on other players",
+                "requiredTag": "",
+                "icon": "rpgiab/coins",
+                "actions": [
+                    {
+                        "action": "scriptevent feathergui:bounty",
+                        "id": 1759574618305
+                    }
+                ],
+                "id": 1759574618304,
+                "type": "button"
+            },
+            {
+                "text": "§6RTP",
+                "subtext": "Randomly teleport in the world",
+                "requiredTag": "",
+                "icon": "rpgiab/dice",
+                "actions": [
+                    {
+                        "action": "scriptevent feather:rtp",
+                        "id": 1768072416808
+                    }
+                ],
+                "id": 1768072416807,
+                "type": "button",
+                "meta": null
+            },
+            {
+                "text": "§6Player Shop",
+                "subtext": "Browse and view player-created shops",
+                "requiredTag": "",
+                "icon": "azalea/playershop2",
+                "actions": [
+                    {
+                        "action": "opengui @s playershop",
+                        "id": 1769630754624
+                    }
+                ],
+                "id": 1769630754623,
+                "type": "button"
+            }
+        ],
+        "icon": "textures/azalea_icons/WarpEditor",
+        "allowedInCombat": true,
         "isBuiltIn": true
     }
 ];

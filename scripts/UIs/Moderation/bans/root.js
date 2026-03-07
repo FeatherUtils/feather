@@ -1,7 +1,7 @@
 import uiManager from "../../../Libraries/uiManager";
 import moderation from "../../../Modules/moderation";
 import config from "../../../config";
-import { ActionForm } from "../../../Libraries/prismarinedb";
+import { ActionForm } from "../../../Libraries/form_func";
 import {consts} from "../../../cherryUIConsts";
 import moment from '../../../Libraries/moment'
 import icons from "../../../Modules/icons";

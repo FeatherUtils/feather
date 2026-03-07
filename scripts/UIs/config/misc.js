@@ -12,6 +12,7 @@ import { themes } from "../../cherryThemes";
 import homes from "../../Modules/homes";
 import keyvalues from "../../Modules/keyvalues";
 import { rtp } from "../../Modules/rtp";
+import { cLog } from "../../Modules/cLog";
 
 uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     let form = new ActionForm();
@@ -107,6 +108,18 @@ uiManager.addUI(config.uinames.config.clans, 'f', (player) => {
         if (!prismarineDb.economy.getCurrencies().find(_ => _.scoreboard === scoreboard)) prismarineDb.economy.addCurrency(scoreboard, '$', scoreboard);
         clans.settingsKV.set('currencyScoreboard', scoreboard)
         clans.settingsKV.set('clanBaseEnabled', cb)
+        player.runCommand('open @s config_world')
+    })
+})
+uiManager.addUI(config.uinames.config.experimental, 'cfg experimental', (player) => {
+    let form = new ModalFormData();
+    form.title(consts.modal)
+    form.toggle('ExperimentalNotificationInfoMessages', {defaultValue:modules.get('ExperimentalNotificationInfoMessages')})
+    form.show(player).then((res) => {
+        let [exnim] = res.formValues;
+        modules.set('ExperimentalNotificationInfoMessages', exnim)
+        player.success('Set experimental values!')
+        player.runCommand('open @s config_extra')
     })
 })
 uiManager.addUI(config.uinames.config.crf, 'chat rank format', (player) => {
@@ -127,12 +140,13 @@ uiManager.addUI(config.uinames.config.clog, 'CLog Protection', (player) => {
     form2.title(consts.modal + 'Combat Log Config')
     form2.toggle('Enabled', {defaultValue:modules.get('CLog')})
     form2.toggle('Keep Inventory', {defaultValue:modules.get('CLogKeepInventory')})
-    form2.textField('Cooldown', 'Example: 20', {defaultValue:`${modules.get('clogCooldown')}` ?? '30'})
+    form2.textField('Cooldown', 'Example: 20', {defaultValue:`${modules.get('clogCooldown') ?? '30'}`})
     form2.toggle('Commands Disabled', {defaultValue:modules.get('CLogCommandsDisabled')})
     form2.toggle('Teleport Disabled', {defaultValue:modules.get('CLogTeleportDisabled')})
     form2.show(player).then((res) => {
         let [enabled,keepinventory,clogCooldown,commandsDisabled,disabletp] = res.formValues
-        if(isNaN(clogCooldown)) return player.error('Cooldown is not a number')
+        if(isNaN(+clogCooldown)) return player.error('Cooldown is not a number')
+        if(!enabled) cLog.clearClogEntries()
         modules.set('CLog', enabled)
         modules.set('CLogKeepInventory', keepinventory)
         modules.set('clogCooldown', clogCooldown)
@@ -147,8 +161,8 @@ uiManager.addUI(config.uinames.config.proximity, 'pro', (player) => {
     let form = new ModalFormData();
     form.title(consts.modal + 'Proximity Chat Settings')
     form.label('Requires Chat Ranks to be on in modules.')
-    form.toggle('Enabled', {defaultValue:modules.get('proximityChat')})
-    form.textField('Range', 'How far away can players talk to eachother from', {defaultValue:modules.get('proximityChatRange').toString() ?? '20'})
+    form.toggle('Enabled', {defaultValue:modules.get('proximityChat') ?? false})
+    form.textField('Range', 'How far away can players talk to eachother from', {defaultValue:`${modules.get('proximityChatRange') ?? '20'}`})
     form.show(player).then((res) => {
         let [f,en,ra] = res.formValues
         if(isNaN(+ra) || 0 > ra) return player.error('Range is not a valid number')
@@ -217,13 +231,19 @@ uiManager.addUI(config.uinames.config.betterKB, 'betterKB', (player) => {
     let form2 = new ModalFormData();
     form2.title(consts.modal + 'BetterKB Config')
     form2.toggle('Enabled', {defaultValue: keyvalues.get('BetterKB')})
+    form2.toggle('Enable Knockback', {defaultValue:keyvalues.get('BetterKBKnockback')})
+    form2.toggle('Enable Projectile Ding', {defaultValue:keyvalues.get('BetterKBArrowDing')})
+    form2.toggle('Enable Fishing Rod Combat', {defaultValue:keyvalues.get('BetterKBFishingRodCombat')})
     form2.textField('XVel', 'xvel', {defaultValue: keyvalues.get('BetterKBXVel')})
     form2.textField('YVel', 'yvel', {defaultValue: keyvalues.get('BetterKBYVel')})
     form2.textField('ZVel', 'zvel', {defaultValue: keyvalues.get('BetterKBZVel')})
     form2.show(player).then((res) => {
-        let [en,xvel,yvel,zvel] = res.formValues;
+        let [en,kb,proding,fishrod,xvel,yvel,zvel] = res.formValues;
         if(isNaN(+xvel) || isNaN(+yvel) || isNaN(+zvel)) return player.error('Invalid inputs');
         keyvalues.set('BetterKB', en)
+        keyvalues.set('BetterKBKnockback', kb)
+        keyvalues.set('BetterKBArrowDing', proding)
+        keyvalues.set('BetterKBFishingRodCombat', fishrod)
         keyvalues.set('BetterKBXVel', xvel)
         keyvalues.set('BetterKBYVel', yvel)
         keyvalues.set('BetterKBZVel', zvel)
