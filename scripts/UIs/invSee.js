@@ -1,4 +1,4 @@
-import { world } from "@minecraft/server";
+import { EnchantmentTypes, world } from "@minecraft/server";
 import { ActionForm } from "../Libraries/form_func";
 import config from "../config";
 import { consts } from '../cherryUIConsts'
@@ -16,14 +16,7 @@ function getAllInventoryItems(player) {
     const items = [];
     for (let i = 0; i < size; i++) {
         const item = inventory.getItem(i);
-        items.push({
-            slot: i,
-            item: item ? {
-                typeId: item.typeId,
-                amount: item.amount,
-                nameTag: item.nameTag ?? null
-            } : null
-        });
+        items.push({item,slot:i});
     }
     return items;
 }
@@ -49,7 +42,7 @@ uiManager.addUI(config.uinames.inventorySee, 'INVSEE', (player, user) => {
     for (const slotData of items) {
         const slot = slotData.slot;
         const item = slotData.item;
-
+        const enchantable = item?.getComponent('minecraft:enchantable')
         if (item) {
             form.button(
                 slot,
@@ -57,7 +50,7 @@ uiManager.addUI(config.uinames.inventorySee, 'INVSEE', (player, user) => {
                 item.nameTag ? [item.typeId] : null,
                 item.typeId,
                 item.amount,
-                false,
+                enchantable ? enchantable.getEnchantments().length > 0 ? true : false : false,
                 () => {
                     transferItem(user, player, slot);
                 }

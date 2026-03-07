@@ -117,6 +117,7 @@ export async function openChest(e) {
                     buyform.button(`Sell 16\n§7${+button.sellButtonSettings.price * 16} ${button.sellButtonSettings.scoreboard}`, null, () => buy(16))
                     buyform.button(`Sell 32\n§7${+button.sellButtonSettings.price * 32} ${button.sellButtonSettings.scoreboard}`, null, () => buy(32))
                     buyform.button(`Sell 64\n§7${+button.sellButtonSettings.price * 64} ${button.sellButtonSettings.scoreboard}`, null, () => buy(64))
+                    buyform.button(`Sell All\n§7${+button.sellButtonSettings.price * hasItem(player,button.sellButtonSettings.item)} ${button.sellButtonSettings.scoreboard}`, null, () => buy(hasItem(player,button.sellButtonSettings.item)))
                     buyform.show(player)
                 }
             )

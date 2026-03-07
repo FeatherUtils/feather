@@ -33,6 +33,14 @@ export const custom_content = {
     'featherlifesteal:heart': {
         texture: 'textures/items/heartofthesea_closed',
         type: 'item'
+    },
+    'feather:menu': {
+        texture: 'textures/items/redeem',
+        type: 'item'
+    },
+    'minecraft:amethyst_shard': {
+        texture: 'textures/items/amethyst_shard', // chestui thinks amethyst shard is spyglass
+        type: 'item'
     }
 };
 
