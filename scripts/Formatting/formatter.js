@@ -158,11 +158,11 @@ class BlossomFormatting {
         }
         const allObjectives = world.scoreboard.getObjectives();
         for (const obj of allObjectives) {
-            let score = obj.hasParticipant(player) ? abbreviateNumber(obj.getScore(player.scoreboardIdentity), 2) : 0;
+            let score = obj.hasParticipant(player.scoreboardIdentity) ? abbreviateNumber(obj.getScore(player.scoreboardIdentity), 2) : 0;
             newLine = newLine.replaceAll(`{{ab_${obj.id}}}`, score);
         }
         for (const obj of allObjectives) {
-            let score = obj.hasParticipant(player) ? obj.getScore(player.scoreboardIdentity) : 0;
+            let score = obj.hasParticipant(player.scoreboardIdentity) ? obj.getScore(player.scoreboardIdentity) : 0;
             newLine = newLine.replaceAll(`{{${obj.id}}}`, score);
         }
 
@@ -175,10 +175,6 @@ class BlossomFormatting {
 
         return newLine;
     }
-
-
-
-
 }
 
 export default new BlossomFormatting();

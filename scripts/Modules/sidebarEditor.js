@@ -3,6 +3,27 @@ import { playerAPI, prismarineDb } from "../Libraries/prismarinedb";
 import formatter from "../Formatting/formatter";
 import { array_move } from "./array_move";
 
+class FakeOnScreenDisplay {
+    setTitle(_) { }
+}
+
+class FakePlayer {
+    constructor(name = "FakePlayer") {
+        this.name = name;
+        this.scoreboardIdentity = name;
+        this.onScreenDisplay = new FakeOnScreenDisplay();
+    }
+
+    getTags() { return []; }
+    addTag(_) { return true; }
+    removeTag(_) { return true; }
+    hasTag(_) { return false; }
+
+    getDynamicProperty(_) { return undefined; }
+    setDynamicProperty(_, __) { }
+
+    sendMessage(_) { }
+}
 class SidebarEditor {
     constructor() {
         system.run(async () => {
@@ -18,7 +39,16 @@ class SidebarEditor {
     }
     run() {
         system.runInterval(async () => {
-            for (const plr of world.getPlayers()) {
+            function a() {
+                let fakes = []
+                for (let i = 0; i < 10; i++) {
+                    fakes.push(new FakePlayer('guh' + i))
+                }
+                return fakes
+            }
+            let a2 = [...world.getPlayers()]
+            for (const plr of a2) {
+                await system.waitTicks(1)
                 let sd3 = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)
                 let sd = this.db.findFirst({ name: sd3 })
                 if (!sd) {
