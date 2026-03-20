@@ -35,6 +35,7 @@ class Clans {
             if (c.data.type === '__keyval__') continue;
             if (c.data.members.find(_ => _.id == player.id)) return c.data.name
         }
+        return null;
     }
     addClan(owner, name, isPublic) {
         let ownerID = owner.id

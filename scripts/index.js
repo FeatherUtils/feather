@@ -57,27 +57,31 @@ import { ActionForm } from './Libraries/form_func'
 import { consts } from './cherryUIConsts'
 import emojis from './Formatting/emojis'
 import { cLog } from './Modules/cLog'
+import modulesV2 from './Modules/modulesV2'
 
-if (modules.get('ExperimentalNotificationInfoMessages') === undefined) modules.set('ExperimentalNotificationInfoMessages', true)
-
+modulesV2.register('ExpNIMessages', modulesV2.Types.Boolean, true)
 Player.prototype.error = function (msg) {
-  if (modules.get('ExperimentalNotificationInfoMessages')) {
-    this.sendMessage(dynamicToast('§cERROR', msg, 'textures/azalea_icons/other/delete'))
-    this.playSound('random.glass')
+  if (modulesV2.get('ExpNIMessages')) {
+    system.run(() => {
+      this.sendMessage(dynamicToast('§cERROR', msg, 'textures/azalea_icons/other/delete'))
+      this.playSound('random.glass')
+    })
   } else {
     this.sendMessage(`§c§lERROR§8 >>§r§7 ${msg}`)
   }
 }
 Player.prototype.success = function (msg) {
-  if (modules.get('ExperimentalNotificationInfoMessages')) {
-    this.sendMessage(dynamicToast('§aSUCCESS', msg, 'textures/azalea_icons/other/accept'))
-    this.playSound('random.orb')
+  if (modulesV2.get('ExpNIMessages')) {
+    system.run(() => {
+      this.sendMessage(dynamicToast('§aSUCCESS', msg, 'textures/azalea_icons/other/accept'))
+      this.playSound('random.orb')
+    })
   } else {
     this.sendMessage(`§a§lSUCCESS§8 >>§r§7 ${msg}`)
   }
 }
 Player.prototype.info = function (msg) {
-  if (modules.get('ExperimentalNotificationInfoMessages')) {
+  if (modulesV2.get('ExpNIMessages')) {
     this.sendMessage(dynamicToast('§bINFO', msg, 'textures/azalea_icons/other/light'))
   } else {
     this.sendMessage(`§b§lINFO§8 >>§r§7 ${msg}`)
@@ -106,8 +110,30 @@ system.run(() => {
   prismarineDb.permissions.setAdmin('admin', true)
 })
 
+modulesV2.register('AntiGuestAccount', modulesV2.Types.Boolean, true)
+modulesV2.register('AntiNuker', modulesV2.Types.Boolean, true)
+
 world.afterEvents.playerSpawn.subscribe(e => {
   if (!e.initialSpawn) return;
+  const overworld = world.getDimension('minecraft:overworld')
+  if (modulesV2.get('AntiGuestAccount')) {
+    if (e.player.name.includes('(')) return overworld.runCommand(`kick "${e.player.name}" Guest accounts are not allowed on the server`)
+  }
+  if (modulesV2.get('AntiNuker')) {
+    const name = e.player.name;
+
+    const invalid =
+      name.length < 1 ||
+      name.length > 15 ||
+      name !== name.trim() ||
+      / {2,}/.test(name) ||
+      !/^[A-Za-z0-9 ]+$/.test(name) ||
+      /^\d+$/.test(name);
+
+    if (invalid) {
+      overworld.runCommand(`kick "${name}" Username is malformed`);
+    }
+  }
   const ban = moderation.Database.findFirst({ type: 'BAN', player: e.player.id })
   if (ban) {
     world.getDimension('minecraft:overworld').runCommand(`kick "${e.player.name}" You are banned for ${moment(ban.data.time).fromNow()}.\nReason:\n${ban}`)

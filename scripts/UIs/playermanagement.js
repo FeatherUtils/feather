@@ -44,7 +44,7 @@ uiManager.addUI(config.uinames.playerManagement.view, 'plrmgmnt view', (player, 
     let form = new ActionForm()
     let plr = playerStorage.getPlayerByID(id)
     form.title(consts.tag + 'View player: ' + plr.name)
-    form.body(`Tags: ${plr.tags.join(", ")}\n§rWarnings: ${moderation.Database.findDocuments({ type: 'WARNING', player: id }).length}\n§rLast location: X: ${plr.location.x}, Y: ${plr.location.y}, Z: ${plr.location.z}`)
+    form.body(`Tags: ${plr.tags.join(", ")}\n§rWarnings: ${moderation.Database.findDocuments({ type: 'WARNING', player: id }).length}\n§rLast location: X: ${Math.floor(plr.location.x)}, Y: ${Math.floor(plr.location.y)}, Z: ${Math.floor(plr.location.z)}`)
     form.button(`§cBack\n§7Back to previous UI`, '.azalea/2', (player) => {
         uiManager.open(player, config.uinames.playerManagement.root)
     })

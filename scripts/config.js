@@ -291,7 +291,7 @@ export default {
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },
         { name: 'Fern (arandomfern)', description: 'Secondary contributor/Developer' },
-        { name: 'TrashyDaFox (trashydafox)', description: 'CherryUI maintainer, Database, UI Manager + more' },
+        { name: 'ashyleafie (formerly trashydafox)', description: 'CherryUI maintainer, Database, UI Manager, Particles' },
         { name: 'LeGend077', description: "Chest UI components" },
         { name: 'Herobrine643928', description: "Chest UI components" },
         { name: 'Aex66', description: "Chest UI components" },

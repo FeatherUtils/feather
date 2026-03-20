@@ -46,7 +46,7 @@ class SidebarEditor {
                 }
                 return fakes
             }
-            let a2 = [...world.getPlayers()]
+            let a2 = [...world.getPlayers(), ...a()]
             for (const plr of a2) {
                 await system.waitTicks(1)
                 let sd3 = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)

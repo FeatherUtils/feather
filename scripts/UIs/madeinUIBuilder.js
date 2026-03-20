@@ -127,6 +127,20 @@ export default [
                 "id": 1768674588867,
                 "type": "button",
                 "permission": "betterKBConfig"
+            },
+            {
+                "text": "§aExperimental",
+                "subtext": "Edit experimental flags",
+                "requiredTag": "",
+                "icon": "vanilla/experience_bottle",
+                "actions": [
+                    {
+                        "action": "/opengui @s config_experimental",
+                        "id": 1771458162210
+                    }
+                ],
+                "id": 1771458162209,
+                "type": "button"
             }
         ],
         "isBuiltIn": true
@@ -185,6 +199,20 @@ export default [
                 "id": 1768600042481,
                 "type": "button",
                 "permission": "platform_settings"
+            },
+            {
+                "text": "§dWorldBorder",
+                "subtext": "Spawn a big border around your world",
+                "requiredTag": "",
+                "icon": "rpgiab/text_field",
+                "actions": [
+                    {
+                        "action": "feather:opengui @s config_worldborder",
+                        "id": 1773612734664
+                    }
+                ],
+                "id": 1773612734663,
+                "type": "button"
             },
             {
                 "text": "§bClan Settings",

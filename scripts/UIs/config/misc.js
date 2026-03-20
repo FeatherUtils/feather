@@ -13,6 +13,7 @@ import homes from "../../Modules/homes";
 import keyvalues from "../../Modules/keyvalues";
 import { rtp } from "../../Modules/rtp";
 import { cLog } from "../../Modules/cLog";
+import modulesV2 from "../../Modules/modulesV2";
 
 uiManager.addUI(config.uinames.config.misc, 'misc settings', (player) => {
     let form = new ActionForm();
@@ -114,10 +115,10 @@ uiManager.addUI(config.uinames.config.clans, 'f', (player) => {
 uiManager.addUI(config.uinames.config.experimental, 'cfg experimental', (player) => {
     let form = new ModalFormData();
     form.title(consts.modal)
-    form.toggle('ExperimentalNotificationInfoMessages', {defaultValue:modules.get('ExperimentalNotificationInfoMessages')})
+    form.toggle('NotificationInfoMessages', {defaultValue:modulesV2.get('ExpNIMessages')})
     form.show(player).then((res) => {
         let [exnim] = res.formValues;
-        modules.set('ExperimentalNotificationInfoMessages', exnim)
+        modulesV2.set('ExpNIMessages', exnim)
         player.success('Set experimental values!')
         player.runCommand('open @s config_extra')
     })

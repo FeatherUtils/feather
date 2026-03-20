@@ -2,6 +2,7 @@ import config from "../config";
 import { prismarineDb } from "../Libraries/prismarinedb";
 import { system } from '@minecraft/server'
 import './iconViewer'
+import './worldBorder'
 
 class Modules {
     constructor() {
