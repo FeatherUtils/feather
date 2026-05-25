@@ -36,7 +36,7 @@ uiManager.addUI(config.uinames.uiBuilder.buttons.editall, 'edit all buttons', (p
         })
     }
     for(const button of u.buttons) {
-        form.button(`${button.text ? button.text : ''}${button.subtext ? `\n§r§7${button.subtext}` : `\n§7${button.type}`}`, button.icon ? icons.resolve(button.icon) : null, (player)=>{
+        form.button(`§r${button.text ? button.text : ''}${button.subtext ? `\n§r§7${button.subtext}` : `\n§7${button.type}`}`, button.icon ? icons.resolve(button.icon) : null, (player)=>{
             uiManager.open(player,config.uinames.uiBuilder.buttons.edit,uiID,button.id)
         })
     }

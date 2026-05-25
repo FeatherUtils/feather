@@ -43,7 +43,7 @@ export async function openChest(e) {
                         if (!prismarineDb.economy.getCurrency(button.buyButtonSettings.scoreboard)) prismarineDb.economy.addCurrency(button.buyButtonSettings.scoreboard, '$', `${button.buyButtonSettings.scoreboard}`)
                         let money = prismarineDb.economy.getMoney(player, button.buyButtonSettings.scoreboard)
                         if (money < p * amount) return buyform.show(player), player.playSound('random.glass')
-                        prismarineDb.economy.removeMoney(player, p, button.buyButtonSettings.scoreboard)
+                        prismarineDb.economy.removeMoney(player, p * amount, button.buyButtonSettings.scoreboard)
                         player.runCommand(`playsound random.orb`)
                         if (button.buyButtonSettings.item) {
                             let scf = world.gameRules.sendCommandFeedback
@@ -57,7 +57,7 @@ export async function openChest(e) {
                                 actionParser.runAction(player, await format(ac.action))
                             }
                         }
-                        buyform.show(player)
+                        player.runCommand('open @s "' + u.uniqueId + '"')
                     }
                     buyform.title(consts.tag)
                     buyform.button(`Back\n§7Back to menu`, null, () => player.runCommand('open @s "' + u.uniqueId + '"'))
@@ -108,10 +108,9 @@ export async function openChest(e) {
                         }
                         player.runCommand(`playsound random.orb`)
                         player.runCommand(`feather:open @s ${e.message}`)
-                        buyform.show(player)
                     }
                     buyform.title(consts.tag)
-                    buyform.button(`Back\n§7Back to menu`, null, () => player.runCommand('open @s "' + u.uniqueId + '"'))
+                    buyform.button(`Back\n§7Back to menu`, null, () => player.runCommand('feather:open @s "' + u.uniqueId + '"'))
                     buyform.button(`Sell 1\n§7${+button.sellButtonSettings.price} ${button.sellButtonSettings.scoreboard}`, null, () => buy(1))
                     buyform.button(`Sell 8\n§7${+button.sellButtonSettings.price * 8} ${button.sellButtonSettings.scoreboard}`, null, () => buy(8))
                     buyform.button(`Sell 16\n§7${+button.sellButtonSettings.price * 16} ${button.sellButtonSettings.scoreboard}`, null, () => buy(16))

@@ -3,6 +3,7 @@ import { system, world } from '@minecraft/server'
 import playerStorage from "../Libraries/playerStorage";
 import { SegmentedStoragePrismarine } from "../Libraries/Storage/segmented";
 import { timer } from "./Utilities/timer";
+import './miningAlerts'
 
 class Clans {
     constructor() {

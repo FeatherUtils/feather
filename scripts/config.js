@@ -92,6 +92,7 @@ export default {
         MCBEToolsAuth: 'mcbetools_auth',
         FeatherNetwork: 'feathernetwork',
         FeatherNetworkView: 'feathernetworkview',
+        MiningAlertsConfig: 'miningalerts_config',
         clans: {
             create: 'clans_create',
             public: 'clans_public',
@@ -232,8 +233,8 @@ export default {
     info: {
         name: 'Feather Essentials',
         abName: 'Feather',
-        release: '§uAmethyst',
-        version: [10],
+        release: '§dBlossom',
+        version: [11],
         versionString() {
             return `${this.release} §e${this.version.join('.')}`;
         },
@@ -286,7 +287,8 @@ export default {
         { perm: 'playerShopAdmin', display: 'Player Shop Admin' },
         { perm: 'bind', display: 'Bind items to commands' },
         { perm: 'bypassAreaFlags', display: 'Bypass area flags' },
-        { perm: 'experimental', display: 'Experimental settings' }
+        { perm: 'experimental', display: 'Experimental settings' },
+        { perm: 'recieveMiningAlerts', display: 'Recieve mining alerts'}
     ],
     credits: [
         { name: 'Isabella (isabelladakitty)', description: 'Main contributor/Lead dev/Founder' },

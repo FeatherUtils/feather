@@ -347,6 +347,20 @@ export default [
                 "permission": "warn"
             },
             {
+                "text": "§aMining Alerts",
+                "subtext": "Configure mining alerts",
+                "requiredTag": "",
+                "icon": "azalea/9-old",
+                "actions": [
+                    {
+                        "action": "opengui @s miningalerts_config",
+                        "id": 1779714059007
+                    }
+                ],
+                "id": 1779714059006,
+                "type": "button"
+            },
+            {
                 "text": "§cBack",
                 "subtext": "Go back to Features",
                 "requiredTag": "",

@@ -39,14 +39,7 @@ class SidebarEditor {
     }
     run() {
         system.runInterval(async () => {
-            function a() {
-                let fakes = []
-                for (let i = 0; i < 10; i++) {
-                    fakes.push(new FakePlayer('guh' + i))
-                }
-                return fakes
-            }
-            let a2 = [...world.getPlayers(), ...a()]
+            let a2 = [...world.getPlayers()]
             for (const plr of a2) {
                 await system.waitTicks(1)
                 let sd3 = playerAPI.getFirstTagStartingWithPrefix(plr, `sidebar:`, true)

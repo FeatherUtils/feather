@@ -7,6 +7,7 @@ import preview from '../../preview'
 import { system, world } from '@minecraft/server'
 import {commands} from '../../Modules/commands'
 import { consts } from '../../cherryUIConsts'
+import modulesV2 from '../../Modules/modulesV2'
 
 uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
     let form = new ModalFormData()
@@ -22,11 +23,13 @@ uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
     form.toggle('/redeem', {defaultValue: modules.get('redeem')})
     form.toggle('/rtp', {defaultValue: modules.get('rtp')})
     form.toggle(modules.get('commandPrefix') + 'playershop', {defaultValue: modules.get('playershop')})
+    form.toggle('NoGuests', {defaultValue:modulesV2.get('AntiGuestAccount')})
+    form.toggle('NoCrackedUsernames', {defaultValue:modulesV2.get('AntiNuker')})
     form.textField('Prefix','!', {defaultValue: modules.get('commandPrefix')})
     form.dropdown(`${translate(config.lang.config.modules.lang)}`, langs.map(_=>_.name), {defaultValueIndex: langs.findIndex(_=>_.val==modules.get('language'))})
     form.show(player).then((res) => {
         if(res.canceled) return uiManager.open(player, config.uinames.config.root);
-        let[cr,dev,pay,homes,nick,vote,bounty,redeem,rtp,playershop,prefix,l] = res.formValues
+        let[cr,dev,pay,homes,nick,vote,bounty,redeem,rtp,playershop,nogue,antin,prefix,l] = res.formValues
         let lang = langs[l]
         modules.set('devMode', dev)
         modules.set('cr', cr)
@@ -39,6 +42,8 @@ uiManager.addUI(config.uinames.config.modules, 'config modules', (player) => {
         modules.set('language',lang.val)
         modules.set('rtp',rtp)
         modules.set('playershop',playershop)
+        modulesV2.set('AntiGuestAccount', nogue)
+        modulesV2.set('AntiNuker', antin)
         if(!prefix) player.error('Enter something in the prefix field! It was set to !.')
         try {
             commands.updatePrefix(prefix ?? '!')
